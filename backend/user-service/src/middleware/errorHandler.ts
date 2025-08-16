@@ -13,7 +13,7 @@ export const errorHandler = (
   next: NextFunction
 ) => {
   let statusCode = error.statusCode || 500;
-  let message = error.message || 'Internal Server Error';
+  let message = (error.message ?? 'Internal Server Error') as string;
   let errors: string[] = [];
 
   // Handle specific error types
@@ -25,11 +25,11 @@ export const errorHandler = (
     statusCode = 400;
     message = 'Invalid ID format';
     errors = ['INVALID_ID'];
-  } else if (error.code === '23505') { // PostgreSQL unique constraint violation
+  } else if ((error as any).code === '23505') { // PostgreSQL unique constraint violation
     statusCode = 409;
     message = 'Resource already exists';
     errors = ['DUPLICATE_RESOURCE'];
-  } else if (error.code === '23503') { // PostgreSQL foreign key constraint violation
+  } else if ((error as any).code === '23503') { // PostgreSQL foreign key constraint violation
     statusCode = 400;
     message = 'Referenced resource not found';
     errors = ['REFERENCED_RESOURCE_NOT_FOUND'];
@@ -65,10 +65,12 @@ export const errorHandler = (
     success: false,
     message,
     errors,
-    ...(process.env.NODE_ENV === 'development' && {
-      stack: error.stack,
-      details: error.message,
-    }),
+    ...(process.env.NODE_ENV === 'development'
+      ? {
+          stack: (error.stack ?? '') as string,
+          details: String(error.message ?? ''),
+        }
+      : {}),
   });
 };
 

@@ -6,13 +6,14 @@ import rateLimit from 'express-rate-limit';
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
 import dotenv from 'dotenv';
-import { createConnection } from 'typeorm';
+
+dotenv.config();
+
 import { commerceRoutes } from './routes/commerce.routes';
 import { errorHandler } from './middleware/errorHandler';
 import { config } from './config/database';
 import { CommerceResolver } from './resolvers/commerce.resolver';
-
-dotenv.config();
+import { env } from './config/env';
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -89,8 +90,9 @@ app.use('*', (req, res) => {
 // Database connection and server startup
 async function startServer() {
   try {
-    // Connect to database
-    await createConnection(config);
+    if (!config.isInitialized) {
+      await config.initialize();
+    }
     console.log('✅ Database connected successfully');
 
     // Setup GraphQL

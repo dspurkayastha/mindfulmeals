@@ -2,8 +2,7 @@ import { Router } from 'express';
 import { body, query, param, validationResult } from 'express-validator';
 import { asyncHandler } from '../middleware/errorHandler';
 import { MealPlanningService } from '../services/meal-planning.service';
-import { Repository } from 'typeorm';
-import { Recipe, RecipeCategory, RecipeType, MindfulnessLevel } from '../entities/Recipe';
+import { Recipe, RecipeCategory, RecipeType, MindfulnessLevel, RecipeDifficulty } from '../entities/Recipe';
 import { RecipeIngredient, IngredientType } from '../entities/RecipeIngredient';
 import { RecipeStep, MindfulnessPrompt } from '../entities/RecipeStep';
 import { MealPlan, MealType, PlanType, PlanStatus, MindfulnessTheme } from '../entities/MealPlan';
@@ -11,14 +10,11 @@ import { Household, IndianRegion, DietaryType } from '../entities/Household';
 
 export const router = Router();
 
-// Initialize service (this would be injected via dependency injection)
-const mealPlanningService = new MealPlanningService(
-  {} as Repository<Recipe>,
-  {} as Repository<RecipeIngredient>,
-  {} as Repository<RecipeStep>,
-  {} as Repository<MealPlan>,
-  {} as Repository<Household>
-);
+// Initialize service (injected during server startup)
+let mealPlanningService: MealPlanningService = null as unknown as MealPlanningService;
+export const setMealPlanningService = (service: MealPlanningService) => {
+  mealPlanningService = service;
+};
 
 // Validation middleware
 const validateHouseholdId = param('householdId')

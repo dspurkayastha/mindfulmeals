@@ -4,15 +4,20 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
-import { createConnection } from 'typeorm';
+
+dotenv.config();
+
+import { env } from './config/env';
 import { userRoutes } from './routes/user.routes';
-import { authRoutes } from './routes/auth.routes';
+import { authRoutes, setAuthService } from './routes/auth.routes';
 import { householdRoutes } from './routes/household.routes';
 import { errorHandler } from './middleware/errorHandler';
 import { authMiddleware } from './middleware/authMiddleware';
 import { config } from './config/database';
-
-dotenv.config();
+import { User } from './entities/User';
+import { UserSession } from './entities/UserSession';
+import { TwoFactorSecret } from './entities/TwoFactorSecret';
+import { AuthService } from './services/auth.service';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -66,9 +71,17 @@ app.use('*', (req, res) => {
 // Database connection and server startup
 async function startServer() {
   try {
-    // Connect to database
-    await createConnection(config);
+    if (!config.isInitialized) {
+      await config.initialize();
+    }
     console.log('✅ Database connected successfully');
+
+    // Wire repositories and inject services
+    const userRepo = config.getRepository(User);
+    const userSessionRepo = config.getRepository(UserSession);
+    const twoFactorRepo = config.getRepository(TwoFactorSecret);
+    const authService = new AuthService(userRepo, userSessionRepo, twoFactorRepo);
+    setAuthService(authService);
 
     // Start server
     app.listen(PORT, () => {

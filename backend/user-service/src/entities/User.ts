@@ -50,43 +50,43 @@ export enum HealthGoal {
 @Index(['email'], { unique: true, where: "email IS NOT NULL" })
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ type: 'varchar', length: 100, nullable: false })
-  name: string;
+  name!: string;
 
   @Column({ type: 'varchar', length: 15, nullable: false, unique: true })
-  phone: string;
+  phone!: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true, unique: true })
   email?: string;
 
   @Column({ type: 'varchar', length: 20, nullable: false, default: HouseholdRole.FAMILY_MEMBER })
-  role: HouseholdRole;
+  role!: HouseholdRole;
 
   @Column({ type: 'varchar', length: 20, nullable: true })
   ageGroup?: AgeGroup;
 
   @Column({ type: 'text', array: true, default: [] })
-  dietaryRestrictions: DietaryRestriction[];
+  dietaryRestrictions!: DietaryRestriction[];
 
   @Column({ type: 'text', array: true, default: [] })
-  healthGoals: HealthGoal[];
+  healthGoals!: HealthGoal[];
 
   @Column({ type: 'varchar', length: 10, default: 'english' })
-  languagePreference: 'hindi' | 'english';
+  languagePreference!: 'hindi' | 'english';
 
   @Column({ type: 'varchar', length: 36, nullable: false })
-  householdId: string;
+  householdId!: string;
 
   @Column({ type: 'boolean', default: false })
-  isPhoneVerified: boolean;
+  isPhoneVerified!: boolean;
 
   @Column({ type: 'boolean', default: false })
-  isEmailVerified: boolean;
+  isEmailVerified!: boolean;
 
   @Column({ type: 'boolean', default: true })
-  isActive: boolean;
+  isActive!: boolean;
 
   @Column({ type: 'timestamp', nullable: true })
   lastLoginAt?: Date;
@@ -108,21 +108,21 @@ export class User {
   };
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 
   // Relations
   @ManyToOne(() => Household, household => household.members)
   @JoinColumn({ name: 'householdId' })
-  household: Household;
+  household!: Household;
 
   @OneToMany(() => UserSession, session => session.user)
-  sessions: UserSession[];
+  sessions!: UserSession[];
 
   @OneToMany(() => TwoFactorSecret, secret => secret.user)
-  twoFactorSecrets: TwoFactorSecret[];
+  twoFactorSecrets!: TwoFactorSecret[];
 
   // Virtual properties (not stored in database)
   get fullName(): string {

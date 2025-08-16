@@ -2,7 +2,6 @@ import { Router } from 'express';
 import { body, query, param, validationResult } from 'express-validator';
 import { asyncHandler } from '../middleware/errorHandler';
 import { InventoryService } from '../services/inventory.service';
-import { Repository } from 'typeorm';
 import { PantryItem, ItemCategory, ItemStatus, StorageLocation } from '../entities/PantryItem';
 import { Household } from '../entities/Household';
 import { ShoppingList, ShoppingListStatus, ShoppingListType } from '../entities/ShoppingList';
@@ -10,13 +9,11 @@ import { ShoppingListItem, ItemPriority, ItemSource } from '../entities/Shopping
 
 export const router = Router();
 
-// Initialize service (this would be injected via dependency injection)
-const inventoryService = new InventoryService(
-  {} as Repository<PantryItem>,
-  {} as Repository<Household>,
-  {} as Repository<ShoppingList>,
-  {} as Repository<ShoppingListItem>
-);
+// Initialize service (injected during server startup)
+let inventoryService: InventoryService = null as unknown as InventoryService;
+export const setInventoryService = (service: InventoryService) => {
+  inventoryService = service;
+};
 
 // Validation middleware
 const validateHouseholdId = param('householdId')

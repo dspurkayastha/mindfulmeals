@@ -1,9 +1,13 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { asyncHandler } from '../middleware/errorHandler';
 import { AuthService } from '../services/auth.service';
 
 const router = Router();
+
+// Injected service instance
+let authService: AuthService = null as unknown as AuthService;
+export const setAuthService = (service: AuthService) => { authService = service; };
 
 // Validation middleware
 const validatePhone = body('phone')
@@ -23,23 +27,21 @@ const validateDeviceFingerprint = body('deviceFingerprint')
 router.post('/send-otp',
   validatePhone,
   body('purpose').isIn(['login', 'verification']).withMessage('Invalid purpose'),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: 'Validation failed',
         errors: errors.array().map(err => err.msg),
       });
+      return;
     }
 
-    const { phone, purpose } = req.body;
-    
-    // TODO: Initialize AuthService with proper repositories
-    const authService = new AuthService({} as any, {} as any, {} as any);
-    
+    const { phone, purpose } = req.body as any;
+
     const result = await authService.sendSecureOTP(phone, purpose);
-    
+
     if (result.success) {
       res.status(200).json(result);
     } else {
@@ -54,28 +56,26 @@ router.post('/verify-otp',
   validateOTP,
   validateDeviceFingerprint,
   body('ipAddress').optional().isIP().withMessage('Invalid IP address'),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: 'Validation failed',
         errors: errors.array().map(err => err.msg),
       });
+      return;
     }
 
-    const { phone, otp, deviceFingerprint, ipAddress } = req.body;
-    
-    // TODO: Initialize AuthService with proper repositories
-    const authService = new AuthService({} as any, {} as any, {} as any);
-    
+    const { phone, otp, deviceFingerprint, ipAddress } = req.body as any;
+
     const result = await authService.authenticateWithPhone(
       phone,
       otp,
       deviceFingerprint,
       ipAddress || req.ip
     );
-    
+
     if (result.success) {
       res.status(200).json(result);
     } else {
@@ -87,23 +87,21 @@ router.post('/verify-otp',
 // Setup two-factor authentication
 router.post('/setup-2fa',
   body('userId').isUUID().withMessage('Valid user ID required'),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: 'Validation failed',
         errors: errors.array().map(err => err.msg),
       });
+      return;
     }
 
-    const { userId } = req.body;
-    
-    // TODO: Initialize AuthService with proper repositories
-    const authService = new AuthService({} as any, {} as any, {} as any);
-    
+    const { userId } = req.body as any;
+
     const result = await authService.setupTwoFactorAuthentication(userId);
-    
+
     if (result.success) {
       res.status(200).json(result);
     } else {
@@ -116,23 +114,21 @@ router.post('/setup-2fa',
 router.post('/verify-2fa',
   body('userId').isUUID().withMessage('Valid user ID required'),
   body('token').isLength({ min: 6, max: 6 }).isNumeric().withMessage('Valid 2FA token required'),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: 'Validation failed',
         errors: errors.array().map(err => err.msg),
       });
+      return;
     }
 
-    const { userId, token } = req.body;
-    
-    // TODO: Initialize AuthService with proper repositories
-    const authService = new AuthService({} as any, {} as any, {} as any);
-    
+    const { userId, token } = req.body as any;
+
     const isValid = await authService.verifyTwoFactorToken(userId, token);
-    
+
     if (isValid) {
       res.status(200).json({
         success: true,
@@ -151,18 +147,19 @@ router.post('/verify-2fa',
 // Refresh token
 router.post('/refresh',
   body('refreshToken').notEmpty().withMessage('Refresh token required'),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: 'Validation failed',
         errors: errors.array().map(err => err.msg),
       });
+      return;
     }
 
-    const { refreshToken } = req.body;
-    
+    const { refreshToken } = req.body as any;
+
     // TODO: Implement refresh token logic
     res.status(501).json({
       success: false,
@@ -175,18 +172,19 @@ router.post('/refresh',
 // Logout (revoke refresh token)
 router.post('/logout',
   body('refreshToken').notEmpty().withMessage('Refresh token required'),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: 'Validation failed',
         errors: errors.array().map(err => err.msg),
       });
+      return;
     }
 
-    const { refreshToken } = req.body;
-    
+    const { refreshToken } = req.body as any;
+
     // TODO: Implement logout logic
     res.status(501).json({
       success: false,

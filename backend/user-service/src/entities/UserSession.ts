@@ -15,13 +15,13 @@ import { User } from './User';
 @Index(['refreshTokenHash'], { unique: true })
 export class UserSession {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ type: 'varchar', length: 36, nullable: false })
-  userId: string;
+  userId!: string;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
-  deviceFingerprint: string;
+  deviceFingerprint!: string;
 
   @Column({ type: 'varchar', length: 45, nullable: true })
   ipAddress?: string;
@@ -30,13 +30,13 @@ export class UserSession {
   userAgent?: string;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
-  refreshTokenHash: string;
+  refreshTokenHash!: string;
 
   @Column({ type: 'timestamp', nullable: false })
-  expiresAt: Date;
+  expiresAt!: Date;
 
   @Column({ type: 'boolean', default: false })
-  isRevoked: boolean;
+  isRevoked!: boolean;
 
   @Column({ type: 'timestamp', nullable: true })
   revokedAt?: Date;
@@ -54,15 +54,15 @@ export class UserSession {
   };
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 
   // Relations
   @ManyToOne(() => User, user => user.sessions)
   @JoinColumn({ name: 'userId' })
-  user: User;
+  user!: User;
 
   // Virtual properties
   get isExpired(): boolean {

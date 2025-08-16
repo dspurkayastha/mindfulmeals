@@ -14,19 +14,19 @@ import { User } from './User';
 @Index(['userId'], { unique: true })
 export class TwoFactorSecret {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ type: 'varchar', length: 36, nullable: false })
-  userId: string;
+  userId!: string;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
-  secretHash: string; // Encrypted secret
+  secretHash!: string; // Encrypted secret
 
   @Column({ type: 'varchar', length: 255, nullable: false })
-  backupCodesHash: string; // Encrypted backup codes
+  backupCodesHash!: string; // Encrypted backup codes
 
   @Column({ type: 'boolean', default: false })
-  isEnabled: boolean;
+  isEnabled!: boolean;
 
   @Column({ type: 'timestamp', nullable: true })
   enabledAt?: Date;
@@ -35,7 +35,7 @@ export class TwoFactorSecret {
   lastUsedAt?: Date;
 
   @Column({ type: 'integer', default: 0 })
-  failedAttempts: number;
+  failedAttempts!: number;
 
   @Column({ type: 'timestamp', nullable: true })
   lockedUntil?: Date;
@@ -48,15 +48,15 @@ export class TwoFactorSecret {
   };
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 
   // Relations
   @ManyToOne(() => User, user => user.twoFactorSecrets)
   @JoinColumn({ name: 'userId' })
-  user: User;
+  user!: User;
 
   // Virtual properties
   get isLocked(): boolean {
