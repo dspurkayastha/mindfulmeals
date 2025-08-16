@@ -7,11 +7,12 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from 'react-native';
-import { Card, Title, Paragraph, Button, Chip } from 'react-native-paper';
+import { Card, Title, Paragraph, Button, Chip, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import SunsetHeader from '../../components/common/SunsetHeader';
 
 const MealPlanningScreen = () => {
+  const { colors } = useTheme();
   const mockMeals = [
     {
       id: 1,
@@ -40,7 +41,7 @@ const MealPlanningScreen = () => {
   ];
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}> 
       <ScrollView style={styles.scrollView}>
         {/* Header */}
         <SunsetHeader title="Meal Planning" subtitle="Plan your healthy meals" />
@@ -88,12 +89,12 @@ const MealPlanningScreen = () => {
         <View style={styles.quickActions}>
           <Text style={styles.sectionTitle}>Quick Actions</Text>
           <View style={styles.actionRow}>
-            <TouchableOpacity style={styles.actionButton}>
+            <TouchableOpacity style={[styles.actionButton, { backgroundColor: colors.surface }]}>
               <Icon name="shopping-basket" size={24} color="#4CAF50" />
               <Text style={styles.actionText}>Shopping List</Text>
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.actionButton}>
+            <TouchableOpacity style={[styles.actionButton, { backgroundColor: colors.surface }]}>
               <Icon name="kitchen" size={24} color="#FF9800" />
               <Text style={styles.actionText}>Check Pantry</Text>
             </TouchableOpacity>
@@ -107,7 +108,6 @@ const MealPlanningScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
   },
   scrollView: {
     flex: 1,
@@ -116,7 +116,6 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   generateButton: {
-    backgroundColor: '#4CAF50',
     paddingVertical: 8,
   },
   mealsSection: {
@@ -173,7 +172,6 @@ const styles = StyleSheet.create({
   actionButton: {
     alignItems: 'center',
     padding: 16,
-    backgroundColor: 'white',
     borderRadius: 12,
     minWidth: 120,
     elevation: 2,

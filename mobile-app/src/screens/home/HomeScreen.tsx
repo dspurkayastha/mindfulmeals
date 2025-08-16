@@ -7,13 +7,14 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from 'react-native';
-import { Card, Title, Paragraph, Button } from 'react-native-paper';
+import { Card, Title, Paragraph, Button, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import SunsetHeader from '../../components/common/SunsetHeader';
 
 const HomeScreen = ({ navigation }: any) => {
+  const { colors } = useTheme();
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView style={styles.scrollView}>
         {/* Header */}
         <SunsetHeader title="Namaste! 🙏" subtitle="Welcome to Swasthya Food" />
@@ -23,7 +24,7 @@ const HomeScreen = ({ navigation }: any) => {
           <Text style={styles.sectionTitle}>Quick Actions</Text>
           <View style={styles.actionGrid}>
             <TouchableOpacity
-              style={styles.actionCard}
+              style={[styles.actionCard, { backgroundColor: colors.surface }]}
               onPress={() => navigation.navigate('Meal Planning')}
             >
               <Icon name="restaurant-menu" size={32} color="#4CAF50" />
@@ -31,7 +32,7 @@ const HomeScreen = ({ navigation }: any) => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.actionCard}
+              style={[styles.actionCard, { backgroundColor: colors.surface }]}
               onPress={() => navigation.navigate('Pantry')}
             >
               <Icon name="kitchen" size={32} color="#FF9800" />
@@ -39,7 +40,7 @@ const HomeScreen = ({ navigation }: any) => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.actionCard}
+              style={[styles.actionCard, { backgroundColor: colors.surface }]}
               onPress={() => navigation.navigate('Shopping')}
             >
               <Icon name="shopping-cart" size={32} color="#2196F3" />
@@ -47,7 +48,7 @@ const HomeScreen = ({ navigation }: any) => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.actionCard}
+              style={[styles.actionCard, { backgroundColor: colors.surface }]}
               onPress={() => navigation.navigate('Community')}
             >
               <Icon name="people" size={32} color="#9C27B0" />
@@ -88,7 +89,6 @@ const HomeScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
   },
   scrollView: {
     flex: 1,
@@ -109,7 +109,6 @@ const styles = StyleSheet.create({
   },
   actionCard: {
     width: '48%',
-    backgroundColor: 'white',
     padding: 20,
     borderRadius: 12,
     alignItems: 'center',

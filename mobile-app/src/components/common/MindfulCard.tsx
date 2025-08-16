@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { colors as palette } from '../../utils/theme';
 
 interface MindfulCardProps {
   children: React.ReactNode;
@@ -17,14 +18,14 @@ const MindfulCard: React.FC<MindfulCardProps> = ({
     const baseStyle: ViewStyle = {
       borderRadius: 20,
       padding: 20,
-      backgroundColor: '#F5F5DC', // Warm Gray
+      backgroundColor: palette.warmGray,
     };
 
     switch (variant) {
       case 'elevated':
         return {
           ...baseStyle,
-          shadowColor: '#8B4513',
+          shadowColor: palette.mutedBrown,
           shadowOffset: { width: 0, height: 8 },
           shadowOpacity: 0.2,
           shadowRadius: 16,
@@ -34,13 +35,13 @@ const MindfulCard: React.FC<MindfulCardProps> = ({
         return {
           ...baseStyle,
           borderWidth: 2,
-          borderColor: '#D2B48C', // Soft Taupe
+          borderColor: palette.softTaupe,
           backgroundColor: 'transparent',
         };
       default:
         return {
           ...baseStyle,
-          shadowColor: '#8B4513',
+          shadowColor: palette.mutedBrown,
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.1,
           shadowRadius: 8,
@@ -60,7 +61,7 @@ const MindfulCard: React.FC<MindfulCardProps> = ({
   return (
     <View style={[getCardStyle(), style]}>
       <LinearGradient
-        colors={['#F5F5DC', '#FFF8DC']} // Warm Gray to Soft Cream
+        colors={[palette.warmGray, palette.softCream]}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         style={{

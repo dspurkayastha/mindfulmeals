@@ -1,11 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
-import { Card, Title, Paragraph, Button } from 'react-native-paper';
+import { Card, Title, Paragraph, Button, useTheme } from 'react-native-paper';
 import SunsetHeader from '../../components/common/SunsetHeader';
 
 const ShoppingScreen = () => {
+  const { colors } = useTheme();
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView style={styles.scrollView}>
         <SunsetHeader title="Shopping" subtitle="Order groceries online" />
         
@@ -22,7 +23,7 @@ const ShoppingScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5' },
+  container: { flex: 1 },
   scrollView: { flex: 1 },
   card: { margin: 20, elevation: 2 },
   button: { marginTop: 12, backgroundColor: '#2196F3' },
