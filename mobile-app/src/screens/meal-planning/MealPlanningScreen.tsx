@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Card, Title, Paragraph, Button, Chip } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import SunsetHeader from '../../components/common/SunsetHeader';
 
 const MealPlanningScreen = () => {
   const mockMeals = [
@@ -42,10 +43,7 @@ const MealPlanningScreen = () => {
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
         {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Meal Planning</Text>
-          <Text style={styles.headerSubtitle}>Plan your healthy meals</Text>
-        </View>
+        <SunsetHeader title="Meal Planning" subtitle="Plan your healthy meals" />
 
         {/* Generate Plan Button */}
         <View style={styles.generateSection}>
@@ -113,22 +111,6 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-  },
-  header: {
-    padding: 20,
-    backgroundColor: '#4CAF50',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
-    marginBottom: 4,
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    color: 'white',
-    opacity: 0.9,
   },
   generateSection: {
     padding: 20,

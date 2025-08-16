@@ -9,16 +9,14 @@ import {
 } from 'react-native';
 import { Card, Title, Paragraph, Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import SunsetHeader from '../../components/common/SunsetHeader';
 
 const HomeScreen = ({ navigation }: any) => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
         {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.welcomeText}>Namaste! 🙏</Text>
-          <Text style={styles.subtitleText}>Welcome to Swasthya Food</Text>
-        </View>
+        <SunsetHeader title="Namaste! 🙏" subtitle="Welcome to Swasthya Food" />
 
         {/* Quick Actions */}
         <View style={styles.quickActions}>
@@ -94,22 +92,6 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-  },
-  header: {
-    padding: 20,
-    backgroundColor: '#4CAF50',
-    alignItems: 'center',
-  },
-  welcomeText: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: 'white',
-    marginBottom: 8,
-  },
-  subtitleText: {
-    fontSize: 16,
-    color: 'white',
-    opacity: 0.9,
   },
   quickActions: {
     padding: 20,
