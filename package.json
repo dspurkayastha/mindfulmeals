@@ -13,11 +13,14 @@
     "test": "npm run test --workspaces",
     "lint": "npm run lint --workspaces",
     "start:mobile": "cd mobile-app && npm start",
-    "start:backend": "cd backend && npm run dev"
+    "start:backend": "cd backend && npm run dev",
+    "check:features": "ts-node scripts/feature-check.ts",
+    "watch:features": "bash -c 'while true; do ts-node scripts/feature-check.ts; sleep 900; done'"
   },
   "devDependencies": {
     "typescript": "^5.0.0",
-    "@types/node": "^20.0.0"
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.2"
   },
   "engines": {
     "node": ">=18.0.0",
