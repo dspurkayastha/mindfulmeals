@@ -1,0 +1,137 @@
+import React from 'react';
+import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import { LinearGradient } from 'react-native-linear-gradient';
+
+interface MindfulButtonProps {
+  title: string;
+  onPress: () => void;
+  variant?: 'primary' | 'secondary' | 'outline';
+  size?: 'small' | 'medium' | 'large';
+  disabled?: boolean;
+  style?: ViewStyle;
+  textStyle?: TextStyle;
+}
+
+const MindfulButton: React.FC<MindfulButtonProps> = ({
+  title,
+  onPress,
+  variant = 'primary',
+  size = 'medium',
+  disabled = false,
+  style,
+  textStyle,
+}) => {
+  const getButtonColors = () => {
+    switch (variant) {
+      case 'primary':
+        return ['#D2691E', '#FF8C00']; // Terracotta to Golden Amber
+      case 'secondary':
+        return ['#6B8E23', '#9CAF88']; // Olive to Sage
+      case 'outline':
+        return ['transparent', 'transparent'];
+      default:
+        return ['#D2691E', '#FF8C00'];
+    }
+  };
+
+  const getButtonStyle = (): ViewStyle => {
+    const baseStyle: ViewStyle = {
+      borderRadius: 16,
+      alignItems: 'center',
+      justifyContent: 'center',
+      shadowColor: '#8B4513',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.15,
+      shadowRadius: 8,
+      elevation: 4,
+    };
+
+    switch (size) {
+      case 'small':
+        return { ...baseStyle, paddingHorizontal: 16, paddingVertical: 8, minHeight: 36 };
+      case 'large':
+        return { ...baseStyle, paddingHorizontal: 32, paddingVertical: 16, minHeight: 56 };
+      default:
+        return { ...baseStyle, paddingHorizontal: 24, paddingVertical: 12, minHeight: 48 };
+    }
+  };
+
+  const getTextStyle = (): TextStyle => {
+    const baseStyle: TextStyle = {
+      fontWeight: '600',
+      textAlign: 'center',
+    };
+
+    switch (size) {
+      case 'small':
+        return { ...baseStyle, fontSize: 14 };
+      case 'large':
+        return { ...baseStyle, fontSize: 18 };
+      default:
+        return { ...baseStyle, fontSize: 16 };
+    }
+  };
+
+  if (variant === 'outline') {
+    return (
+      <TouchableOpacity
+        style={[
+          getButtonStyle(),
+          {
+            borderWidth: 2,
+            borderColor: '#D2691E',
+            backgroundColor: 'transparent',
+          },
+          style,
+        ]}
+        onPress={onPress}
+        disabled={disabled}
+        activeOpacity={0.8}
+      >
+        <Text
+          style={[
+            getTextStyle(),
+            { color: '#D2691E' },
+            textStyle,
+          ]}
+        >
+          {title}
+        </Text>
+      </TouchableOpacity>
+    );
+  }
+
+  return (
+    <TouchableOpacity
+      style={[getButtonStyle(), style]}
+      onPress={onPress}
+      disabled={disabled}
+      activeOpacity={0.8}
+    >
+      <LinearGradient
+        colors={getButtonColors()}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+          borderRadius: 16,
+        }}
+      />
+      <Text
+        style={[
+          getTextStyle(),
+          { color: '#FFF8DC' }, // Soft Cream
+          textStyle,
+        ]}
+      >
+        {title}
+      </Text>
+    </TouchableOpacity>
+  );
+};
+
+export default MindfulButton;

@@ -1,0 +1,52 @@
+---
+alwaysApply: true
+---
+{
+  "version": "1.2.0",
+  "languages": ["TypeScript", "JavaScript"],
+  "frameworks": ["React Native", "Expo"],
+  "architecture": {
+    "pattern": "MVVM or feature-based",
+    "state_management": ["Zustand", "React Context", "Redux Toolkit (if complex)"],
+    "navigation": "React Navigation with deep links and animated transitions"
+  },
+  "ui_guidelines": {
+    "theme": "system-driven light/dark with custom color palette (think Duolingo: bright, friendly, playful)",
+    "component_library": ["React Native Paper", "NativeBase", "custom atomic design components for branding"],
+    "typography": {
+      "fonts": ["Poppins", "Nunito", "SF Pro Display"],
+      "scale": "responsive modular"
+    },
+    "icons": "Phosphor Icons or Feather (consistency, line-style)",
+    "spacing": "8pt grid",
+    "corners": "large, rounded (Duolingo style)",
+    "animation": "React Native Reanimated, Moti, Lottie for expressive feedback"
+  },
+  "ux_guidelines": {
+    "microinteractions": "use Lottie or Reanimated with delight, visible on all major flows (login, quiz, success, error)",
+    "accessibility": "VoiceOver/TalkBack, >44px touch targets, sufficient contrast, label all actionable controls",
+    "feedback": "optimistic updates, skeleton loaders, clear error boundaries with retry",
+    "onboarding": "gamified, motivation-driven, mascot/character encouragement"
+  },
+  "testing": {
+    "unit": ["Jest", "React Native Testing Library"],
+    "e2e": "Detox or Maestro (app flows, onboarding, navigation, key UI states)"
+  },
+  "file_structure": "feature (src/features), UI (src/ui), assets (src/assets), core (src/core), utils (src/utils)",
+  "naming": {
+    "files": "kebab-case",
+    "components": "PascalCase",
+    "variables": "camelCase"
+  },
+  "api": {
+    "layer": "fetch/axios wrapper with hooks (SWR, TanStack Query, RTK Query, or custom)",
+    "schemas": "OpenAPI or GraphQL (refer to schema docs)"
+  },
+  "notes_for_ai": [
+    "Always use TypeScript for new files.",
+    "Prioritize lively, animated, and character-driven UIs.",
+    "All UI should be tactile, accessible, and joyful.",
+    "Favor composable, reusable hooks and atomic components.",
+    "Strive for simplicity in API, state, and navigation patterns."
+  ]
+}

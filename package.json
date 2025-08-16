@@ -1,0 +1,26 @@
+{
+  "name": "mindfulmeals",
+  "version": "1.0.0",
+  "description": "MindfulMeals - Nourish your body, mind, and soul",
+  "private": true,
+  "workspaces": [
+    "mobile-app",
+    "backend/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "lint": "npm run lint --workspaces",
+    "start:mobile": "cd mobile-app && npm start",
+    "start:backend": "cd backend && npm run dev"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}

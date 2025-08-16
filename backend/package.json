@@ -1,0 +1,30 @@
+{
+  "name": "mindfulmeals-backend",
+  "version": "1.0.0",
+  "description": "MindfulMeals Backend Services",
+  "private": true,
+  "workspaces": [
+    "user-service",
+    "meal-planning-service",
+    "commerce-service",
+    "inventory-service",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "lint": "npm run lint --workspaces",
+    "start": "npm run start --workspaces"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.0",
+    "ts-node-dev": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}
