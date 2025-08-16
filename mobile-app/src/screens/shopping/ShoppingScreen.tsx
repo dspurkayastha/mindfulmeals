@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import { Card, Title, Paragraph, Button, useTheme } from 'react-native-paper';
 import SunsetHeader from '../../components/common/SunsetHeader';
+import MindfulButton from '../../components/common/MindfulButton';
 
 const ShoppingScreen = () => {
   const { colors } = useTheme();
@@ -14,7 +15,7 @@ const ShoppingScreen = () => {
           <Card.Content>
             <Title>Quick Commerce</Title>
             <Paragraph>Order from Blinkit, Zepto, or Swiggy</Paragraph>
-            <Button mode="contained" style={styles.button}>Start Shopping</Button>
+            <MindfulButton title="Start Shopping" onPress={() => {}} />
           </Card.Content>
         </Card>
       </ScrollView>

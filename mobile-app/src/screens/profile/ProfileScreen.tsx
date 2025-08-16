@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import { Card, Title, Paragraph, Button, useTheme } from 'react-native-paper';
 import SunsetHeader from '../../components/common/SunsetHeader';
+import MindfulButton from '../../components/common/MindfulButton';
 
 const ProfileScreen = () => {
   const { colors } = useTheme();
@@ -14,7 +15,7 @@ const ProfileScreen = () => {
           <Card.Content>
             <Title>Household Settings</Title>
             <Paragraph>Manage family members and preferences</Paragraph>
-            <Button mode="contained" style={styles.button}>Edit Profile</Button>
+            <MindfulButton title="Edit Profile" onPress={() => {}} />
           </Card.Content>
         </Card>
       </ScrollView>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, FlatList, StyleSheet, SafeAreaView } from 'react-native';
 import { Card, Text, Chip, Searchbar, useTheme } from 'react-native-paper';
 import SunsetHeader from '../../components/common/SunsetHeader';
+import { colors as palette } from '../../utils/theme';
 
 const mockRecipes = [
 	{ id: '1', title: 'Palak Paneer', cuisine: 'North Indian', calories: 320 },
@@ -30,8 +31,8 @@ const RecipeListScreen: React.FC<ScreenProps> = ({ navigation }) => {
 				<FlatList
 					data={data}
 					renderItem={({ item }) => (
-						<Card style={styles.card} onPress={() => navigation.navigate('RecipeDetails', { id: item.id })}>
-							<Card.Title title={item.title} subtitle={`${item.cuisine} • ${item.calories} cal`} />
+						<Card style={[styles.card, { backgroundColor: colors.surface }]} onPress={() => navigation.navigate('RecipeDetails', { id: item.id })}>
+							<Card.Title title={item.title} subtitle={`${item.cuisine} • ${item.calories} cal`} titleStyle={{ color: palette.textPrimary }} subtitleStyle={{ color: palette.textSecondary }} />
 						</Card>
 					)}
 					keyExtractor={(item) => item.id}
