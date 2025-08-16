@@ -14,7 +14,7 @@ import SunsetHeader from '../../components/common/SunsetHeader';
 const HomeScreen = ({ navigation }: any) => {
   const { colors } = useTheme();
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}> 
       <ScrollView style={styles.scrollView}>
         {/* Header */}
         <SunsetHeader title="Namaste! 🙏" subtitle="Welcome to Swasthya Food" />
@@ -41,18 +41,34 @@ const HomeScreen = ({ navigation }: any) => {
 
             <TouchableOpacity
               style={[styles.actionCard, { backgroundColor: colors.surface }]}
-              onPress={() => navigation.navigate('Shopping')}
+              onPress={() => navigation.navigate('Recipes')}
             >
-              <Icon name="shopping-cart" size={32} color="#2196F3" />
-              <Text style={styles.actionText}>Shop</Text>
+              <Icon name="book" size={32} color="#8D6E63" />
+              <Text style={styles.actionText}>Recipes</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.actionCard, { backgroundColor: colors.surface }]}
-              onPress={() => navigation.navigate('Community')}
+              onPress={() => navigation.navigate('CalorieScanner')}
             >
-              <Icon name="people" size={32} color="#9C27B0" />
-              <Text style={styles.actionText}>Community</Text>
+              <Icon name="camera-alt" size={32} color="#795548" />
+              <Text style={styles.actionText}>Calorie Scan</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.actionCard, { backgroundColor: colors.surface }]}
+              onPress={() => navigation.navigate('Wellness')}
+            >
+              <Icon name="self-improvement" size={32} color="#9CCC65" />
+              <Text style={styles.actionText}>Wellness</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.actionCard, { backgroundColor: colors.surface }]}
+              onPress={() => navigation.navigate('QuickCommerce')}
+            >
+              <Icon name="shopping-bag" size={32} color="#FF7043" />
+              <Text style={styles.actionText}>Quick Commerce</Text>
             </TouchableOpacity>
           </View>
         </View>

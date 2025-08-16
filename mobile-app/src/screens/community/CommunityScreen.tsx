@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import { Card, Title, Paragraph, Button, useTheme } from 'react-native-paper';
 import SunsetHeader from '../../components/common/SunsetHeader';
 
-const CommunityScreen = () => {
+const CommunityScreen = ({ navigation }: any) => {
   const { colors } = useTheme();
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -14,7 +14,7 @@ const CommunityScreen = () => {
           <Card.Content>
             <Title>Share Recipe</Title>
             <Paragraph>Share your family recipes with the community</Paragraph>
-            <Button mode="contained" style={styles.button}>Share Recipe</Button>
+            <Button mode="contained" style={styles.button} onPress={() => navigation.navigate('ShareRecipe')}>Share Recipe</Button>
           </Card.Content>
         </Card>
       </ScrollView>
