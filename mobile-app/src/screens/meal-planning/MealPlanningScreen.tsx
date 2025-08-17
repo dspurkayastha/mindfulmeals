@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,10 +7,18 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from 'react-native';
-import { Card, Title, Paragraph, Button, Chip } from 'react-native-paper';
+import { Card, Title, Paragraph, Button, Chip, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import SunsetHeader from '../../components/common/SunsetHeader';
+import MindfulButton from '../../components/common/MindfulButton';
+import { colors as palette, typography } from '../../utils/theme';
+import AnimatedSurface from '../../components/common/AnimatedSurface';
+import LottieSuccess from '../../components/common/LottieSuccess';
 
 const MealPlanningScreen = () => {
+  const { colors } = useTheme();
+  const [generating, setGenerating] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const mockMeals = [
     {
       id: 1,
@@ -38,25 +46,30 @@ const MealPlanningScreen = () => {
     },
   ];
 
+  const handleGenerate = () => {
+    setGenerating(true);
+    setShowSuccess(false);
+    setTimeout(() => {
+      setGenerating(false);
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 1500);
+    }, 1200);
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}> 
       <ScrollView style={styles.scrollView}>
         {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Meal Planning</Text>
-          <Text style={styles.headerSubtitle}>Plan your healthy meals</Text>
-        </View>
+        <SunsetHeader title="Meal Planning" subtitle="Plan your healthy meals" />
 
         {/* Generate Plan Button */}
         <View style={styles.generateSection}>
-          <Button
-            mode="contained"
-            icon="plus"
-            style={styles.generateButton}
-            onPress={() => {}}
-          >
-            Generate Weekly Plan
-          </Button>
+          <MindfulButton title={generating ? 'Generating…' : 'Generate Weekly Plan'} onPress={handleGenerate} />
+          {showSuccess && (
+            <View style={{ alignItems: 'center', marginTop: 8 }}>
+              <LottieSuccess />
+            </View>
+          )}
         </View>
 
         {/* Today's Meals */}
@@ -90,15 +103,19 @@ const MealPlanningScreen = () => {
         <View style={styles.quickActions}>
           <Text style={styles.sectionTitle}>Quick Actions</Text>
           <View style={styles.actionRow}>
-            <TouchableOpacity style={styles.actionButton}>
-              <Icon name="shopping-basket" size={24} color="#4CAF50" />
-              <Text style={styles.actionText}>Shopping List</Text>
-            </TouchableOpacity>
+            <AnimatedSurface delay={0}>
+              <TouchableOpacity style={[styles.actionButton, { backgroundColor: colors.surface }]}>
+                <Icon name="shopping-basket" size={24} color={palette.olive} />
+                <Text style={styles.actionText}>Shopping List</Text>
+              </TouchableOpacity>
+            </AnimatedSurface>
             
-            <TouchableOpacity style={styles.actionButton}>
-              <Icon name="kitchen" size={24} color="#FF9800" />
-              <Text style={styles.actionText}>Check Pantry</Text>
-            </TouchableOpacity>
+            <AnimatedSurface delay={120}>
+              <TouchableOpacity style={[styles.actionButton, { backgroundColor: colors.surface }]}>
+                <Icon name="kitchen" size={24} color={palette.goldenAmber} />
+                <Text style={styles.actionText}>Check Pantry</Text>
+              </TouchableOpacity>
+            </AnimatedSurface>
           </View>
         </View>
       </ScrollView>
@@ -109,32 +126,14 @@ const MealPlanningScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
   },
   scrollView: {
     flex: 1,
-  },
-  header: {
-    padding: 20,
-    backgroundColor: '#4CAF50',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
-    marginBottom: 4,
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    color: 'white',
-    opacity: 0.9,
   },
   generateSection: {
     padding: 20,
   },
   generateButton: {
-    backgroundColor: '#4CAF50',
     paddingVertical: 8,
   },
   mealsSection: {
@@ -142,10 +141,9 @@ const styles = StyleSheet.create({
     paddingTop: 0,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    ...typography.h4,
     marginBottom: 16,
-    color: '#333',
+    color: palette.textPrimary,
   },
   mealCard: {
     marginBottom: 16,
@@ -163,22 +161,22 @@ const styles = StyleSheet.create({
   },
   mealType: {
     fontSize: 14,
-    color: '#666',
+    color: palette.textSecondary,
   },
   mealTime: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#4CAF50',
+    color: palette.olive,
   },
   mealDetails: {
     flexDirection: 'row',
     gap: 8,
   },
   cuisineChip: {
-    backgroundColor: '#E8F5E8',
+    backgroundColor: palette.softCream,
   },
   calorieChip: {
-    backgroundColor: '#FFF3E0',
+    backgroundColor: palette.warmBeige,
   },
   quickActions: {
     padding: 20,
@@ -191,7 +189,6 @@ const styles = StyleSheet.create({
   actionButton: {
     alignItems: 'center',
     padding: 16,
-    backgroundColor: 'white',
     borderRadius: 12,
     minWidth: 120,
     elevation: 2,
@@ -200,7 +197,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 14,
     fontWeight: '600',
-    color: '#333',
+    color: palette.textPrimary,
     textAlign: 'center',
   },
 });

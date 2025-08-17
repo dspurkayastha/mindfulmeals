@@ -7,54 +7,84 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from 'react-native';
-import { Card, Title, Paragraph, Button } from 'react-native-paper';
+import { Card, Title, Paragraph, Button, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import SunsetHeader from '../../components/common/SunsetHeader';
+import MindfulButton from '../../components/common/MindfulButton';
+import AnimatedSurface from '../../components/common/AnimatedSurface';
+import { colors as palette, typography } from '../../utils/theme';
 
 const HomeScreen = ({ navigation }: any) => {
+  const { colors } = useTheme();
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}> 
       <ScrollView style={styles.scrollView}>
         {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.welcomeText}>Namaste! 🙏</Text>
-          <Text style={styles.subtitleText}>Welcome to Swasthya Food</Text>
-        </View>
+        <SunsetHeader title="Namaste! 🙏" subtitle="Welcome to Swasthya Food" />
 
         {/* Quick Actions */}
         <View style={styles.quickActions}>
           <Text style={styles.sectionTitle}>Quick Actions</Text>
           <View style={styles.actionGrid}>
-            <TouchableOpacity
-              style={styles.actionCard}
-              onPress={() => navigation.navigate('Meal Planning')}
-            >
-              <Icon name="restaurant-menu" size={32} color="#4CAF50" />
-              <Text style={styles.actionText}>Plan Meals</Text>
-            </TouchableOpacity>
+            <AnimatedSurface delay={0}>
+              <TouchableOpacity
+                style={[styles.actionCard, { backgroundColor: colors.surface }]}
+                onPress={() => navigation.navigate('Meal Planning')}
+              >
+                <Icon name="restaurant-menu" size={32} color={palette.olive} />
+                <Text style={styles.actionText}>Plan Meals</Text>
+              </TouchableOpacity>
+            </AnimatedSurface>
 
-            <TouchableOpacity
-              style={styles.actionCard}
-              onPress={() => navigation.navigate('Pantry')}
-            >
-              <Icon name="kitchen" size={32} color="#FF9800" />
-              <Text style={styles.actionText}>Check Pantry</Text>
-            </TouchableOpacity>
+            <AnimatedSurface delay={80}>
+              <TouchableOpacity
+                style={[styles.actionCard, { backgroundColor: colors.surface }]}
+                onPress={() => navigation.navigate('Pantry')}
+              >
+                <Icon name="kitchen" size={32} color={palette.goldenAmber} />
+                <Text style={styles.actionText}>Check Pantry</Text>
+              </TouchableOpacity>
+            </AnimatedSurface>
 
-            <TouchableOpacity
-              style={styles.actionCard}
-              onPress={() => navigation.navigate('Shopping')}
-            >
-              <Icon name="shopping-cart" size={32} color="#2196F3" />
-              <Text style={styles.actionText}>Shop</Text>
-            </TouchableOpacity>
+            <AnimatedSurface delay={160}>
+              <TouchableOpacity
+                style={[styles.actionCard, { backgroundColor: colors.surface }]}
+                onPress={() => navigation.navigate('Recipes')}
+              >
+                <Icon name="book" size={32} color={palette.mutedBrown} />
+                <Text style={styles.actionText}>Recipes</Text>
+              </TouchableOpacity>
+            </AnimatedSurface>
 
-            <TouchableOpacity
-              style={styles.actionCard}
-              onPress={() => navigation.navigate('Community')}
-            >
-              <Icon name="people" size={32} color="#9C27B0" />
-              <Text style={styles.actionText}>Community</Text>
-            </TouchableOpacity>
+            <AnimatedSurface delay={240}>
+              <TouchableOpacity
+                style={[styles.actionCard, { backgroundColor: colors.surface }]}
+                onPress={() => navigation.navigate('CalorieScanner')}
+              >
+                <Icon name="camera-alt" size={32} color={palette.mutedBrown} />
+                <Text style={styles.actionText}>Calorie Scan</Text>
+              </TouchableOpacity>
+            </AnimatedSurface>
+
+            <AnimatedSurface delay={320}>
+              <TouchableOpacity
+                style={[styles.actionCard, { backgroundColor: colors.surface }]}
+                onPress={() => navigation.navigate('Wellness')}
+              >
+                <Icon name="self-improvement" size={32} color={palette.sage} />
+                <Text style={styles.actionText}>Wellness</Text>
+              </TouchableOpacity>
+            </AnimatedSurface>
+
+            <AnimatedSurface delay={400}>
+              <TouchableOpacity
+                style={[styles.actionCard, { backgroundColor: colors.surface }]}
+                onPress={() => navigation.navigate('QuickCommerce')}
+              >
+                <Icon name="shopping-bag" size={32} color={palette.deepCoral} />
+                <Text style={styles.actionText}>Quick Commerce</Text>
+              </TouchableOpacity>
+            </AnimatedSurface>
           </View>
         </View>
 
@@ -63,13 +93,7 @@ const HomeScreen = ({ navigation }: any) => {
           <Card.Content>
             <Title>Today's Meal Plan</Title>
             <Paragraph>You have 3 meals planned for today</Paragraph>
-            <Button
-              mode="contained"
-              onPress={() => navigation.navigate('Meal Planning')}
-              style={styles.button}
-            >
-              View Plan
-            </Button>
+            <MindfulButton title="View Plan" onPress={() => navigation.navigate('Meal Planning')} />
           </Card.Content>
         </Card>
 
@@ -90,35 +114,17 @@ const HomeScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
   },
   scrollView: {
     flex: 1,
-  },
-  header: {
-    padding: 20,
-    backgroundColor: '#4CAF50',
-    alignItems: 'center',
-  },
-  welcomeText: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: 'white',
-    marginBottom: 8,
-  },
-  subtitleText: {
-    fontSize: 16,
-    color: 'white',
-    opacity: 0.9,
   },
   quickActions: {
     padding: 20,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    ...typography.h4,
     marginBottom: 16,
-    color: '#333',
+    color: palette.textPrimary,
   },
   actionGrid: {
     flexDirection: 'row',
@@ -127,7 +133,6 @@ const styles = StyleSheet.create({
   },
   actionCard: {
     width: '48%',
-    backgroundColor: 'white',
     padding: 20,
     borderRadius: 12,
     alignItems: 'center',
@@ -142,17 +147,13 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 14,
     fontWeight: '600',
-    color: '#333',
+    color: palette.textPrimary,
     textAlign: 'center',
   },
   card: {
     margin: 20,
     marginTop: 0,
     elevation: 2,
-  },
-  button: {
-    marginTop: 12,
-    backgroundColor: '#4CAF50',
   },
 });
 

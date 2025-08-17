@@ -1,6 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
-import { LinearGradient } from 'react-native-linear-gradient';
+import LinearGradient from 'react-native-linear-gradient';
+import { colors as palette } from '../../utils/theme';
 
 interface MindfulButtonProps {
   title: string;
@@ -24,13 +25,13 @@ const MindfulButton: React.FC<MindfulButtonProps> = ({
   const getButtonColors = () => {
     switch (variant) {
       case 'primary':
-        return ['#D2691E', '#FF8C00']; // Terracotta to Golden Amber
+        return [palette.terracotta, palette.goldenAmber];
       case 'secondary':
-        return ['#6B8E23', '#9CAF88']; // Olive to Sage
+        return [palette.olive, palette.sage];
       case 'outline':
         return ['transparent', 'transparent'];
       default:
-        return ['#D2691E', '#FF8C00'];
+        return [palette.terracotta, palette.goldenAmber];
     }
   };
 
@@ -39,7 +40,7 @@ const MindfulButton: React.FC<MindfulButtonProps> = ({
       borderRadius: 16,
       alignItems: 'center',
       justifyContent: 'center',
-      shadowColor: '#8B4513',
+      shadowColor: palette.mutedBrown,
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.15,
       shadowRadius: 8,
@@ -79,7 +80,7 @@ const MindfulButton: React.FC<MindfulButtonProps> = ({
           getButtonStyle(),
           {
             borderWidth: 2,
-            borderColor: '#D2691E',
+            borderColor: palette.terracotta,
             backgroundColor: 'transparent',
           },
           style,
@@ -91,7 +92,7 @@ const MindfulButton: React.FC<MindfulButtonProps> = ({
         <Text
           style={[
             getTextStyle(),
-            { color: '#D2691E' },
+            { color: palette.terracotta },
             textStyle,
           ]}
         >
@@ -124,7 +125,7 @@ const MindfulButton: React.FC<MindfulButtonProps> = ({
       <Text
         style={[
           getTextStyle(),
-          { color: '#FFF8DC' }, // Soft Cream
+          { color: palette.textInverse },
           textStyle,
         ]}
       >
