@@ -46,6 +46,7 @@ const PostMealReflection: React.FC<PostMealReflectionProps> = ({
   const { t } = useTranslation();
   const [selectedMood, setSelectedMood] = useState<string>('');
   const [energyLevel, setEnergyLevel] = useState(3);
+  const [satisfaction, setSatisfaction] = useState(5);
   const [gratitudeText, setGratitudeText] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -65,6 +66,7 @@ const PostMealReflection: React.FC<PostMealReflectionProps> = ({
       mealName,
       mood: selectedMood,
       energyLevel,
+      satisfaction,
       gratitudeText,
       timestamp: new Date().toISOString(),
     };
@@ -173,6 +175,29 @@ const PostMealReflection: React.FC<PostMealReflectionProps> = ({
                 <Text style={styles.energyValue}>{energyLevel}/5</Text>
                 <Text style={[styles.energyLabel, { color: getEnergyColor() }]}>
                   {getEnergyLabel()}
+                </Text>
+              </View>
+            </View>
+
+            <Text style={styles.sectionTitle}>{t('reflection.satisfaction', 'How satisfied are you?')}</Text>
+            <View style={styles.energyContainer}>
+              <Slider
+                style={styles.slider}
+                minimumValue={1}
+                maximumValue={10}
+                step={1}
+                value={satisfaction}
+                onValueChange={setSatisfaction}
+                minimumTrackTintColor={colors.primary}
+                maximumTrackTintColor="#E0E0E0"
+                thumbTintColor={colors.primary}
+              />
+              <View style={styles.energyLabels}>
+                <Text style={styles.energyValue}>{satisfaction}/10</Text>
+                <Text style={[styles.energyLabel, { color: colors.primary }]}>
+                  {satisfaction <= 3 ? t('reflection.notSatisfied', 'Not satisfied') :
+                   satisfaction <= 6 ? t('reflection.moderatelySatisfied', 'Moderately satisfied') :
+                   t('reflection.verySatisfied', 'Very satisfied')}
                 </Text>
               </View>
             </View>

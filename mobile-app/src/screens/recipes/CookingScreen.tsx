@@ -1,39 +1,52 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 import { useTheme, Title, Paragraph, Chip } from 'react-native-paper';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { CookingBreathingTimer } from '../../components/mindfulness';
+import { CookingBreathingTimer, GratitudeOverlay } from '../../components/mindfulness';
 import NotificationService from '../../services/NotificationService';
+import { showToast } from '../../utils/toast';
 
 const CookingScreen = () => {
   const { colors } = useTheme();
   const navigation = useNavigation();
   const route = useRoute();
+  const [showGratitude, setShowGratitude] = useState(false);
+  const [currentMealId, setCurrentMealId] = useState<string | null>(null);
   
   const { recipe } = route.params || {};
   const cookingTime = recipe?.cookTime || 30; // Default 30 minutes
   const recipeName = recipe?.name || 'Your Meal';
 
-  const handleTimerComplete = () => {
+  const handleTimerComplete = async () => {
+    const mealId = recipe?.id || `meal_${Date.now()}`;
     const mealData = {
-      mealId: recipe?.id || 'default',
+      mealId: mealId,
       mealName: recipeName,
       mealTime: new Date(),
+      recipeId: recipe?.id,
     };
     
-    // Schedule post-meal reflection notification for 30 minutes later
-    NotificationService.getInstance().schedulePostMealReflection(mealData.mealId, 30);
-
-    // Navigate directly to post-meal reflection
-    navigation.navigate('PostMealReflection', {
-      mealId: mealData.mealId,
-      mealData: mealData,
-    });
+    try {
+      // Save meal data first (this would normally go to a meal service)
+      // For now, we'll just set the meal ID
+      setCurrentMealId(mealId);
+      
+      // Show gratitude overlay
+      setShowGratitude(true);
+    } catch (error) {
+      console.error('Error completing cooking:', error);
+      showToast({
+        message: 'Error saving meal data',
+        preset: 'error',
+      });
+    }
   };
 
   const handleCancel = () => {
     navigation.goBack();
   };
+
+
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -64,6 +77,30 @@ const CookingScreen = () => {
           onCancel={handleCancel}
         />
       </ScrollView>
+      
+      <GratitudeOverlay
+        visible={showGratitude}
+        onClose={async () => {
+          setShowGratitude(false);
+          
+          // Schedule post-meal reflection notification
+          if (currentMealId) {
+            await NotificationService.getInstance().schedulePostMealReflection(
+              currentMealId,
+              30 // 30 minutes later
+            );
+          }
+          
+          // Navigate to post-meal reflection after closing
+          navigation.navigate('PostMealReflection', { 
+            mealId: currentMealId!,
+            fromScreen: 'Cooking'
+          });
+        }}
+        itemName={recipeName}
+        itemId={currentMealId || ''}
+        itemType="meal"
+      />
     </SafeAreaView>
   );
 };

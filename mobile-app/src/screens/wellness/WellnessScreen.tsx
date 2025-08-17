@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, SafeAreaView, ScrollView, RefreshControl } from 'react-native';
 import { Card, Text, useTheme, IconButton, ProgressBar, Chip, Button } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import SunsetHeader from '../../components/common/SunsetHeader';
 import { useWellnessData } from '../../hooks/useWellnessData';
@@ -26,6 +26,13 @@ const WellnessScreen: React.FC = () => {
     await refreshData();
     setRefreshing(false);
   }, [refreshData]);
+
+  // Refresh data when screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      refreshData();
+    }, [refreshData])
+  );
 
   const getMoodEmoji = (mood: string) => {
     const moodMap = {

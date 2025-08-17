@@ -230,7 +230,9 @@ const PantryScreen = ({ navigation }: any) => {
           onPress={() => {
             setShowBreatherButton(false);
             navigation.navigate('BreathingExercise', {
-              context: 'pantry_organizing',
+              context: 'pantry',
+              returnScreen: 'Pantry',
+              duration: 3, // 3 minutes for pantry context
             });
           }}
           onDismiss={() => {
