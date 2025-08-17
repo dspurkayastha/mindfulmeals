@@ -44,7 +44,7 @@ const validateRecipeInput = [
 router.post('/households/:householdId/generate-plan',
   validateHouseholdId,
   validateMealPlanningInput,
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -163,7 +163,7 @@ router.get('/households/:householdId/recommendations',
 // Mindfulness Integration Routes
 router.get('/mindfulness/themes',
   asyncHandler(async (req, res) => {
-    const themes = Object.values(MindfulnessTheme).map(theme => ({
+    const themes = (Object.values(MindfulnessTheme) as MindfulnessTheme[]).map(theme => ({
       value: theme,
       label: theme.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
       description: getMindfulnessThemeDescription(theme),
@@ -501,7 +501,7 @@ function getRegionalCuisine(region: IndianRegion): string {
 }
 
 function getRegionalSpecialties(region: IndianRegion): string[] {
-  const specialties: Record<IndianRegion, string[]> = {
+  const specialties: Partial<Record<IndianRegion, string[]>> = {
     [IndianRegion.PUNJAB]: ['Butter Chicken', 'Sarson da Saag', 'Makki di Roti', 'Amritsari Fish'],
     [IndianRegion.KERALA]: ['Kerala Fish Curry', 'Appam with Stew', 'Malabar Biryani', 'Puttu Kadala'],
     [IndianRegion.WEST_BENGAL]: ['Macher Jhol', 'Luchi Aloor Dom', 'Rasgulla', 'Sandesh'],
@@ -517,7 +517,7 @@ function getRegionalSpecialties(region: IndianRegion): string[] {
 }
 
 function getRegionalFestivals(region: IndianRegion): string[] {
-  const festivals: Record<IndianRegion, string[]> = {
+  const festivals: Partial<Record<IndianRegion, string[]>> = {
     [IndianRegion.PUNJAB]: ['Lohri', 'Baisakhi', 'Gurpurab', 'Hola Mohalla'],
     [IndianRegion.KERALA]: ['Onam', 'Vishu', 'Thrissur Pooram', 'Theyyam'],
     [IndianRegion.WEST_BENGAL]: ['Durga Puja', 'Kali Puja', 'Poila Boishakh', 'Nabanna'],
