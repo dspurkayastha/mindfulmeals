@@ -54,9 +54,20 @@ export default {
   // Pantry
   pantry: {
     title: 'My Pantry',
+    subtitle: 'Organize your ingredients mindfully',
     empty: 'Your pantry is empty',
+    emptyTitle: 'No ingredients yet',
+    emptyMessage: 'Add your first ingredient to start your mindful cooking journey',
     addFirst: 'Add your first ingredient mindfully',
     addItem: 'Add ingredient',
+    searchPlaceholder: 'Search ingredients...',
+    all: 'All',
+    produce: 'Produce',
+    dairy: 'Dairy',
+    proteins: 'Proteins',
+    grains: 'Grains',
+    condiments: 'Condiments',
+    snacks: 'Snacks',
     categories: {
       grains: 'Grains',
       vegetables: 'Vegetables',
@@ -68,6 +79,10 @@ export default {
     expiring: 'Expiring soon',
     lowStock: 'Running low',
     gratitude: 'Take a moment to appreciate this ingredient',
+    refreshed: 'Pantry refreshed mindfully',
+    refreshError: 'Could not refresh pantry',
+    errorTitle: 'Unable to load pantry',
+    errorMessage: 'Please check your connection and try again',
   },
 
   // Meal Planning
@@ -107,6 +122,9 @@ export default {
     dailyIntention: 'Set your daily food intention',
     mealBlessing: 'Take a moment to appreciate your meal',
     mindfulEating: 'Eat slowly and mindfully',
+    takeBreath: 'Take a mindful breath',
+    fiveMinutes: 'You\'ve been organizing for 5 minutes',
+    skipForNow: 'Skip for now',
   },
 
   // Shopping
@@ -133,5 +151,56 @@ export default {
     loginFailed: 'Login failed. Please try again',
     saveFailed: 'Could not save. Please try again',
     loadFailed: 'Could not load data',
+  },
+
+  // Loading
+  loading: {
+    mindfulMoment: 'Taking a mindful moment...',
+    breatheWhileWaiting: 'Breathe with us while we prepare...',
+    practicePatience: 'Practice patience as we gather your information...',
+  },
+
+  // Breathing
+  breathing: {
+    inhale: 'Inhale...',
+    hold: 'Hold...',
+    exhale: 'Exhale...',
+    inhaleInstruction: 'Breathe In',
+    holdInstruction: 'Hold',
+    exhaleInstruction: 'Breathe Out',
+    tapToStart: 'Tap to begin',
+    sessionComplete: 'Well done! You completed your breathing exercise',
+    tip: 'Focus on your breath and let your thoughts drift away',
+    contexts: {
+      pantryOrganizing: 'Take a moment to center yourself while organizing',
+      preMeal: 'Prepare your body and mind for nourishment',
+      cooking: 'Find calm in the rhythm of cooking',
+      general: 'Let\'s take a mindful breathing break',
+    },
+  },
+
+  // Reflection
+  reflection: {
+    howWasMeal: 'How was {{meal}}?',
+    mood: 'How do you feel?',
+    moods: {
+      energized: 'Energized',
+      satisfied: 'Satisfied',
+      heavy: 'Heavy',
+      still_hungry: 'Still Hungry',
+    },
+    energyLevel: 'Energy Level',
+    lowEnergy: 'Low Energy',
+    moderateEnergy: 'Moderate Energy',
+    highEnergy: 'High Energy',
+    gratitude: 'Gratitude',
+    gratitudePlaceholder: 'What are you grateful for about this meal?',
+    addPhoto: 'Add Photo',
+    addVoiceNote: 'Voice Note',
+    skipForNow: 'Skip for now',
+    save: 'Save Reflection',
+    selectMood: 'Please select how you feel',
+    saved: 'Reflection saved mindfully',
+    saveError: 'Could not save reflection',
   },
 };
