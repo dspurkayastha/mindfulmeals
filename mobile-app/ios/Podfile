@@ -1,3 +1,31 @@
+# Dynamically resolve paths based on the actual project structure
+def node_modules_path
+  # Start from current directory and look for node_modules
+  current_dir = File.expand_path(__dir__)
+  
+  # Check common locations for node_modules
+  possible_paths = [
+    File.join(current_dir, '..', 'node_modules'),                    # mobile-app/node_modules
+    File.join(current_dir, '..', '..', 'node_modules'),              # workspace/node_modules
+    File.join(current_dir, '..', '..', '..', 'node_modules'),        # parent/node_modules
+  ]
+  
+  # Find the first existing node_modules directory
+  node_modules = possible_paths.find { |path| File.directory?(path) }
+  
+  if node_modules.nil?
+    Pod::UI.puts "Error: Could not find node_modules directory!".red
+    Pod::UI.puts "Searched in: #{possible_paths.join(', ')}".yellow
+    raise "node_modules directory not found"
+  end
+  
+  return File.expand_path(node_modules)
+end
+
+# Dynamically load React Native scripts
+node_modules = node_modules_path()
+react_native_path = File.join(node_modules, 'react-native')
+
 # Resolve react_native_pods.rb with node to allow for hoisting
 require Pod::Executable.execute_command('node', ['-p',
   'require.resolve(
@@ -5,12 +33,16 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
-# Change these lines to point to workspace root (three levels up)
-require_relative '../../../node_modules/react-native/scripts/react_native_pods'
-require_relative '../../../node_modules/@react-native-community/cli-platform-ios/native_modules'
+# Load scripts using dynamic paths
+require File.join(react_native_path, 'scripts', 'react_native_pods')
+require File.join(node_modules, '@react-native-community', 'cli-platform-ios', 'native_modules')
 
-platform :ios, min_ios_version_supported
+# Use minimum iOS version or default
+platform :ios, ENV['IOS_DEPLOYMENT_TARGET'] || min_ios_version_supported
 prepare_react_native_project!
+
+# Flipper configuration (can be disabled via environment variable)
+flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
@@ -18,36 +50,80 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-target 'MindfulMeals' do
+# Dynamically determine the app name from the Xcode project
+def get_app_name
+  # Look for .xcodeproj file
+  xcodeproj = Dir.glob("*.xcodeproj").first
+  return xcodeproj ? File.basename(xcodeproj, ".xcodeproj") : "MindfulMeals"
+end
+
+app_name = get_app_name()
+
+target app_name do
   config = use_native_modules!
 
+  # Flags change depending on the env values.
+  flags = get_default_flags()
+
   use_react_native!(
-    :path => '../../../node_modules/react-native',
-    :hermes_enabled => true,
-    :fabric_enabled => false,
+    :path => react_native_path,
+    # Hermes is enabled by default, disable via env variable if needed
+    :hermes_enabled => ENV['HERMES_ENABLED'] != 'false' ? flags[:hermes_enabled] : false,
+    :fabric_enabled => flags[:fabric_enabled],
+    # Flipper configuration
+    :flipper_configuration => flipper_config,
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  target 'MindfulMealsTests' do
+  target "#{app_name}Tests" do
     inherit! :complete
     # Pods for testing
   end
 
   post_install do |installer|
-    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
+    # React Native post install
     react_native_post_install(
       installer,
-      '../../../node_modules/react-native',
+      react_native_path,
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
     
-    # Fix deployment targets for monorepo compatibility
+    # Apply Xcode 12.5 M1 workaround if needed
+    __apply_Xcode_12_5_M1_post_install_workaround(installer)
+    
+    # Configure deployment targets dynamically
+    deployment_target = ENV['IOS_DEPLOYMENT_TARGET'] || '12.4'
+    
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.4'
+        # Set deployment target
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = deployment_target
+        
+        # Exclude arm64 for simulator builds on M1 Macs if needed
+        if ENV['EXCLUDE_SIMULATOR_ARM64'] == 'true'
+          config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
+        end
+        
+        # Enable bitcode based on environment
+        config.build_settings['ENABLE_BITCODE'] = ENV['ENABLE_BITCODE'] || 'NO'
+        
+        # Suppress warnings for specific pods if needed
+        if ENV['SUPPRESS_POD_WARNINGS'] == 'true'
+          config.build_settings['GCC_WARN_INHIBIT_ALL_WARNINGS'] = 'YES'
+        end
       end
     end
+    
+    # Fix React-Codegen for M1 Macs
+    installer.pods_project.build_configurations.each do |config|
+      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64" if `uname -m`.strip == 'arm64'
+    end
+    
+    # Output success message
+    Pod::UI.puts "✅ Pod installation completed successfully!".green
+    Pod::UI.puts "📱 iOS Deployment Target: #{deployment_target}".cyan
+    Pod::UI.puts "📦 Node modules path: #{node_modules}".cyan
   end
 end

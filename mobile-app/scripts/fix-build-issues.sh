@@ -179,56 +179,20 @@ echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━�
 if [[ "$OSTYPE" == "darwin"* ]]; then
     cd ios
     
-    # Update Podfile for compatibility
-    cat > Podfile << 'EOF'
-require_relative '../node_modules/react-native/scripts/react_native_pods'
-require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
-
-platform :ios, '12.4'
-install! 'cocoapods', :deterministic_uuids => false
-
-target 'MindfulMeals' do
-  config = use_native_modules!
-
-  # Flags change depending on the env values.
-  flags = get_default_flags()
-
-  use_react_native!(
-    :path => config[:reactNativePath],
-    # Hermes is now enabled by default. Disable by setting this flag to false.
-    :hermes_enabled => flags[:hermes_enabled],
-    :fabric_enabled => flags[:fabric_enabled],
-    # An absolute path to your application root.
-    :app_path => "#{Pod::Config.instance.installation_root}/.."
-  )
-
-  target 'MindfulMealsTests' do
-    inherit! :complete
-    # Pods for testing
-  end
-
-  post_install do |installer|
-    react_native_post_install(
-      installer,
-      # Set `mac_catalyst_enabled` to `true` in order to apply patches
-      # necessary for Mac Catalyst builds
-      :mac_catalyst_enabled => false
-    )
-    __apply_Xcode_12_5_M1_post_install_workaround(installer)
+    # The Podfile is now dynamic and doesn't need to be recreated
+    echo "📱 Using dynamic Podfile configuration..."
     
-    # Fix build issues
-    installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-        config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = "arm64"
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.4'
-      end
-    end
-  end
-end
-EOF
-
-    # Install pods
-    pod install --repo-update
+    # Set environment variables for pod install
+    export NO_FLIPPER=1  # Disable Flipper by default for faster builds
+    export IOS_DEPLOYMENT_TARGET=12.4
+    
+    # Clean pod cache
+    echo "🧹 Cleaning CocoaPods cache..."
+    pod cache clean --all
+    
+    # Install pods with verbose output
+    echo "📦 Installing CocoaPods dependencies..."
+    pod install --repo-update --verbose
     
     cd ..
 else

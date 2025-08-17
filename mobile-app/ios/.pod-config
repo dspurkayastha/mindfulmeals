@@ -1,0 +1,27 @@
+# iOS Pod Configuration
+# This file contains environment variables for pod installation
+# You can customize these values based on your project needs
+
+# iOS Deployment Target
+export IOS_DEPLOYMENT_TARGET=12.4
+
+# Disable Flipper for faster builds (set to 0 to enable)
+export NO_FLIPPER=1
+
+# Hermes configuration (set to false to disable)
+export HERMES_ENABLED=true
+
+# Exclude arm64 for simulator on M1 Macs (set to true if having issues)
+export EXCLUDE_SIMULATOR_ARM64=false
+
+# Enable bitcode (usually NO for React Native)
+export ENABLE_BITCODE=NO
+
+# Suppress pod warnings during installation
+export SUPPRESS_POD_WARNINGS=false
+
+# Use frameworks (dynamic/static or leave empty)
+# export USE_FRAMEWORKS=static
+
+# Custom node modules path (leave empty to auto-detect)
+# export NODE_MODULES_PATH=/path/to/node_modules
