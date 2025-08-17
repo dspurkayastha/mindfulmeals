@@ -133,6 +133,50 @@ fi
 # Navigate to iOS directory
 cd "$SCRIPT_DIR"
 
+# Check if Xcode project exists
+if [ ! -d "MindfulMeals.xcodeproj" ]; then
+    print_status "warning" "Xcode project not found. Initializing iOS project..."
+    
+    # Create a temporary React Native project to get the iOS files
+    cd "$PROJECT_ROOT"
+    print_status "info" "Creating temporary React Native project for iOS files..."
+    npx react-native@0.72.6 init MindfulMealsTemp --version 0.72.6 --skip-install
+    
+    if [ -d "MindfulMealsTemp/ios" ]; then
+        print_status "info" "Copying iOS project files..."
+        
+        # Copy the Xcode project and workspace files
+        cp -r MindfulMealsTemp/ios/MindfulMealsTemp.xcodeproj "$SCRIPT_DIR/MindfulMeals.xcodeproj"
+        cp -r MindfulMealsTemp/ios/MindfulMealsTemp.xcworkspace "$SCRIPT_DIR/MindfulMeals.xcworkspace" 2>/dev/null || true
+        
+        # Rename project files
+        cd "$SCRIPT_DIR/MindfulMeals.xcodeproj"
+        mv MindfulMealsTemp.xcscheme MindfulMeals.xcscheme 2>/dev/null || true
+        
+        # Update project name in project.pbxproj
+        if [ -f "project.pbxproj" ]; then
+            sed -i '' 's/MindfulMealsTemp/MindfulMeals/g' project.pbxproj
+        fi
+        
+        cd "$SCRIPT_DIR"
+        
+        # Copy any missing source files
+        if [ ! -f "MindfulMeals/AppDelegate.h" ] && [ -f "$PROJECT_ROOT/MindfulMealsTemp/ios/MindfulMealsTemp/AppDelegate.h" ]; then
+            cp "$PROJECT_ROOT/MindfulMealsTemp/ios/MindfulMealsTemp/AppDelegate.h" MindfulMeals/
+            cp "$PROJECT_ROOT/MindfulMealsTemp/ios/MindfulMealsTemp/AppDelegate.mm" MindfulMeals/
+            sed -i '' 's/MindfulMealsTemp/MindfulMeals/g' MindfulMeals/AppDelegate.*
+        fi
+        
+        # Clean up temporary project
+        rm -rf "$PROJECT_ROOT/MindfulMealsTemp"
+        
+        print_status "success" "iOS project initialized"
+    else
+        print_status "error" "Failed to create temporary React Native project"
+        exit 1
+    fi
+fi
+
 # Update Podfile for optimizations and fixes
 print_status "info" "Configuring Podfile..."
 
