@@ -1,0 +1,1 @@
+Place lottie JSON files here, e.g. success.json, error.json, confetti.json.

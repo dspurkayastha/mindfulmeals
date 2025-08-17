@@ -1,16 +1,18 @@
 module.exports = {
-  dependencies: {
-    'lottie-react-native': {
-      platforms: {
-        ios: {
-          sourceDir: './node_modules/lottie-react-native/src/ios',
-        },
-      },
-    },
-    'react-native-vector-icons': {
-      platforms: {
-        ios: null,
-      },
-    },
+  project: {
+    ios: {},
+    android: {},
   },
+  dependencies: {
+    // Disable autolinking for packages that cause issues in monorepo
+    // Example:
+    // 'react-native-flipper': {
+    //   platforms: {
+    //     ios: null,
+    //     android: null,
+    //   },
+    // },
+  },
+  // Asset configuration
+  assets: ['./src/assets/fonts/'],
 };
