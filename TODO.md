@@ -29,13 +29,15 @@ Status key: [ ] pending, [~] in progress, [x] done, [🚀] next focus
 - [ ] Basic OpenAPI docs (Swagger UI for dev team)
 - [ ] Performance baseline (aim for <500ms, optimize later)
 
-## Phase 3 — Mobile Core (1.5 weeks)
-- [🚀] Simple API client (axios + React Query, no interceptors yet)
-- [🚀] Basic auth flow (AsyncStorage for MVP, Keychain later)
-- [🚀] Connect 3 key screens: onboarding, pantry list, meal planner
-- [🚀] Simple navigation (stack navigation, no deep links yet)
-- [ ] Skeleton loading states (3-4 key screens)
-- [ ] Optimistic updates for add/edit actions
+## Phase 3 — Mindful Mobile Experience (2 weeks)
+- [🚀] API client with React Query for wellness data
+- [🚀] Mindful auth flow with welcoming onboarding
+- [🚀] Core screens: mindful onboarding, pantry with gratitude, meal planner with check-ins
+- [🚀] Navigation with gentle transitions and animations
+- [🚀] Wellness tracking foundation (mood, energy, gratitude)
+- [ ] Lottie animations for key moments (success, meditation, gratitude)
+- [ ] Haptic feedback for positive reinforcement
+- [ ] Skeleton loading with breathing rhythm
 
 ## Phase 4 — Quality Essentials (1 week, parallel with development)
 - [🚀] Essential tests: critical hooks and utils only
@@ -45,34 +47,48 @@ Status key: [ ] pending, [~] in progress, [x] done, [🚀] next focus
 - [ ] Basic error boundaries and crash handling
 - [ ] TypeScript coverage report (aim for >90%)
 
-## Phase 5 — Security & Performance (1 week, before launch)
-- [ ] Secure token storage (Keychain/Keystore)
-- [ ] HTTPS enforcement and basic cert validation
-- [ ] Basic privacy policy and data handling docs
-- [ ] Performance optimization: Hermes, list virtualization
-- [ ] Crash reporting (Crashlytics - free, simple)
-- [ ] Basic analytics events (5-10 key events max)
+## Phase 5 — Mindfulness Features & Polish (2 weeks) 🧘
+**The core differentiator - what makes us unique**
+- [🚀] Wellness tracking dashboard with mood/energy charts
+- [🚀] Daily gratitude journaling with celebration animations  
+- [🚀] Guided breathing exercises (3-5 minute sessions)
+- [🚀] Mindful eating guidance and gentle portion awareness
+- [ ] Health insights based on eating patterns (gentle, non-judgmental)
+- [ ] Beautiful, calming theme with gradients and smooth animations
+- [ ] Haptic feedback patterns for achievements and positive actions
+- [ ] Streak tracking for mindful practices with visual rewards
+- [ ] Gentle waste awareness and seasonal ingredient celebrations
 
-## Phase 6 — Launch Preparation (1 week)
+## Phase 6 — Security & Performance (1 week)
+- [ ] Secure token storage (Keychain/Keystore)
+- [ ] HTTPS enforcement and basic security headers
+- [ ] Performance optimization: Hermes, list virtualization, animation optimization
+- [ ] Crash reporting (Crashlytics - simple setup)
+- [ ] Basic privacy policy focusing on wellness data handling
+- [ ] Essential analytics for understanding mindfulness feature usage
+
+## Phase 7 — Launch Preparation (1 week)
 - [ ] Simple deployment: Docker + Railway/Render for backend
 - [ ] Basic CI/CD: GitHub Actions (build/test/deploy)
 - [ ] EAS Build setup for mobile (managed workflow)
-- [ ] Store assets: app icon, splash screen, 3 screenshots
-- [ ] Internal testing: 5 users, core flows
-- [ ] Release planning: soft launch strategy
+- [ ] Store assets highlighting mindfulness: app icon, screenshots showing wellness features
+- [ ] Internal testing: 5 users testing mindfulness workflows
+- [ ] Beta launch strategy focusing on wellness-conscious users
 
-## Phase 7 — Launch & Iterate (ongoing)
-- [ ] Beta launch: 50 users maximum
-- [ ] Monitor key metrics: crash rate, core user journeys
-- [ ] Weekly iterations based on user feedback
-- [ ] Plan v1.1 features based on actual usage patterns
+## Phase 8 — Launch & Iterate (ongoing)
+- [ ] Beta launch: 50 wellness-focused users
+- [ ] Monitor mindfulness metrics: meditation streaks, gratitude entries, mood patterns
+- [ ] Track engagement with wellness features vs traditional meal planning
+- [ ] Weekly iterations based on mindful eating behavior insights
+- [ ] Plan v1.1: Advanced wellness features based on user patterns
 
 ## 🎯 Success Criteria (Pre-Launch)
 - [ ] TypeScript clean, zero linting errors
-- [ ] Core user flow works end-to-end (tested by 5 people)
-- [ ] App starts in <3s, core screens load in <1s
-- [ ] Zero crashes in happy path testing
-- [ ] Basic accessibility compliance (automated + manual spot checks)
+- [ ] **Mindful user journey** works end-to-end: onboard → add ingredients → plan mindful meals → track wellness
+- [ ] App starts in <3s, animations smooth (60fps), wellness features responsive
+- [ ] Zero crashes in mindfulness workflows (breathing, gratitude, meal logging)
+- [ ] Delightful animations working: gratitude celebrations, meditation success, meal completion
+- [ ] Accessibility for wellness features (VoiceOver, haptic feedback, sufficient contrast)
 
 ## 🚀 Launch-First Mindset
 **Ship early, learn fast, iterate wisely**
