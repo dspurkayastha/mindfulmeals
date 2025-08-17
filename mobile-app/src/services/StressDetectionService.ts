@@ -25,6 +25,8 @@ class StressDetectionService {
   private lastScrollTime: number = Date.now();
   private scrollVelocities: number[] = [];
   private isMonitoring: boolean = false;
+  private currentStressLevel: number = 0;
+  private stressChangeCallbacks: ((level: number) => void)[] = [];
 
   private readonly STRESS_THRESHOLDS = {
     highNavigationSpeed: 30, // taps per minute
@@ -58,6 +60,34 @@ class StressDetectionService {
 
   stopMonitoring() {
     this.isMonitoring = false;
+  }
+
+  getCurrentStressLevel(): number {
+    return this.currentStressLevel;
+  }
+
+  onStressLevelChange(callback: (level: number) => void) {
+    this.stressChangeCallbacks.push(callback);
+    // Return unsubscribe function
+    return () => {
+      const index = this.stressChangeCallbacks.indexOf(callback);
+      if (index > -1) {
+        this.stressChangeCallbacks.splice(index, 1);
+      }
+    };
+  }
+
+  private updateStressLevel(level: number) {
+    if (Math.abs(this.currentStressLevel - level) > 0.05) { // Only update if significant change
+      this.currentStressLevel = level;
+      this.stressChangeCallbacks.forEach(cb => cb(level));
+      
+      // Trigger meditation if stress is high
+      if (level > 0.7) {
+        const indicators = this.calculateStressIndicators();
+        this.triggerStressIntervention(indicators);
+      }
+    }
   }
 
   // Track screen navigation
@@ -146,13 +176,26 @@ class StressDetectionService {
   private analyzeStressPatterns() {
     const indicators = this.calculateStressIndicators();
     
+    // Calculate stress level (0-1)
+    let stressLevel = 0;
+    if (indicators.navigationSpeed > this.STRESS_THRESHOLDS.highNavigationSpeed) {
+      stressLevel += 0.3;
+    }
+    if (indicators.scrollVelocity > this.STRESS_THRESHOLDS.highScrollVelocity) {
+      stressLevel += 0.2;
+    }
+    if (indicators.rushPattern) {
+      stressLevel += 0.3;
+    }
+    if (indicators.decisionFatigue) {
+      stressLevel += 0.2;
+    }
+    
+    // Update stress level
+    this.updateStressLevel(Math.min(stressLevel, 1));
+    
     // Check for high stress patterns
-    if (
-      indicators.navigationSpeed > this.STRESS_THRESHOLDS.highNavigationSpeed ||
-      indicators.scrollVelocity > this.STRESS_THRESHOLDS.highScrollVelocity ||
-      indicators.rushPattern ||
-      indicators.decisionFatigue
-    ) {
+    if (stressLevel > 0.5) {
       this.triggerStressIntervention(indicators);
     }
   }
@@ -226,7 +269,16 @@ class StressDetectionService {
     }
 
     // Schedule breathing reminder
-    NotificationService.scheduleBreathingReminder(interventionType, 0.5); // 30 seconds delay
+    NotificationService.getInstance().scheduleBreathingReminder({
+      title: 'Time for a Mindful Moment',
+      body: message,
+      trigger: { seconds: 30 },
+      data: { 
+        interventionType,
+        navigateTo: 'BreathingExercise',
+        context: 'stress'
+      }
+    });
 
     // Save intervention time
     await AsyncStorage.setItem('@last_stress_intervention', now.toString());

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ActivityIndicator, View } from 'react-native';
+import { View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -13,7 +13,18 @@ import MainTabs from './MainTabs';
 import { STORAGE_KEYS } from '@/config/constants';
 import { useAuthStatus } from '@/hooks/api/useAuth';
 
-const Stack = createNativeStackNavigator();
+// Import wellness screens
+import BreathingExerciseScreen from '../screens/wellness/BreathingExerciseScreen';
+import PostMealReflectionScreen from '../screens/wellness/PostMealReflectionScreen';
+import GratitudeJournalScreen from '../screens/wellness/GratitudeJournalScreen';
+import WeeklyReportScreen from '../screens/wellness/WeeklyReportScreen';
+
+// Import services and components
+import StressDetectionService from '../services/StressDetectionService';
+import { MindfulLoader } from '../components/mindfulness';
+import { RootStackParamList } from '../types/navigation';
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const AppNavigator = () => {
   const theme = useTheme();
@@ -45,13 +56,20 @@ const AppNavigator = () => {
         alignItems: 'center',
         backgroundColor: theme.colors.background 
       }}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
+        <MindfulLoader duration="medium" message="Preparing your mindful experience..." />
       </View>
     );
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer
+      onStateChange={(state) => {
+        // Track navigation state for stress detection
+        if (state) {
+          StressDetectionService.getInstance().trackNavigation(state);
+        }
+      }}
+    >
       <Stack.Navigator 
         screenOptions={{ 
           headerShown: false,
@@ -89,14 +107,51 @@ const AppNavigator = () => {
               />
             ) : (
               // Main app
-              <Stack.Screen 
-                name="Main" 
-                component={MainTabs}
-                options={{ 
-                  animation: 'fade',
-                  gestureEnabled: false, // Prevent swipe back to auth
-                }}
-              />
+              <>
+                <Stack.Screen 
+                  name="Main" 
+                  component={MainTabs}
+                  options={{ 
+                    animation: 'fade',
+                    gestureEnabled: false, // Prevent swipe back to auth
+                  }}
+                />
+                
+                {/* Wellness Screens */}
+                <Stack.Screen 
+                  name="BreathingExercise" 
+                  component={BreathingExerciseScreen}
+                  options={{ 
+                    animation: 'slide_from_bottom',
+                    presentation: 'modal',
+                  }}
+                />
+                
+                <Stack.Screen 
+                  name="PostMealReflection" 
+                  component={PostMealReflectionScreen}
+                  options={{ 
+                    animation: 'slide_from_bottom',
+                    presentation: 'modal',
+                  }}
+                />
+                
+                <Stack.Screen 
+                  name="GratitudeJournal" 
+                  component={GratitudeJournalScreen}
+                  options={{ 
+                    animation: 'slide_from_right',
+                  }}
+                />
+                
+                <Stack.Screen 
+                  name="WeeklyReport" 
+                  component={WeeklyReportScreen}
+                  options={{ 
+                    animation: 'slide_from_right',
+                  }}
+                />
+              </>
             )}
           </>
         )}

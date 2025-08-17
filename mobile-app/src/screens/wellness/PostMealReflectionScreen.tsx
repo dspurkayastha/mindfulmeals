@@ -1,25 +1,52 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, StyleSheet, SafeAreaView } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import PostMealReflection from '../../components/mindfulness/PostMealReflection';
-import NotificationService from '../../services/NotificationService';
+import { useWellnessService } from '../../hooks/useWellnessData';
+import { showToast } from '../../utils/toast';
 
 const PostMealReflectionScreen = () => {
   const { colors } = useTheme();
   const navigation = useNavigation();
   const route = useRoute();
+  const { saveMoodEntry, saveGratitudeEntry, incrementMindfulMeals } = useWellnessService();
   
-  const { mealId, mealName } = route.params || {};
+  const { mealId, mealData } = route.params || {};
+  const mealName = mealData?.mealName || 'your meal';
 
-  useEffect(() => {
-    // Initialize notification service
-    NotificationService.configure();
-  }, []);
-
-  const handleComplete = (reflection: any) => {
-    // Navigate back or to a success screen
-    navigation.goBack();
+  const handleComplete = async (reflection: any) => {
+    try {
+      // Save mood entry if provided
+      if (reflection.mood) {
+        await saveMoodEntry(reflection.mood, reflection.moodNote, mealId);
+      }
+      
+      // Save gratitude entry if provided
+      if (reflection.gratitude) {
+        await saveGratitudeEntry(reflection.gratitude, mealId);
+      }
+      
+      // Increment mindful meals counter
+      await incrementMindfulMeals();
+      
+      // Show success message
+      showToast({
+        type: 'success',
+        text1: 'Reflection Saved',
+        text2: 'Thank you for being mindful! 🙏',
+      });
+      
+      // Navigate back or to home
+      navigation.goBack();
+    } catch (error) {
+      console.error('Error saving reflection:', error);
+      showToast({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Failed to save reflection. Please try again.',
+      });
+    }
   };
 
   const handleSkip = () => {
@@ -30,7 +57,7 @@ const PostMealReflectionScreen = () => {
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <PostMealReflection
         mealId={mealId || 'default'}
-        mealName={mealName || 'your meal'}
+        mealName={mealName}
         onComplete={handleComplete}
         onSkip={handleSkip}
       />

@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { parseISO, differenceInDays, format, startOfWeek, endOfWeek } from 'date-fns';
+import WellnessService from './WellnessService';
 
 interface MealReflection {
   mealId: string;
@@ -335,11 +336,31 @@ class InsightsEngine {
   // Helper methods
   private async getMealReflections(): Promise<MealReflection[]> {
     try {
-      const stored = await AsyncStorage.getItem('@meal_reflections');
-      return stored ? JSON.parse(stored) : [];
+      const wellnessData = WellnessService.getInstance().getWellnessData();
+      // Map mood entries that have meal links to meal reflections
+      return wellnessData.moodHistory
+        .filter(entry => entry.linkedMealId)
+        .map(entry => ({
+          mealId: entry.linkedMealId!,
+          mealName: `Meal ${entry.linkedMealId}`, // This would ideally come from meal service
+          mood: entry.mood,
+          energyLevel: this.moodToEnergyLevel(entry.mood),
+          timestamp: entry.timestamp.toISOString()
+        }));
     } catch {
       return [];
     }
+  }
+
+  private moodToEnergyLevel(mood: string): number {
+    const energyMap: { [key: string]: number } = {
+      'energized': 5,
+      'grateful': 4,
+      'calm': 3,
+      'neutral': 3,
+      'stressed': 2
+    };
+    return energyMap[mood] || 3;
   }
 
   private async getStressEvents(): Promise<StressEvent[]> {
@@ -353,8 +374,12 @@ class InsightsEngine {
 
   private async getGratitudeEntries(): Promise<any[]> {
     try {
-      const stored = await AsyncStorage.getItem('@gratitude_entries');
-      return stored ? JSON.parse(stored) : [];
+      const wellnessData = WellnessService.getInstance().getWellnessData();
+      return wellnessData.gratitudeEntries.map(entry => ({
+        content: entry.content,
+        timestamp: entry.timestamp.toISOString(),
+        linkedMealId: entry.linkedMealId
+      }));
     } catch {
       return [];
     }
@@ -362,8 +387,12 @@ class InsightsEngine {
 
   private async getBreathingSessions(): Promise<BreathingSession[]> {
     try {
-      const stored = await AsyncStorage.getItem('@breathing_sessions');
-      return stored ? JSON.parse(stored) : [];
+      const wellnessData = WellnessService.getInstance().getWellnessData();
+      return wellnessData.breathingSessions.map(session => ({
+        context: session.context,
+        cycles: Math.floor(session.duration / 12), // Convert duration to cycles
+        timestamp: session.timestamp.toISOString()
+      }));
     } catch {
       return [];
     }

@@ -1,57 +1,240 @@
 import React from 'react';
-import { View, StyleSheet, SafeAreaView } from 'react-native';
-import { Card, Text, useTheme, Switch } from 'react-native-paper';
+import { View, StyleSheet, SafeAreaView, ScrollView, RefreshControl } from 'react-native';
+import { Card, Text, useTheme, IconButton, ProgressBar, Chip, Button } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import SunsetHeader from '../../components/common/SunsetHeader';
-import MindfulButton from '../../components/common/MindfulButton';
-import { useMindfulness } from '../../hooks/useMindfulness';
+import { useWellnessData } from '../../hooks/useWellnessData';
+import { MindfulLoader } from '../../components/mindfulness';
 
-const WellnessScreen: React.FC<ScreenProps> = () => {
+const WellnessScreen: React.FC = () => {
   const { colors } = useTheme();
-  const [state, actions] = useMindfulness();
+  const navigation = useNavigation();
+  const { t } = useTranslation();
+  const { 
+    wellnessData, 
+    weeklyStats, 
+    todayGratitude, 
+    isLoading, 
+    refreshData 
+  } = useWellnessData();
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const handleRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await refreshData();
+    setRefreshing(false);
+  }, [refreshData]);
+
+  const getMoodEmoji = (mood: string) => {
+    const moodMap = {
+      stressed: '😰',
+      grateful: '🙏',
+      energized: '⚡',
+      calm: '😌',
+      neutral: '😐',
+    };
+    return moodMap[mood as keyof typeof moodMap] || '😊';
+  };
+
+  if (isLoading && !wellnessData.mindfulMealsCount) {
+    return (
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <MindfulLoader duration="short" message={t('wellness.loading')} />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <SunsetHeader title="Wellness" subtitle="Mindful progress and practice" />
-      <View style={styles.content}>
-        <Card style={styles.card}>
+      <SunsetHeader 
+        title={t('wellness.title', 'Wellness')} 
+        subtitle={t('wellness.subtitle', 'Your mindful journey')} 
+      />
+      
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.content}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={[colors.primary]}
+          />
+        }
+      >
+        {/* Weekly Stats Card */}
+        <Card style={[styles.card, { backgroundColor: colors.primaryContainer }]}>
           <Card.Content>
-            <Text variant="titleMedium">Mindful Mode</Text>
-            <View style={styles.row}>
-              <Text>Enabled</Text>
-              <Switch value={state.isMindfulMode} onValueChange={actions.toggleMindfulMode} />
+            <View style={styles.cardHeader}>
+              <Text variant="titleMedium">{t('wellness.weeklyProgress', 'Weekly Progress')}</Text>
+              <IconButton 
+                icon="calendar-week" 
+                size={20}
+                onPress={() => navigation.navigate('WeeklyReport')}
+              />
             </View>
-            <Text style={styles.quote}>{state.currentQuote}</Text>
-            <View style={styles.actions}>
-              <MindfulButton title="Refresh Quote" onPress={actions.refreshQuote} />
-              <MindfulButton title="Start Mindful Eating" variant="secondary" onPress={actions.startMindfulEating} />
+            
+            <View style={styles.statsGrid}>
+              <View style={styles.statItem}>
+                <Text variant="headlineMedium" style={{ color: colors.primary }}>
+                  {weeklyStats.breathingMinutes}
+                </Text>
+                <Text variant="bodySmall">{t('wellness.mindfulMinutes', 'Mindful Minutes')}</Text>
+              </View>
+              
+              <View style={styles.statItem}>
+                <Text variant="headlineMedium" style={{ color: colors.primary }}>
+                  {weeklyStats.gratitudeCount}
+                </Text>
+                <Text variant="bodySmall">{t('wellness.gratitudeEntries', 'Gratitude Entries')}</Text>
+              </View>
+              
+              <View style={styles.statItem}>
+                <Text variant="headlineMedium" style={{ color: colors.primary }}>
+                  {wellnessData.currentStreak}
+                </Text>
+                <Text variant="bodySmall">{t('wellness.dayStreak', 'Day Streak')}</Text>
+              </View>
+            </View>
+
+            <View style={styles.progressSection}>
+              <Text variant="bodyMedium">{t('wellness.mindfulMeals', 'Mindful Meals')}</Text>
+              <ProgressBar 
+                progress={Math.min(wellnessData.mindfulMealsCount / 21, 1)} 
+                color={colors.primary}
+                style={styles.progressBar}
+              />
+              <Text variant="bodySmall" style={{ opacity: 0.7 }}>
+                {wellnessData.mindfulMealsCount} / 21 {t('wellness.thisWeek', 'this week')}
+              </Text>
             </View>
           </Card.Content>
         </Card>
 
+        {/* Current Mood Card */}
         <Card style={styles.card}>
           <Card.Content>
-            <Text variant="titleMedium">Gratitude Journal</Text>
-            {state.gratitudeJournal.length === 0 ? (
-              <Text style={{ opacity: 0.7 }}>No entries yet</Text>
-            ) : (
-              state.gratitudeJournal.map((g, i) => (
-                <Text key={i}>• {g}</Text>
-              ))
-            )}
+            <View style={styles.cardHeader}>
+              <Text variant="titleMedium">{t('wellness.currentMood', 'Current Mood')}</Text>
+              {weeklyStats.mostFrequentMood && (
+                <Chip icon={() => <Text style={{ fontSize: 20 }}>{getMoodEmoji(weeklyStats.mostFrequentMood)}</Text>}>
+                  {t(`wellness.mood.${weeklyStats.mostFrequentMood}`, weeklyStats.mostFrequentMood)}
+                </Chip>
+              )}
+            </View>
+            
+            <Text variant="bodyMedium" style={{ marginTop: 8, opacity: 0.7 }}>
+              {weeklyStats.moodCount > 0 
+                ? t('wellness.moodTracked', `You've tracked your mood ${weeklyStats.moodCount} times this week`)
+                : t('wellness.noMoodTracked', 'Start tracking your mood to see patterns')}
+            </Text>
           </Card.Content>
         </Card>
-      </View>
+
+        {/* Quick Actions */}
+        <Card style={styles.card}>
+          <Card.Content>
+            <Text variant="titleMedium" style={{ marginBottom: 16 }}>
+              {t('wellness.quickActions', 'Quick Actions')}
+            </Text>
+            
+            <View style={styles.actionButtons}>
+              <Button
+                mode="contained"
+                icon="meditation"
+                onPress={() => navigation.navigate('BreathingExercise', { context: 'manual' })}
+                style={styles.actionButton}
+              >
+                {t('wellness.breathingExercise', 'Breathing Exercise')}
+              </Button>
+              
+              <Button
+                mode="outlined"
+                icon="notebook"
+                onPress={() => navigation.navigate('GratitudeJournal')}
+                style={styles.actionButton}
+              >
+                {t('wellness.gratitudeJournal', 'Gratitude Journal')}
+              </Button>
+            </View>
+          </Card.Content>
+        </Card>
+
+        {/* Today's Gratitude */}
+        {todayGratitude.length > 0 && (
+          <Card style={styles.card}>
+            <Card.Content>
+              <View style={styles.cardHeader}>
+                <Text variant="titleMedium">{t('wellness.todayGratitude', "Today's Gratitude")}</Text>
+                <IconButton 
+                  icon="plus" 
+                  size={20}
+                  onPress={() => navigation.navigate('GratitudeJournal')}
+                />
+              </View>
+              
+              {todayGratitude.map((entry, index) => (
+                <View key={entry.id} style={styles.gratitudeItem}>
+                  <Text>• {entry.content}</Text>
+                </View>
+              ))}
+            </Card.Content>
+          </Card>
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: { padding: 16, gap: 12 },
-  card: { borderRadius: 16 },
-  row: { marginTop: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  quote: { marginTop: 12, fontStyle: 'italic' },
-  actions: { marginTop: 12, gap: 12 },
+  container: { 
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  content: { 
+    padding: 16, 
+    gap: 12,
+    paddingBottom: 32,
+  },
+  card: { 
+    borderRadius: 16,
+    elevation: 2,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginVertical: 16,
+  },
+  statItem: {
+    alignItems: 'center',
+  },
+  progressSection: {
+    marginTop: 16,
+    gap: 8,
+  },
+  progressBar: {
+    height: 8,
+    borderRadius: 4,
+  },
+  actionButtons: {
+    gap: 12,
+  },
+  actionButton: {
+    borderRadius: 24,
+  },
+  gratitudeItem: {
+    paddingVertical: 4,
+  },
 });
 
 export default WellnessScreen;

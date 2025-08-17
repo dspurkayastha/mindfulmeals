@@ -8,6 +8,7 @@ import {
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import StressDetectionService from '../services/StressDetectionService';
+import WellnessService from '../services/WellnessService';
 
 type MoodState = 'default' | 'stressed' | 'grateful' | 'energized' | 'calm';
 
@@ -245,6 +246,7 @@ export const AdaptiveThemeProvider: React.FC<AdaptiveThemeProviderProps> = ({ ch
   useEffect(() => {
     loadThemePreferences();
     subscribeToStressChanges();
+    syncWithWellnessMood();
   }, []);
 
   useEffect(() => {
@@ -285,6 +287,14 @@ export const AdaptiveThemeProvider: React.FC<AdaptiveThemeProviderProps> = ({ ch
     }, 30000); // Check every 30 seconds
 
     return () => clearInterval(checkStress);
+  };
+
+  const syncWithWellnessMood = () => {
+    // Sync with wellness service mood data
+    const recentMood = WellnessService.getInstance().getRecentMood();
+    if (recentMood && recentMood !== 'neutral') {
+      setMood(recentMood as MoodState);
+    }
   };
 
   const toggleTheme = async () => {

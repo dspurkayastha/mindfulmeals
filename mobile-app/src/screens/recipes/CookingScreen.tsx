@@ -15,15 +15,20 @@ const CookingScreen = () => {
   const recipeName = recipe?.name || 'Your Meal';
 
   const handleTimerComplete = () => {
-    // Schedule post-meal reflection notification
-    NotificationService.schedulePostMealReflection({
+    const mealData = {
       mealId: recipe?.id || 'default',
       mealName: recipeName,
       mealTime: new Date(),
-    });
+    };
+    
+    // Schedule post-meal reflection notification for 30 minutes later
+    NotificationService.getInstance().schedulePostMealReflection(mealData.mealId, 30);
 
-    // Navigate to completion screen or back
-    navigation.goBack();
+    // Navigate directly to post-meal reflection
+    navigation.navigate('PostMealReflection', {
+      mealId: mealData.mealId,
+      mealData: mealData,
+    });
   };
 
   const handleCancel = () => {
