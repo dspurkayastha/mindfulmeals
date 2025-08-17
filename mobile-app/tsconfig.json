@@ -3,14 +3,36 @@
 	"compilerOptions": {
 		"target": "ES2022",
 		"module": "ESNext",
+		"lib": ["ES2022"],
 		"strict": true,
 		"noEmit": true,
 		"jsx": "react-jsx",
 		"baseUrl": ".",
 		"paths": {
 			"@/*": ["src/*"]
-		}
+		},
+		// Additional strict checks for production
+		"noImplicitAny": true,
+		"strictNullChecks": true,
+		"strictFunctionTypes": true,
+		"strictBindCallApply": true,
+		"strictPropertyInitialization": true,
+		"noImplicitThis": true,
+		"alwaysStrict": true,
+		// Code quality checks
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUncheckedIndexedAccess": true,
+		// Module resolution
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true
 	},
-	"include": ["src/**/*"],
-	"exclude": ["node_modules", "dist", "build"]
+	"include": ["src/**/*", "App.tsx", "index.js"],
+	"exclude": ["node_modules", "dist", "build", "ios", "android"]
 }
