@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import MilestoneService from './MilestoneService';
+import milestoneService from './MilestoneService';
 
 interface MoodEntry {
   id: string;
@@ -88,8 +88,8 @@ class WellnessService {
     
     // Track milestone if this is part of a meal reflection
     if (linkedMealId) {
-      await MilestoneService.getInstance().trackReflection();
-      await MilestoneService.getInstance().trackWellnessActivity();
+      await milestoneService.trackReflection();
+      await milestoneService.trackWellnessActivity();
     }
   }
 
@@ -105,8 +105,8 @@ class WellnessService {
     await this.saveData();
     
     // Track milestone
-    await MilestoneService.getInstance().trackGratitude();
-    await MilestoneService.getInstance().trackWellnessActivity();
+    await milestoneService.trackGratitude();
+    await milestoneService.trackWellnessActivity();
   }
 
   async recordBreathingSession(duration: number, context: BreathingSession['context'], completed: boolean): Promise<void> {
@@ -124,8 +124,8 @@ class WellnessService {
       this.wellnessData.totalMindfulMinutes += Math.round(duration / 60);
       
       // Track milestone
-      await MilestoneService.getInstance().trackBreathing();
-      await MilestoneService.getInstance().trackWellnessActivity();
+      await milestoneService.trackBreathing();
+      await milestoneService.trackWellnessActivity();
     }
     
     await this.saveData();
@@ -167,29 +167,8 @@ class WellnessService {
   private async checkMindfulMealsMilestone(): Promise<void> {
     const count = this.wellnessData.mindfulMealsCount;
     
-    // Define milestone thresholds
-    const milestones = [
-      { count: 1, type: 'first_mindful_meal' },
-      { count: 7, type: 'mindful_week' },
-      { count: 21, type: 'mindful_habit' },
-      { count: 50, type: 'mindful_master' },
-    ];
-    
-    for (const milestone of milestones) {
-      if (count === milestone.count) {
-        // Track the milestone achievement
-        const progress = await MilestoneService.getInstance().getProgress();
-        // Use a more direct approach to trigger celebration
-        if (milestone.type === 'first_mindful_meal' && count === 1) {
-          MilestoneService.getInstance()['notifyListeners']('first_mindful_meal' as any);
-        } else if (milestone.type === 'mindful_week' && count === 7) {
-          MilestoneService.getInstance()['notifyListeners']('weekly_wellness' as any);
-        } else if (milestone.type === 'mindful_habit' && count === 21) {
-          MilestoneService.getInstance()['notifyListeners']('gratitude_consistency' as any);
-        }
-        break;
-      }
-    }
+    // Use the public API method to track mindful meal milestones
+    await milestoneService.trackMindfulMeal(count);
   }
 
   getWeeklyStats() {

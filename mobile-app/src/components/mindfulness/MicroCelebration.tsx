@@ -32,7 +32,13 @@ export type CelebrationMilestone =
   | 'breathing_streak_3'
   | 'breathing_streak_7'
   | 'first_reflection'
-  | 'weekly_wellness_complete';
+  | 'weekly_wellness_complete'
+  | 'first_mindful_meal'
+  | 'mindful_week'
+  | 'mindful_habit'
+  | 'mindful_master'
+  | 'weekly_wellness'
+  | 'gratitude_consistency';
 
 interface MicroCelebrationProps {
   milestone: CelebrationMilestone;
@@ -101,6 +107,42 @@ const MILESTONE_CONFIG = {
     animation: 'trophy',
     colors: ['#795548', '#8D6E63', '#A1887F'],
     sound: 'complete.mp3',
+  },
+  first_mindful_meal: {
+    icon: '🍴',
+    animation: 'confetti',
+    colors: ['#4CAF50', '#66BB6A', '#81C784'],
+    sound: 'achievement.mp3',
+  },
+  mindful_week: {
+    icon: '🌈',
+    animation: 'rainbow',
+    colors: ['#E91E63', '#9C27B0', '#3F51B5'],
+    sound: 'level_up.mp3',
+  },
+  mindful_habit: {
+    icon: '⭐',
+    animation: 'stars',
+    colors: ['#FF9800', '#FFB74D', '#FFCC80'],
+    sound: 'magic.mp3',
+  },
+  mindful_master: {
+    icon: '👑',
+    animation: 'crown',
+    colors: ['#FFC107', '#FFD54F', '#FFE082'],
+    sound: 'complete.mp3',
+  },
+  weekly_wellness: {
+    icon: '🎯',
+    animation: 'target',
+    colors: ['#00BCD4', '#26C6DA', '#4DD0E1'],
+    sound: 'success.mp3',
+  },
+  gratitude_consistency: {
+    icon: '💝',
+    animation: 'heart',
+    colors: ['#E91E63', '#EC407A', '#F06292'],
+    sound: 'heart.mp3',
   },
 };
 

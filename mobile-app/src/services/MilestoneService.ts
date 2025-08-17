@@ -234,6 +234,20 @@ class MilestoneService {
       reflections: progress.reflectionCount,
     };
   }
+
+  // Track mindful meals
+  async trackMindfulMeal(count: number) {
+    // Check for mindful meal milestones based on count
+    if (count === 1) {
+      this.notifyListeners('first_mindful_meal');
+    } else if (count === 7) {
+      this.notifyListeners('mindful_week');
+    } else if (count === 21) {
+      this.notifyListeners('mindful_habit');
+    } else if (count === 50) {
+      this.notifyListeners('mindful_master');
+    }
+  }
 }
 
 export default MilestoneService.getInstance();
