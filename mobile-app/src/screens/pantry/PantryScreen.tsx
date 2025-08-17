@@ -27,8 +27,9 @@ import { useStressDetection } from '../../hooks/useStressDetection';
 import PantryItem from '../../components/PantryItem';
 import EmptyState from '../../components/EmptyState';
 import { showToast } from '../../utils/toast';
-import { FloatingBreatherButton, MindfulLoader, GratitudeOverlay } from '../../components/mindfulness';
+import { FloatingBreatherButton, MindfulLoader, GratitudeOverlay, useSkipPreference } from '../../components/mindfulness';
 import { hapticFeedback } from '../../utils/haptic';
+import ScreenErrorBoundary from '../../components/ScreenErrorBoundary';
 
 const { width } = Dimensions.get('window');
 
@@ -44,6 +45,9 @@ const PantryScreen = ({ navigation }: any) => {
   
   const scrollY = useRef(new Animated.Value(0)).current;
   const breathButtonOpacity = useRef(new Animated.Value(0)).current;
+  
+  // Check if user has permanently dismissed the breathing button
+  const breathingButtonSkipped = useSkipPreference('pantry_breathing_button');
   
   const { StressAwareFlatList, trackTap } = useStressDetection({
     screen: 'Pantry',
@@ -64,7 +68,9 @@ const PantryScreen = ({ navigation }: any) => {
     
     // Check every minute if user has been organizing for 5 minutes
     const interval = setInterval(() => {
-      if (organizingStartTime && Date.now() - organizingStartTime >= 5 * 60 * 1000) {
+      if (!breathingButtonSkipped && 
+          organizingStartTime && 
+          Date.now() - organizingStartTime >= 5 * 60 * 1000) {
         setShowBreatherButton(true);
         Animated.timing(breathButtonOpacity, {
           toValue: 1,
@@ -175,8 +181,9 @@ const PantryScreen = ({ navigation }: any) => {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={styles.header}>
+    <ScreenErrorBoundary screenName="Pantry" onRetry={refetch}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <View style={styles.header}>
         <Title style={styles.title}>{t('pantry.title')}</Title>
         <Text style={styles.subtitle}>{t('pantry.subtitle')}</Text>
       </View>
@@ -273,6 +280,7 @@ const PantryScreen = ({ navigation }: any) => {
         />
       )}
     </SafeAreaView>
+    </ScreenErrorBoundary>
   );
 };
 

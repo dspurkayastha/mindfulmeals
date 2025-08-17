@@ -248,6 +248,12 @@ class StressDetectionService {
   }
 
   private async triggerStressIntervention(indicators: StressIndicators) {
+    // Check if user has disabled stress interventions
+    const skipPrefs = await this.checkSkipPreference('stress_intervention');
+    if (skipPrefs?.permanentlyDismissed) {
+      return;
+    }
+
     const lastIntervention = await this.getLastInterventionTime();
     const now = Date.now();
 
@@ -291,6 +297,12 @@ class StressDetectionService {
   }
 
   private async triggerMeditationIntervention(stressLevel: number) {
+    // Check if user has disabled meditation interventions
+    const skipPrefs = await this.checkSkipPreference('meditation_intervention');
+    if (skipPrefs?.permanentlyDismissed) {
+      return;
+    }
+
     const lastMeditation = await this.getLastMeditationTime();
     const now = Date.now();
     
@@ -369,6 +381,19 @@ class StressDetectionService {
     } else {
       return 5; // Moderate stress: 5 minutes
     }
+  }
+
+  private async checkSkipPreference(promptId: string): Promise<any> {
+    try {
+      const prefs = await AsyncStorage.getItem('@mindful_skip_preferences');
+      if (prefs) {
+        const parsed = JSON.parse(prefs);
+        return parsed[promptId];
+      }
+    } catch (error) {
+      console.error('Error checking skip preference:', error);
+    }
+    return null;
   }
 
   private async getLastInterventionTime(): Promise<number | null> {

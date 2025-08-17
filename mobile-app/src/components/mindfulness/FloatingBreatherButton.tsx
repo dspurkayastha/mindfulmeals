@@ -70,7 +70,14 @@ const FloatingBreatherButton: React.FC<FloatingBreatherButtonProps> = ({
         style,
       ]}
     >
-      <TouchableOpacity onPress={onPress} activeOpacity={0.9}>
+      <TouchableOpacity 
+        onPress={onPress} 
+        activeOpacity={0.9}
+        accessible={true}
+        accessibilityLabel={t('mindfulness.takeBreathLabel', 'Take a mindful breathing break')}
+        accessibilityHint={t('mindfulness.takeBreathHint', 'Double tap to start a 5-minute breathing exercise')}
+        accessibilityRole="button"
+      >
         <LinearGradient
           colors={['#81C784', '#4CAF50', '#388E3C']}
           start={{ x: 0, y: 0 }}
@@ -83,6 +90,8 @@ const FloatingBreatherButton: React.FC<FloatingBreatherButtonProps> = ({
               iconColor="white"
               size={32}
               style={styles.icon}
+              accessible={false}
+              importantForAccessibility="no"
             />
             <Text style={styles.text}>{t('mindfulness.takeBreath')}</Text>
             <Text style={styles.subtext}>{t('mindfulness.fiveMinutes')}</Text>
@@ -94,6 +103,10 @@ const FloatingBreatherButton: React.FC<FloatingBreatherButtonProps> = ({
         style={styles.dismissButton}
         onPress={onDismiss}
         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        accessible={true}
+        accessibilityLabel={t('mindfulness.dismissLabel', 'Dismiss breathing suggestion')}
+        accessibilityHint={t('mindfulness.dismissHint', 'Double tap to dismiss this suggestion')}
+        accessibilityRole="button"
       >
         <Text style={styles.dismissText}>{t('mindfulness.skipForNow')}</Text>
       </TouchableOpacity>

@@ -22,6 +22,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showToast } from '../../utils/toast';
 import Slider from '@react-native-community/slider';
 import { hapticFeedback } from '../../utils/haptic';
+import { getMoodAccessibilityLabel, formatPercentageForScreenReader, getAccessibleProps } from '../../utils/accessibility';
 
 interface PostMealReflectionProps {
   mealId: string;
@@ -149,13 +150,20 @@ const PostMealReflection: React.FC<PostMealReflectionProps> = ({
                       borderColor: mood.color,
                     },
                   ]}
+                  {...getAccessibleProps(
+                    getMoodAccessibilityLabel(mood.key),
+                    `${selectedMood === mood.key ? 'Selected. ' : ''}Double tap to select ${mood.key} mood`,
+                    'button'
+                  )}
+                  accessibilityState={{ selected: selectedMood === mood.key }}
                 >
-                  <Text style={styles.moodIcon}>{mood.icon}</Text>
+                  <Text style={styles.moodIcon} importantForAccessibility="no">{mood.icon}</Text>
                   <Text
                     style={[
                       styles.moodLabel,
                       selectedMood === mood.key && { color: mood.color },
                     ]}
+                    importantForAccessibility="no"
                   >
                     {t(`reflection.moods.${mood.key}`)}
                   </Text>
@@ -175,6 +183,16 @@ const PostMealReflection: React.FC<PostMealReflectionProps> = ({
                 minimumTrackTintColor={getEnergyColor()}
                 maximumTrackTintColor="#E0E0E0"
                 thumbTintColor={getEnergyColor()}
+                accessible={true}
+                accessibilityLabel={t('reflection.energyLevelLabel', 'Energy level')}
+                accessibilityValue={{
+                  min: 1,
+                  max: 5,
+                  now: energyLevel,
+                  text: `${energyLevel} out of 5, ${getEnergyLabel()}`
+                }}
+                accessibilityHint={t('reflection.energyLevelHint', 'Swipe up or down to change energy level')}
+                accessibilityRole="adjustable"
               />
               <View style={styles.energyLabels}>
                 <Text style={styles.energyValue}>{energyLevel}/5</Text>
@@ -196,6 +214,16 @@ const PostMealReflection: React.FC<PostMealReflectionProps> = ({
                 minimumTrackTintColor={colors.primary}
                 maximumTrackTintColor="#E0E0E0"
                 thumbTintColor={colors.primary}
+                accessible={true}
+                accessibilityLabel={t('reflection.satisfactionLabel', 'Satisfaction level')}
+                accessibilityValue={{
+                  min: 1,
+                  max: 10,
+                  now: satisfaction,
+                  text: `${satisfaction} out of 10`
+                }}
+                accessibilityHint={t('reflection.satisfactionHint', 'Swipe up or down to change satisfaction level')}
+                accessibilityRole="adjustable"
               />
               <View style={styles.energyLabels}>
                 <Text style={styles.energyValue}>{satisfaction}/10</Text>

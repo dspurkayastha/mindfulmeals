@@ -9,6 +9,7 @@ import { colors as palette } from '../../utils/theme';
 import WellnessService from '../../services/WellnessService';
 import { showToast } from '../../utils/toast';
 import { hapticFeedback } from '../../utils/haptic';
+import ScreenErrorBoundary from '../../components/ScreenErrorBoundary';
 
 const RecipeDetailsScreen: React.FC<ScreenProps> = ({ route }) => {
   const { colors } = useTheme();
@@ -88,8 +89,9 @@ const RecipeDetailsScreen: React.FC<ScreenProps> = ({ route }) => {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <SunsetHeader title="Recipe Details" subtitle={recipe.name} />
+    <ScreenErrorBoundary screenName="Recipe Details">
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <SunsetHeader title="Recipe Details" subtitle={recipe.name} />
       <ScrollView style={styles.content}>
         <Card style={[styles.card, { backgroundColor: colors.surface }]}>
           <Card.Content>
@@ -161,6 +163,7 @@ const RecipeDetailsScreen: React.FC<ScreenProps> = ({ route }) => {
         )}
       </Modal>
     </SafeAreaView>
+    </ScreenErrorBoundary>
   );
 };
 
