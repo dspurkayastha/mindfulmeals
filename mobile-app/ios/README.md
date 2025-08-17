@@ -1,116 +1,300 @@
-# iOS Setup Guide - MindfulMeals
+# iOS Setup Guide for MindfulMeals
 
-## Prerequisites
+## 🚀 Quick Start (One-Click Setup)
 
-- macOS (required for iOS development)
-- Xcode 14.0 or later
-- CocoaPods (`sudo gem install cocoapods`)
-- Node.js 16 or later
-
-## Setup Instructions
-
-### 1. Install Dependencies
+Run the automated setup script:
 
 ```bash
-# From the mobile-app directory
+cd mobile-app/ios
+./setup-ios.sh
+```
+
+This script will:
+- ✅ Check macOS compatibility
+- ✅ Verify Xcode installation
+- ✅ Install CocoaPods
+- ✅ Install npm dependencies
+- ✅ Configure iOS project settings
+- ✅ Set up permissions
+- ✅ Install pods
+- ✅ Prepare for first build
+
+## 📋 Prerequisites
+
+### 1. **macOS** (Required)
+iOS development requires macOS. No exceptions.
+
+### 2. **Xcode** (Latest stable version)
+```bash
+# Install from Mac App Store
+# Then run:
+sudo xcode-select --switch /Applications/Xcode.app
+sudo xcodebuild -license accept
+```
+
+### 3. **Node.js** (v18 or higher)
+```bash
+# Check version
+node --version
+
+# Install via Homebrew
+brew install node
+
+# Or via NVM
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+nvm install 18
+nvm use 18
+```
+
+### 4. **CocoaPods**
+```bash
+# Install via RubyGems
+sudo gem install cocoapods
+
+# Or via Homebrew
+brew install cocoapods
+```
+
+### 5. **Apple Developer Account** (for device testing)
+- Free account: https://developer.apple.com/
+- Paid account required for App Store distribution
+
+## 🛠️ Manual Setup Steps
+
+If you prefer manual setup or the script fails:
+
+### Step 1: Install Dependencies
+```bash
+cd mobile-app
 npm install
+```
 
-# Navigate to iOS directory
+### Step 2: Install CocoaPods
+```bash
 cd ios
-
-# Install CocoaPods dependencies
 pod install
 ```
 
-### 2. Configure Lottie Animations
+### Step 3: Configure Xcode Project
 
-The project is pre-configured for Lottie animations. The configuration is in:
-- `react-native.config.js` - Lottie iOS source directory
-- `Podfile` - CocoaPods configuration
+1. Open the workspace (not the project!):
+   ```bash
+   open MindfulMeals.xcworkspace
+   ```
 
-### 3. Permissions
+2. Configure signing:
+   - Select the project in the navigator
+   - Go to "Signing & Capabilities" tab
+   - Select your team from the dropdown
+   - Let Xcode manage signing automatically
 
-The following permissions are configured in Info.plist:
-- **Camera**: For future barcode scanning features
-- **Photo Library**: For saving meal images
-- **Haptic Feedback**: For mindful moment vibrations
+3. Update bundle identifier (if needed):
+   - Change from `com.mindfulmeals` to `com.yourcompany.mindfulmeals`
 
-### 4. Build Configuration
+### Step 4: Configure Permissions
 
-- **Hermes**: Enabled by default for better performance
-- **Minimum iOS Version**: 12.0
-- **Swift Version**: Latest stable
+Edit `ios/MindfulMeals/Info.plist` to add required permissions:
 
-### 5. Running the App
+```xml
+<key>NSCameraUsageDescription</key>
+<string>MindfulMeals needs camera access to scan food barcodes for easy nutrition tracking</string>
 
-#### From Xcode:
-1. Open `MindfulMeals.xcworkspace` (not .xcodeproj)
-2. Select your target device/simulator
-3. Press Cmd+R to build and run
+<key>NSPhotoLibraryUsageDescription</key>
+<string>MindfulMeals needs photo access to save and share your meal images</string>
 
-#### From Terminal:
-```bash
-# From mobile-app directory
-npx react-native run-ios
+<key>NSMicrophoneUsageDescription</key>
+<string>MindfulMeals uses your microphone for voice-guided mindfulness exercises</string>
 
-# Or specify a simulator
-npx react-native run-ios --simulator="iPhone 14 Pro"
+<key>NSMotionUsageDescription</key>
+<string>MindfulMeals tracks your activity to provide personalized nutrition recommendations</string>
+
+<!-- For development only -->
+<key>NSAppTransportSecurity</key>
+<dict>
+    <key>NSAllowsArbitraryLoads</key>
+    <true/>
+</dict>
 ```
 
-## Troubleshooting
+### Step 5: Configure Capabilities
 
-### Pod Installation Issues
+In Xcode, under "Signing & Capabilities":
+- Add Push Notifications
+- Add HealthKit (if using health features)
+- Add Background Modes (for notifications)
 
-If you encounter pod installation errors:
+## 🚀 Running the App
 
+### Using Simulator
+
+1. **List available simulators:**
+   ```bash
+   xcrun simctl list devices
+   ```
+
+2. **Run on default simulator:**
+   ```bash
+   cd mobile-app
+   npm run ios
+   ```
+
+3. **Run on specific simulator:**
+   ```bash
+   npm run ios -- --simulator="iPhone 15 Pro"
+   ```
+
+### Using Physical Device
+
+1. **Connect device via USB**
+
+2. **Trust the computer on your device**
+
+3. **Select device in Xcode**
+
+4. **Run:**
+   ```bash
+   npm run ios -- --device
+   ```
+
+   Or use Xcode's Run button (⌘R)
+
+## 🔧 Common Issues & Solutions
+
+### Issue: "Command PhaseScriptExecution failed"
 ```bash
-# Clean pods
 cd ios
 pod deintegrate
-pod cache clean --all
-
-# Reinstall
 pod install
 ```
 
-### Build Errors
+### Issue: "Unable to boot simulator"
+```bash
+# Reset simulator
+xcrun simctl shutdown all
+xcrun simctl erase all
+```
 
-1. **Clean Build Folder**: In Xcode, Product → Clean Build Folder (Cmd+Shift+K)
-2. **Clear Metro Cache**: `npx react-native start --reset-cache`
-3. **Reset Package Manager Cache**: `npm start -- --reset-cache`
+### Issue: "No bundle URL present"
+```bash
+# Start Metro bundler manually
+cd mobile-app
+npm start -- --reset-cache
 
-### Lottie Animation Issues
+# Then run in new terminal
+npm run ios
+```
 
-If Lottie animations don't work:
-1. Ensure `lottie-ios` is properly linked in Pods
-2. Clean and rebuild the project
-3. Check that animation files are in the correct format (JSON)
+### Issue: "Code signing error"
+1. Open Xcode
+2. Go to Signing & Capabilities
+3. Uncheck "Automatically manage signing"
+4. Check it again
+5. Select your team
 
-### Vector Icons Issues
+### Issue: "Pod install fails"
+```bash
+# Update CocoaPods
+sudo gem update cocoapods
 
-If icons don't display:
-1. Run `npx react-native-asset` to link font files
-2. Ensure fonts are copied to iOS bundle
-3. Clean and rebuild
+# Clear caches
+cd ios
+rm -rf Pods Podfile.lock
+pod cache clean --all
+pod install --repo-update
+```
 
-## Performance Optimization
+### Issue: "Build input file cannot be found"
+1. Clean build folder: ⌘⇧K in Xcode
+2. Delete derived data:
+   ```bash
+   rm -rf ~/Library/Developer/Xcode/DerivedData
+   ```
 
-- Hermes is enabled for improved startup time and memory usage
-- Use React DevTools to profile performance
-- Enable release mode for testing: `npx react-native run-ios --configuration Release`
+## 📱 Build Variants
 
-## Mindfulness Features Configuration
+### Debug Build (Development)
+```bash
+# From command line
+cd ios
+xcodebuild -workspace MindfulMeals.xcworkspace \
+  -scheme MindfulMeals \
+  -configuration Debug \
+  -sdk iphonesimulator \
+  -derivedDataPath build
+```
 
-Special iOS configurations for our mindfulness features:
+### Release Build (Production)
 
-1. **Haptic Feedback**: CoreHaptics framework is automatically included
-2. **Background Audio**: For meditation/breathing exercises (configure in Info.plist if needed)
-3. **HealthKit**: For future wellness tracking integration (not yet implemented)
+1. **Configure release scheme in Xcode:**
+   - Product → Scheme → Edit Scheme
+   - Set Build Configuration to Release
 
-## Next Steps
+2. **Build for device:**
+   ```bash
+   xcodebuild -workspace MindfulMeals.xcworkspace \
+     -scheme MindfulMeals \
+     -configuration Release \
+     -sdk iphoneos \
+     -derivedDataPath build \
+     -archivePath build/MindfulMeals.xcarchive \
+     archive
+   ```
 
-After successful iOS setup:
-1. Test on multiple iOS versions (12.0+)
-2. Verify all animations work smoothly
-3. Test haptic feedback on physical devices
-4. Ensure proper keyboard handling for forms
+3. **Export IPA:**
+   ```bash
+   xcodebuild -exportArchive \
+     -archivePath build/MindfulMeals.xcarchive \
+     -exportPath build \
+     -exportOptionsPlist ExportOptions.plist
+   ```
+
+## 🧪 Testing
+
+### Run unit tests:
+```bash
+npm test
+```
+
+### Run iOS-specific tests:
+```bash
+xcodebuild test \
+  -workspace ios/MindfulMeals.xcworkspace \
+  -scheme MindfulMeals \
+  -destination 'platform=iOS Simulator,name=iPhone 15'
+```
+
+## 🎯 Performance Optimization
+
+### Enable Hermes
+Already configured in the setup script. Verify in `ios/Podfile`:
+```ruby
+:hermes_enabled => true
+```
+
+### Enable ProGuard (Release builds)
+Configure in Xcode build settings for smaller app size.
+
+### Use App Thinning
+Automatically enabled for App Store builds.
+
+## 🚢 App Store Preparation
+
+1. **Create App Store Connect record**
+2. **Generate screenshots** (6.5", 5.5" displays)
+3. **Prepare app metadata**
+4. **Create App Store icons** (1024x1024)
+5. **Test with TestFlight**
+
+## 📚 Additional Resources
+
+- [React Native iOS Guide](https://reactnative.dev/docs/running-on-device)
+- [CocoaPods Troubleshooting](https://guides.cocoapods.org/using/troubleshooting.html)
+- [Xcode Documentation](https://developer.apple.com/documentation/xcode)
+- [App Store Guidelines](https://developer.apple.com/app-store/review/guidelines/)
+
+---
+
+Need help? Check the logs:
+- Metro: Terminal running `npm start`
+- Xcode: Build logs in Xcode console
+- Device: Console.app on macOS
