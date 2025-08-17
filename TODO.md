@@ -1,6 +1,8 @@
-# MindfulMeals Production Readiness TODO (Phase-wise)
+# MindfulMeals Development Roadmap - Elegant & Focused
 
-Status key: [ ] pending, [~] in progress, [x] done
+**Philosophy**: Build elegantly, ship fast, iterate wisely. Avoid overengineering.
+
+Status key: [ ] pending, [~] in progress, [x] done, [🚀] next focus
 
 ## Phase 0 — Foundation & Hardening (0.5–1 week)
 - [x] Enable TypeScript strict mode repo-wide (verify all packages)
@@ -10,85 +12,77 @@ Status key: [ ] pending, [~] in progress, [x] done
 - [ ] Add CONTRIBUTING.md and basic ADR(s)
 - [ ] Enforce CI quality gates (typecheck, lint, unit)
 
-## Phase 1 — Fix Service Dependencies (1–2 weeks)
+## Phase 1 — Backend Essentials (1 week) 🚀
 - [x] Switch all services to TypeORM DataSource initialization
 - [x] Wire repository injection (User, Meal Planning, Inventory)
 - [x] Harden auth: remove JWT fallbacks, require env secrets
 - [x] Add typed env loaders (zod) per service
-- [ ] Migrations + seed data for core entities
-- [ ] Health/readiness endpoints per service
-- [ ] Secrets management (GitHub Secrets/Doppler/Vault) for staging/prod
+- [🚀] Simple health endpoints: `/health` and `/ready` (basic DB ping)
+- [🚀] Core migrations + minimal seed data (1 test household, 10 recipes)
+- [ ] Environment secrets (start with .env, upgrade to Doppler/Vault later)
 
-## Phase 2 — Complete Core Backend Features (3–4 weeks)
-- [ ] Auth endpoints: register/login/logout, refresh, password reset, email verify
-- [ ] DB integration: constraints, indexes, pagination patterns
-- [ ] Finish meal planning domain: validation, idempotent writes, audit
-- [ ] Rate limiting, input validation, structured logging, error taxonomy
-- [ ] OpenAPI schema and publish; typed client generation
-- [ ] Basic load test baseline + SLOs (e.g., p95 < 300ms)
+## Phase 2 — Core APIs (2 weeks)
+- [🚀] Auth essentials: login/logout, token refresh (skip email verify for MVP)
+- [🚀] Core CRUD: households, pantry items, meal plans (basic endpoints)
+- [🚀] Input validation with zod schemas (reuse between FE/BE)
+- [ ] Simple rate limiting (express-rate-limit, sensible defaults)
+- [ ] Basic OpenAPI docs (Swagger UI for dev team)
+- [ ] Performance baseline (aim for <500ms, optimize later)
 
-## Phase 3 — Mobile App Integration (2–3 weeks)
-- [ ] API client wrapper with interceptors
-- [ ] TanStack Query for server state; Zustand for UI state
-- [ ] Auth flow + secure storage + token refresh
-- [ ] Navigation with deep/universal links; guards
-- [ ] Connect screens to data; skeleton loaders; optimistic updates
-- [ ] Offline cache (MMKV) and retry policies
+## Phase 3 — Mobile Core (1.5 weeks)
+- [🚀] Simple API client (axios + React Query, no interceptors yet)
+- [🚀] Basic auth flow (AsyncStorage for MVP, Keychain later)
+- [🚀] Connect 3 key screens: onboarding, pantry list, meal planner
+- [🚀] Simple navigation (stack navigation, no deep links yet)
+- [ ] Skeleton loading states (3-4 key screens)
+- [ ] Optimistic updates for add/edit actions
 
-## Phase 4 — Testing & Quality (2–3 weeks, start early)
-- [ ] Jest + React Native Testing Library; hooks/util tests
-- [ ] Contract tests vs mock server; MSW
-- [ ] E2E with Detox/Maestro (auth, onboarding, planner)
-- [ ] Accessibility checks (VoiceOver/TalkBack, 44px targets)
-- [ ] Remove console.log; structured logger + levels
-- [ ] Static analysis: type coverage, secret scan, SCA, CodeQL
+## Phase 4 — Quality Essentials (1 week, parallel with development)
+- [🚀] Essential tests: critical hooks and utils only
+- [🚀] Basic E2E: login → add pantry item → generate meal plan
+- [🚀] Accessibility basics: labels and touch targets (automated tools)
+- [ ] Remove console.log statements
+- [ ] Basic error boundaries and crash handling
+- [ ] TypeScript coverage report (aim for >90%)
 
-## Phase 5 — Security, Privacy & Compliance (1–2 weeks, parallel)
-- [ ] Token storage in secure storage; enforce HTTPS/TLS
-- [ ] Certificate pinning (where feasible)
-- [ ] PII minimization; retention policy; DSR (export/delete)
-- [ ] Privacy nutrition labels; ATT if tracking
-- [ ] (Optional) Jailbreak/root detection
+## Phase 5 — Security & Performance (1 week, before launch)
+- [ ] Secure token storage (Keychain/Keystore)
+- [ ] HTTPS enforcement and basic cert validation
+- [ ] Basic privacy policy and data handling docs
+- [ ] Performance optimization: Hermes, list virtualization
+- [ ] Crash reporting (Crashlytics - free, simple)
+- [ ] Basic analytics events (5-10 key events max)
 
-## Phase 6 — Observability & Analytics (1 week, parallel)
-- [ ] Crash reporting (Sentry/Crashlytics)
-- [ ] Analytics taxonomy + events (Amplitude/Segment/Firebase)
-- [ ] Backend logs/metrics/traces (OTel); dashboards + alerts
+## Phase 6 — Launch Preparation (1 week)
+- [ ] Simple deployment: Docker + Railway/Render for backend
+- [ ] Basic CI/CD: GitHub Actions (build/test/deploy)
+- [ ] EAS Build setup for mobile (managed workflow)
+- [ ] Store assets: app icon, splash screen, 3 screenshots
+- [ ] Internal testing: 5 users, core flows
+- [ ] Release planning: soft launch strategy
 
-## Phase 7 — Performance, Offline & Resilience (1–2 weeks, parallel)
-- [ ] Enable Hermes, Reanimated; startup/memory profiling (Flipper)
-- [ ] Performance budgets (cold start <2s; TTI <3s); list virtualization
-- [ ] Offline/background sync and conflict rules (if needed)
+## Phase 7 — Launch & Iterate (ongoing)
+- [ ] Beta launch: 50 users maximum
+- [ ] Monitor key metrics: crash rate, core user journeys
+- [ ] Weekly iterations based on user feedback
+- [ ] Plan v1.1 features based on actual usage patterns
 
-## Phase 8 — Infrastructure & Deployment (2–3 weeks)
-- [ ] Finalize Docker + docker-compose for local
-- [ ] Environments: dev/staging/prod with isolated resources
-- [ ] Feature flags (ConfigCat/LD or custom)
-- [ ] CI/CD: backend (build/test/scan/deploy with migrations)
-- [ ] CI/CD: mobile (EAS Build/Update or Fastlane); signing automation
-- [ ] OTA channel strategy (dev/preview/prod) + rollback
+## 🎯 Success Criteria (Pre-Launch)
+- [ ] TypeScript clean, zero linting errors
+- [ ] Core user flow works end-to-end (tested by 5 people)
+- [ ] App starts in <3s, core screens load in <1s
+- [ ] Zero crashes in happy path testing
+- [ ] Basic accessibility compliance (automated + manual spot checks)
 
-## Phase 9 — Release Management & Store Readiness (1–2 weeks)
-- [ ] Beta via TestFlight and Play internal/closed
-- [ ] Store assets: icons, splash, screenshots, videos, metadata
-- [ ] Privacy/data safety forms; SDK disclosures
-- [ ] Versioning/semver and changelog automation
+## 🚀 Launch-First Mindset
+**Ship early, learn fast, iterate wisely**
+- Start with 80% feature completeness
+- Focus on 3 core flows: onboarding, pantry, meal planning
+- Defer nice-to-haves: voice input, barcode scanning, community features
+- Use progressive enhancement: add advanced features post-launch
 
-## Phase 10 — Cutover, Launch & Post‑Launch (1 week + ongoing)
-- [ ] Feature freeze; RC build; smoke tests
-- [ ] Staged rollout (5% → 25% → 100%)
-- [ ] On‑call, incident runbook, hotfix playbook
-- [ ] Monitor crash‑free %, key funnels; plan v1.1
-
-## Quality Gates (pre‑GA)
-- [ ] Typecheck/lint clean; unit ≥80% critical modules; E2E passing
-- [ ] Crash‑free sessions ≥99.5% in beta; p95 latency targets met
-- [ ] No high/critical vulnerabilities; privacy forms complete
-- [ ] Staged rollout + rollback tested; observability dashboards green
-
-## Owners (RACI)
-- Mobile: app integration, state, navigation, tests, store prep
-- Backend: APIs, DB, auth, OpenAPI, observability, SLOs
-- DevOps: CI/CD, IaC, environments, alerts, EAS/Fastlane
-- QA: test plans, device matrix, accessibility, E2E
-- Design/PM: design system, assets, copy, analytics taxonomy, release notes
+## 👥 Team Focus Areas
+- **Frontend**: React Native app, user experience, mobile interactions
+- **Backend**: API design, data persistence, authentication
+- **Full-Stack**: End-to-end integration, deployment, monitoring
+- **UX**: User testing, design iteration, accessibility
