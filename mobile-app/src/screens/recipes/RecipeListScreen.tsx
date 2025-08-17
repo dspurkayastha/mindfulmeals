@@ -36,6 +36,16 @@ const RecipeListScreen: React.FC<ScreenProps> = ({ navigation }) => {
 						</Card>
 					)}
 					keyExtractor={(item) => item.id}
+					// Performance optimizations
+					removeClippedSubviews={true}
+					maxToRenderPerBatch={8}
+					windowSize={10}
+					initialNumToRender={8}
+					getItemLayout={(data, index) => ({
+						length: 88, // Card height + margin
+						offset: 88 * index,
+						index,
+					})}
 				/>
 			</View>
 		</SafeAreaView>

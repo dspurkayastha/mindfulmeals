@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import MilestoneService from './MilestoneService';
+import milestoneService from './MilestoneService';
 
 interface MoodEntry {
   id: string;
@@ -88,8 +88,8 @@ class WellnessService {
     
     // Track milestone if this is part of a meal reflection
     if (linkedMealId) {
-      await MilestoneService.getInstance().trackReflection();
-      await MilestoneService.getInstance().trackWellnessActivity();
+      await milestoneService.trackReflection();
+      await milestoneService.trackWellnessActivity();
     }
   }
 
@@ -105,8 +105,8 @@ class WellnessService {
     await this.saveData();
     
     // Track milestone
-    await MilestoneService.getInstance().trackGratitude();
-    await MilestoneService.getInstance().trackWellnessActivity();
+    await milestoneService.trackGratitude();
+    await milestoneService.trackWellnessActivity();
   }
 
   async recordBreathingSession(duration: number, context: BreathingSession['context'], completed: boolean): Promise<void> {
@@ -124,8 +124,8 @@ class WellnessService {
       this.wellnessData.totalMindfulMinutes += Math.round(duration / 60);
       
       // Track milestone
-      await MilestoneService.getInstance().trackBreathing();
-      await MilestoneService.getInstance().trackWellnessActivity();
+      await milestoneService.trackBreathing();
+      await milestoneService.trackWellnessActivity();
     }
     
     await this.saveData();
@@ -134,6 +134,9 @@ class WellnessService {
   async incrementMindfulMeals(): Promise<void> {
     this.wellnessData.mindfulMealsCount++;
     await this.saveData();
+    
+    // Check for mindful meals milestones
+    await this.checkMindfulMealsMilestone();
   }
 
   async updateStreak(days: number): Promise<void> {
@@ -159,6 +162,13 @@ class WellnessService {
       entryDate.setHours(0, 0, 0, 0);
       return entryDate.getTime() === today.getTime();
     });
+  }
+
+  private async checkMindfulMealsMilestone(): Promise<void> {
+    const count = this.wellnessData.mindfulMealsCount;
+    
+    // Use the public API method to track mindful meal milestones
+    await milestoneService.trackMindfulMeal(count);
   }
 
   getWeeklyStats() {

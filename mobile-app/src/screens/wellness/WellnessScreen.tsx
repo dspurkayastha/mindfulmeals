@@ -1,11 +1,12 @@
 import React from 'react';
 import { View, StyleSheet, SafeAreaView, ScrollView, RefreshControl } from 'react-native';
 import { Card, Text, useTheme, IconButton, ProgressBar, Chip, Button } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import SunsetHeader from '../../components/common/SunsetHeader';
 import { useWellnessData } from '../../hooks/useWellnessData';
 import { MindfulLoader } from '../../components/mindfulness';
+import ScreenErrorBoundary from '../../components/ScreenErrorBoundary';
 
 const WellnessScreen: React.FC = () => {
   const { colors } = useTheme();
@@ -27,6 +28,13 @@ const WellnessScreen: React.FC = () => {
     setRefreshing(false);
   }, [refreshData]);
 
+  // Refresh data when screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      refreshData();
+    }, [refreshData])
+  );
+
   const getMoodEmoji = (mood: string) => {
     const moodMap = {
       stressed: '😰',
@@ -47,11 +55,12 @@ const WellnessScreen: React.FC = () => {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <SunsetHeader 
-        title={t('wellness.title', 'Wellness')} 
-        subtitle={t('wellness.subtitle', 'Your mindful journey')} 
-      />
+    <ScreenErrorBoundary screenName="Wellness" onRetry={refreshData}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <SunsetHeader 
+          title={t('wellness.title', 'Wellness')} 
+          subtitle={t('wellness.subtitle', 'Your mindful journey')} 
+        />
       
       <ScrollView 
         style={styles.scrollView}
@@ -185,6 +194,7 @@ const WellnessScreen: React.FC = () => {
         )}
       </ScrollView>
     </SafeAreaView>
+    </ScreenErrorBoundary>
   );
 };
 

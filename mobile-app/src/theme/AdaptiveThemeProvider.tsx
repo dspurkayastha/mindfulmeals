@@ -245,8 +245,18 @@ export const AdaptiveThemeProvider: React.FC<AdaptiveThemeProviderProps> = ({ ch
 
   useEffect(() => {
     loadThemePreferences();
-    subscribeToStressChanges();
+    const unsubscribeStress = subscribeToStressChanges();
+    
+    // Sync with wellness mood initially and periodically
     syncWithWellnessMood();
+    const moodSyncInterval = setInterval(() => {
+      syncWithWellnessMood();
+    }, 60000); // Check every minute
+    
+    return () => {
+      unsubscribeStress();
+      clearInterval(moodSyncInterval);
+    };
   }, []);
 
   useEffect(() => {

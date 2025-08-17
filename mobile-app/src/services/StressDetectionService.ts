@@ -34,6 +34,7 @@ class StressDetectionService {
     decisionFatigueTime: 600000, // 10 minutes
     rushPatternTime: 5000, // 5 seconds between screens
     activityWindowSize: 60000, // 1 minute window for analysis
+    meditationTriggerLevel: 0.7, // Stress level threshold for meditation
   };
 
   private readonly SMART_TRIGGER_TIMES = {
@@ -78,14 +79,16 @@ class StressDetectionService {
   }
 
   private updateStressLevel(level: number) {
-    if (Math.abs(this.currentStressLevel - level) > 0.05) { // Only update if significant change
+    const previousLevel = this.currentStressLevel;
+    
+    if (Math.abs(previousLevel - level) > 0.05) { // Only update if significant change
       this.currentStressLevel = level;
       this.stressChangeCallbacks.forEach(cb => cb(level));
       
-      // Trigger meditation if stress is high
-      if (level > 0.7) {
-        const indicators = this.calculateStressIndicators();
-        this.triggerStressIntervention(indicators);
+      // Check if we've crossed the meditation threshold
+      if (level >= this.STRESS_THRESHOLDS.meditationTriggerLevel && 
+          previousLevel < this.STRESS_THRESHOLDS.meditationTriggerLevel) {
+        this.triggerMeditationIntervention(level);
       }
     }
   }
@@ -245,6 +248,12 @@ class StressDetectionService {
   }
 
   private async triggerStressIntervention(indicators: StressIndicators) {
+    // Check if user has disabled stress interventions
+    const skipPrefs = await this.checkSkipPreference('stress_intervention');
+    if (skipPrefs?.permanentlyDismissed) {
+      return;
+    }
+
     const lastIntervention = await this.getLastInterventionTime();
     const now = Date.now();
 
@@ -285,6 +294,106 @@ class StressDetectionService {
 
     // Log stress event for insights
     await this.logStressEvent(indicators, interventionType);
+  }
+
+  private async triggerMeditationIntervention(stressLevel: number) {
+    // Check if user has disabled meditation interventions
+    const skipPrefs = await this.checkSkipPreference('meditation_intervention');
+    if (skipPrefs?.permanentlyDismissed) {
+      return;
+    }
+
+    const lastMeditation = await this.getLastMeditationTime();
+    const now = Date.now();
+    
+    // Don't trigger too frequently (minimum 1 hour between meditation prompts)
+    if (lastMeditation && now - lastMeditation < 3600000) {
+      return;
+    }
+    
+    const context = this.getCurrentContext();
+    const duration = this.calculateOptimalDuration(stressLevel);
+    
+    // Determine the message based on stress level
+    let message = 'Your stress level is elevated. Let\'s take a mindful break.';
+    if (stressLevel > 0.85) {
+      message = 'High stress detected. A meditation session can help restore your calm.';
+    } else if (stressLevel > 0.75) {
+      message = 'Feeling stressed? Let\'s practice some mindful breathing together.';
+    }
+    
+    // Trigger meditation notification
+    NotificationService.getInstance().scheduleBreathingReminder({
+      title: '🧘 Time for Meditation',
+      body: message,
+      trigger: { seconds: 5 }, // Show quickly for high stress
+      data: {
+        type: 'meditation_trigger',
+        stressLevel,
+        context: context.currentScreen,
+        suggestedDuration: duration,
+        navigateTo: 'BreathingExercise',
+        navigationParams: {
+          context: 'stress',
+          returnScreen: context.currentScreen,
+          duration,
+        },
+      },
+    });
+    
+    // Save meditation time
+    await AsyncStorage.setItem('@last_meditation_trigger', now.toString());
+    
+    // Log meditation trigger
+    await this.logStressEvent({
+      navigationSpeed: 0,
+      scrollVelocity: 0,
+      screenTime: {},
+      decisionFatigue: false,
+      rushPattern: false,
+      stressLevel,
+    }, 'meditation_triggered');
+  }
+
+  private async getLastMeditationTime(): Promise<number | null> {
+    try {
+      const time = await AsyncStorage.getItem('@last_meditation_trigger');
+      return time ? parseInt(time) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private getCurrentContext() {
+    return {
+      currentScreen: this.currentScreen,
+      timeOnScreen: Date.now() - this.screenStartTime,
+      recentActivities: this.activities.slice(-5).map(a => a.type),
+    };
+  }
+
+  private calculateOptimalDuration(stressLevel: number): number {
+    // Calculate meditation duration based on stress level (in minutes)
+    if (stressLevel > 0.85) {
+      return 10; // High stress: 10 minutes
+    } else if (stressLevel > 0.75) {
+      return 7; // Moderate-high stress: 7 minutes
+    } else {
+      return 5; // Moderate stress: 5 minutes
+    }
+  }
+
+  private async checkSkipPreference(promptId: string): Promise<any> {
+    try {
+      const prefs = await AsyncStorage.getItem('@mindful_skip_preferences');
+      if (prefs) {
+        const parsed = JSON.parse(prefs);
+        return parsed[promptId];
+      }
+    } catch (error) {
+      console.error('Error checking skip preference:', error);
+    }
+    return null;
   }
 
   private async getLastInterventionTime(): Promise<number | null> {

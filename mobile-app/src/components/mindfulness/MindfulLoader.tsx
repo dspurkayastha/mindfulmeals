@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { useTranslation } from '../../hooks/useTranslation';
+import { announceForAccessibility, getLoadingAccessibilityProps } from '../../utils/accessibility';
 
 const { width } = Dimensions.get('window');
 
@@ -188,17 +189,40 @@ const MindfulLoader: React.FC<MindfulLoaderProps> = ({
     );
   };
 
+  const loadingMessage = getLoadingMessage();
+  const phaseText = getPhaseText();
+
+  // Announce loading state and phase changes to screen readers
+  useEffect(() => {
+    announceForAccessibility(loadingMessage);
+  }, [loadingMessage]);
+
+  useEffect(() => {
+    if (showBreathingGuide && phaseText) {
+      announceForAccessibility(phaseText);
+    }
+  }, [phaseText, showBreathingGuide]);
+
   return (
-    <View style={[styles.container, style]}>
+    <View 
+      style={[styles.container, style]}
+      {...getLoadingAccessibilityProps(loadingMessage)}
+    >
       {renderBreathingCircle()}
       
-      <Text style={[styles.message, { color: colors.onSurface }]}>
-        {getLoadingMessage()}
+      <Text 
+        style={[styles.message, { color: colors.onSurface }]}
+        importantForAccessibility="no"
+      >
+        {loadingMessage}
       </Text>
       
       {showBreathingGuide && !reducedMotion && (
-        <Text style={[styles.phaseText, { color: colors.primary }]}>
-          {getPhaseText()}
+        <Text 
+          style={[styles.phaseText, { color: colors.primary }]}
+          importantForAccessibility="no"
+        >
+          {phaseText}
         </Text>
       )}
     </View>

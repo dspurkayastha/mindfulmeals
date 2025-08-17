@@ -215,6 +215,10 @@ const GratitudeOverlay: React.FC<GratitudeOverlayProps> = ({
                   size={24}
                   onPress={handleClose}
                   style={styles.closeButton}
+                  accessible={true}
+                  accessibilityLabel={t('common.close', 'Close')}
+                  accessibilityHint={t('gratitude.closeHint', 'Double tap to close gratitude prompt')}
+                  accessibilityRole="button"
                 />
               </View>
 
@@ -237,12 +241,19 @@ const GratitudeOverlay: React.FC<GratitudeOverlayProps> = ({
                 outlineColor={colors.primary}
                 activeOutlineColor={colors.primary}
                 autoFocus
+                accessible={true}
+                accessibilityLabel={t('gratitude.textInputLabel', 'Gratitude text input')}
+                accessibilityHint={t('gratitude.textInputHint', 'Enter what you are grateful for about this meal')}
               />
 
               <View style={styles.quickResponses}>
                 <TouchableOpacity
                   style={styles.quickChip}
                   onPress={() => setGratitudeText(t('gratitude.quick1'))}
+                  accessible={true}
+                  accessibilityLabel={t('gratitude.quick1Label', 'Quick gratitude response: ') + t('gratitude.quick1')}
+                  accessibilityHint={t('gratitude.quickHint', 'Double tap to use this quick response')}
+                  accessibilityRole="button"
                 >
                   <Text style={styles.quickChipText}>🙏 {t('gratitude.quick1')}</Text>
                 </TouchableOpacity>

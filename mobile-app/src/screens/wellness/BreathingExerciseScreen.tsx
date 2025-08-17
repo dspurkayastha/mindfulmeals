@@ -30,7 +30,7 @@ const BREATH_PHASES = {
   exhale: 4000,
 };
 
-const TOTAL_CYCLES = 5; // Default number of breath cycles
+const DEFAULT_CYCLES = 5; // Default number of breath cycles
 
 const BreathingExerciseScreen = () => {
   const { colors } = useTheme();
@@ -39,7 +39,10 @@ const BreathingExerciseScreen = () => {
   const route = useRoute();
   const { recordBreathingSession } = useWellnessService();
   
-  const { context = 'general' } = route.params || {};
+  const { context = 'general', returnScreen, duration } = route.params || {};
+  
+  // Calculate total cycles based on duration (each cycle is 12 seconds)
+  const totalCycles = duration ? Math.round((duration * 60) / 12) : DEFAULT_CYCLES;
   
   const [currentPhase, setCurrentPhase] = useState<'inhale' | 'hold' | 'exhale'>('inhale');
   const [currentCycle, setCurrentCycle] = useState(1);
@@ -115,7 +118,7 @@ const BreathingExerciseScreen = () => {
           }),
         ]).start(() => {
           // Cycle complete
-          if (currentCycle < TOTAL_CYCLES && isActive) {
+          if (currentCycle < totalCycles && isActive) {
             setCurrentCycle(currentCycle + 1);
             progressAnim.setValue(0);
             startBreathingCycle();
@@ -148,7 +151,11 @@ const BreathingExerciseScreen = () => {
     
     // Small delay before navigating back
     setTimeout(() => {
-      navigation.goBack();
+      if (returnScreen) {
+        navigation.navigate(returnScreen as any);
+      } else {
+        navigation.goBack();
+      }
     }, 1500);
   };
 
@@ -176,14 +183,24 @@ const BreathingExerciseScreen = () => {
 
   const getContextMessage = () => {
     switch (context) {
+      case 'pantry':
+        return "Let's take a mindful moment before planning your meals";
+      case 'meal':
+        return "Prepare your mind and body for mindful eating";
+      case 'shopping':
+        return "Center yourself before making mindful food choices";
+      case 'cooking':
+        return "Find your calm before creating nourishing meals";
+      case 'wellness':
+        return "Take a moment for your wellbeing";
+      case 'stress':
+        return "Let's manage this stress together with some deep breathing";
       case 'pantry_organizing':
         return t('breathing.contexts.pantryOrganizing');
       case 'pre_meal':
         return t('breathing.contexts.preMeal');
-      case 'cooking':
-        return t('breathing.contexts.cooking');
       default:
-        return t('breathing.contexts.general');
+        return "Take a moment to breathe and center yourself";
     }
   };
 
@@ -217,7 +234,7 @@ const BreathingExerciseScreen = () => {
             style={styles.closeButton}
           />
           <Text style={styles.cycleText}>
-            {isActive ? `${currentCycle} / ${TOTAL_CYCLES}` : ''}
+            {isActive ? `${currentCycle} / ${totalCycles}` : ''}
           </Text>
         </View>
 

@@ -19,12 +19,13 @@ const PostMealReflectionScreen = () => {
     try {
       // Save mood entry if provided
       if (reflection.mood) {
-        await saveMoodEntry(reflection.mood, reflection.moodNote, mealId);
+        const moodNote = reflection.moodNote || `Energy: ${reflection.energyLevel}/5, Satisfaction: ${reflection.satisfaction}/10`;
+        await saveMoodEntry(reflection.mood, moodNote, mealId);
       }
       
       // Save gratitude entry if provided
-      if (reflection.gratitude) {
-        await saveGratitudeEntry(reflection.gratitude, mealId);
+      if (reflection.gratitudeText) {
+        await saveGratitudeEntry(reflection.gratitudeText, mealId);
       }
       
       // Increment mindful meals counter

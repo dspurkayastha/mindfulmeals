@@ -8,10 +8,22 @@ export type RootStackParamList = {
   Main: undefined;
   
   // Wellness Stack
-  BreathingExercise: { context?: 'pantry' | 'meal' | 'stress' | 'manual' };
-  PostMealReflection: { mealId: string; mealData?: any };
+  BreathingExercise: { 
+    context: 'pantry' | 'meal' | 'shopping' | 'cooking' | 'wellness' | 'stress' | 'manual';
+    returnScreen: string;
+    duration?: number;
+  };
+  PostMealReflection: { 
+    mealId: string; 
+    mealData?: any;
+    eatingDuration?: number;
+    wasMindful?: boolean;
+    fromScreen?: string;
+    skippedGratitude?: boolean;
+  };
   GratitudeJournal: { mealId?: string };
   WeeklyReport: undefined;
+  ReflectionComplete: { mood: string; mealId: string };
   
   // Other Screens
   RecipeDetails: { recipeId: string };

@@ -21,6 +21,8 @@ import { useTranslation } from '../../hooks/useTranslation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showToast } from '../../utils/toast';
 import Slider from '@react-native-community/slider';
+import { hapticFeedback } from '../../utils/haptic';
+import { getMoodAccessibilityLabel, formatPercentageForScreenReader, getAccessibleProps } from '../../utils/accessibility';
 
 interface PostMealReflectionProps {
   mealId: string;
@@ -46,6 +48,7 @@ const PostMealReflection: React.FC<PostMealReflectionProps> = ({
   const { t } = useTranslation();
   const [selectedMood, setSelectedMood] = useState<string>('');
   const [energyLevel, setEnergyLevel] = useState(3);
+  const [satisfaction, setSatisfaction] = useState(5);
   const [gratitudeText, setGratitudeText] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -65,6 +68,7 @@ const PostMealReflection: React.FC<PostMealReflectionProps> = ({
       mealName,
       mood: selectedMood,
       energyLevel,
+      satisfaction,
       gratitudeText,
       timestamp: new Date().toISOString(),
     };
@@ -84,6 +88,7 @@ const PostMealReflection: React.FC<PostMealReflectionProps> = ({
         preset: 'success',
       });
 
+      hapticFeedback.reflectionComplete();
       onComplete(reflection);
     } catch (error) {
       showToast({
@@ -134,7 +139,10 @@ const PostMealReflection: React.FC<PostMealReflectionProps> = ({
               {MOOD_OPTIONS.map((mood) => (
                 <TouchableOpacity
                   key={mood.key}
-                  onPress={() => setSelectedMood(mood.key)}
+                  onPress={() => {
+                    hapticFeedback.selection();
+                    setSelectedMood(mood.key);
+                  }}
                   style={[
                     styles.moodOption,
                     selectedMood === mood.key && {
@@ -142,13 +150,20 @@ const PostMealReflection: React.FC<PostMealReflectionProps> = ({
                       borderColor: mood.color,
                     },
                   ]}
+                  {...getAccessibleProps(
+                    getMoodAccessibilityLabel(mood.key),
+                    `${selectedMood === mood.key ? 'Selected. ' : ''}Double tap to select ${mood.key} mood`,
+                    'button'
+                  )}
+                  accessibilityState={{ selected: selectedMood === mood.key }}
                 >
-                  <Text style={styles.moodIcon}>{mood.icon}</Text>
+                  <Text style={styles.moodIcon} importantForAccessibility="no">{mood.icon}</Text>
                   <Text
                     style={[
                       styles.moodLabel,
                       selectedMood === mood.key && { color: mood.color },
                     ]}
+                    importantForAccessibility="no"
                   >
                     {t(`reflection.moods.${mood.key}`)}
                   </Text>
@@ -168,11 +183,54 @@ const PostMealReflection: React.FC<PostMealReflectionProps> = ({
                 minimumTrackTintColor={getEnergyColor()}
                 maximumTrackTintColor="#E0E0E0"
                 thumbTintColor={getEnergyColor()}
+                accessible={true}
+                accessibilityLabel={t('reflection.energyLevelLabel', 'Energy level')}
+                accessibilityValue={{
+                  min: 1,
+                  max: 5,
+                  now: energyLevel,
+                  text: `${energyLevel} out of 5, ${getEnergyLabel()}`
+                }}
+                accessibilityHint={t('reflection.energyLevelHint', 'Swipe up or down to change energy level')}
+                accessibilityRole="adjustable"
               />
               <View style={styles.energyLabels}>
                 <Text style={styles.energyValue}>{energyLevel}/5</Text>
                 <Text style={[styles.energyLabel, { color: getEnergyColor() }]}>
                   {getEnergyLabel()}
+                </Text>
+              </View>
+            </View>
+
+            <Text style={styles.sectionTitle}>{t('reflection.satisfaction', 'How satisfied are you?')}</Text>
+            <View style={styles.energyContainer}>
+              <Slider
+                style={styles.slider}
+                minimumValue={1}
+                maximumValue={10}
+                step={1}
+                value={satisfaction}
+                onValueChange={setSatisfaction}
+                minimumTrackTintColor={colors.primary}
+                maximumTrackTintColor="#E0E0E0"
+                thumbTintColor={colors.primary}
+                accessible={true}
+                accessibilityLabel={t('reflection.satisfactionLabel', 'Satisfaction level')}
+                accessibilityValue={{
+                  min: 1,
+                  max: 10,
+                  now: satisfaction,
+                  text: `${satisfaction} out of 10`
+                }}
+                accessibilityHint={t('reflection.satisfactionHint', 'Swipe up or down to change satisfaction level')}
+                accessibilityRole="adjustable"
+              />
+              <View style={styles.energyLabels}>
+                <Text style={styles.energyValue}>{satisfaction}/10</Text>
+                <Text style={[styles.energyLabel, { color: colors.primary }]}>
+                  {satisfaction <= 3 ? t('reflection.notSatisfied', 'Not satisfied') :
+                   satisfaction <= 6 ? t('reflection.moderatelySatisfied', 'Moderately satisfied') :
+                   t('reflection.verySatisfied', 'Very satisfied')}
                 </Text>
               </View>
             </View>
