@@ -134,22 +134,47 @@ class NotificationService {
     });
   }
 
-  scheduleBreathingReminder(context: string, delayMinutes: number = 5) {
-    const notificationTime = new Date();
-    notificationTime.setMinutes(notificationTime.getMinutes() + delayMinutes);
+  scheduleBreathingReminder(options: string | {
+    title: string;
+    body: string;
+    trigger: { seconds: number };
+    data?: any;
+  }, delayMinutes: number = 5) {
+    if (typeof options === 'string') {
+      // Legacy support
+      const notificationTime = new Date();
+      notificationTime.setMinutes(notificationTime.getMinutes() + delayMinutes);
 
-    PushNotification.localNotificationSchedule({
-      id: `breathing-${context}-${Date.now()}`,
-      channelId: 'mindful-meals-gentle',
-      title: '🧘 Time for a mindful breath',
-      message: "You've been busy. Let's take a moment to breathe together.",
-      date: notificationTime,
-      allowWhileIdle: true,
-      data: {
-        type: 'breathing_reminder',
-        data: { context },
-      },
-    });
+      PushNotification.localNotificationSchedule({
+        id: `breathing-${options}-${Date.now()}`,
+        channelId: 'mindful-meals-gentle',
+        title: '🧘 Time for a mindful breath',
+        message: "You've been busy. Let's take a moment to breathe together.",
+        date: notificationTime,
+        allowWhileIdle: true,
+        data: {
+          type: 'breathing_reminder',
+          data: { context: options },
+        },
+      });
+    } else {
+      // New interface
+      const notificationTime = new Date();
+      notificationTime.setSeconds(notificationTime.getSeconds() + options.trigger.seconds);
+
+      PushNotification.localNotificationSchedule({
+        id: `breathing-${options.data?.interventionType || 'stress'}-${Date.now()}`,
+        channelId: 'mindful-meals-gentle',
+        title: options.title,
+        message: options.body,
+        date: notificationTime,
+        allowWhileIdle: true,
+        data: {
+          type: 'breathing_reminder',
+          ...options.data,
+        },
+      });
+    }
   }
 
   cancelNotification(notificationId: string) {

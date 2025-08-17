@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { colors as palette } from '../../utils/theme';
+import { hapticFeedback } from '../../utils/haptic';
 
 interface MindfulButtonProps {
   title: string;
@@ -85,7 +86,10 @@ const MindfulButton: React.FC<MindfulButtonProps> = ({
           },
           style,
         ]}
-        onPress={onPress}
+        onPress={() => {
+          hapticFeedback.buttonPress();
+          onPress();
+        }}
         disabled={disabled}
         activeOpacity={0.8}
       >
@@ -105,7 +109,10 @@ const MindfulButton: React.FC<MindfulButtonProps> = ({
   return (
     <TouchableOpacity
       style={[getButtonStyle(), style]}
-      onPress={onPress}
+      onPress={() => {
+        hapticFeedback.buttonPress();
+        onPress();
+      }}
       disabled={disabled}
       activeOpacity={0.8}
     >

@@ -5,9 +5,9 @@ import {
   Button, 
   Text, 
   useTheme,
-  ActivityIndicator,
   IconButton,
 } from 'react-native-paper';
+import { MindfulLoader } from '@/components/mindfulness';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLogin } from '@/hooks/api/useAuth';

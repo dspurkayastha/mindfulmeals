@@ -19,6 +19,8 @@ import { useTranslation } from '../../hooks/useTranslation';
 import { LinearGradient } from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showToast } from '../../utils/toast';
+import { useWellnessService } from '../../hooks/useWellnessData';
+import { hapticFeedback } from '../../utils/haptic';
 
 const { width, height } = Dimensions.get('window');
 
@@ -35,6 +37,7 @@ const BreathingExerciseScreen = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const route = useRoute();
+  const { recordBreathingSession } = useWellnessService();
   
   const { context = 'general' } = route.params || {};
   
@@ -62,7 +65,7 @@ const BreathingExerciseScreen = () => {
   const startBreathingCycle = () => {
     // Inhale phase
     setCurrentPhase('inhale');
-    Vibration.vibrate(100);
+    hapticFeedback.breathingPhaseChange();
     
     Animated.parallel([
       Animated.timing(scaleAnim, {
@@ -83,6 +86,7 @@ const BreathingExerciseScreen = () => {
     ]).start(() => {
       // Hold phase
       setCurrentPhase('hold');
+      hapticFeedback.breathingPhaseChange();
       
       Animated.timing(progressAnim, {
         toValue: 0.66,
@@ -91,7 +95,7 @@ const BreathingExerciseScreen = () => {
       }).start(() => {
         // Exhale phase
         setCurrentPhase('exhale');
-        Vibration.vibrate(100);
+        hapticFeedback.breathingPhaseChange();
         
         Animated.parallel([
           Animated.timing(scaleAnim, {
@@ -126,17 +130,14 @@ const BreathingExerciseScreen = () => {
   const completeExercise = async () => {
     setIsActive(false);
     
-    // Save session to local storage
+    // Calculate session duration (each cycle is 12 seconds)
+    const duration = currentCycle * 12; // seconds
+    
+    // Save session to wellness service
     try {
-      const sessions = await AsyncStorage.getItem('@breathing_sessions');
-      const sessionData = sessions ? JSON.parse(sessions) : [];
-      sessionData.push({
-        context,
-        cycles: currentCycle,
-        timestamp: new Date().toISOString(),
-      });
-      await AsyncStorage.setItem('@breathing_sessions', JSON.stringify(sessionData));
+      await recordBreathingSession(duration, context as any, true);
       
+      hapticFeedback.breathingComplete();
       showToast({
         message: t('breathing.sessionComplete'),
         preset: 'success',
@@ -152,6 +153,7 @@ const BreathingExerciseScreen = () => {
   };
 
   const handleStart = () => {
+    hapticFeedback.breathingStart();
     setIsActive(true);
     setCurrentCycle(1);
   };

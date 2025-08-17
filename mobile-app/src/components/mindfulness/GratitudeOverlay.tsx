@@ -254,15 +254,24 @@ const GratitudeOverlay: React.FC<GratitudeOverlayProps> = ({
                 </TouchableOpacity>
               </View>
 
-              <Button
-                mode="contained"
-                onPress={handleSave}
-                loading={saving}
-                disabled={saving}
-                style={styles.saveButton}
-              >
-                {t('gratitude.express')}
-              </Button>
+              <View style={styles.buttonContainer}>
+                <Button
+                  mode="text"
+                  onPress={handleClose}
+                  style={styles.skipButton}
+                >
+                  {t('gratitude.skipForNow', 'Skip for now')}
+                </Button>
+                <Button
+                  mode="contained"
+                  onPress={handleSave}
+                  loading={saving}
+                  disabled={saving}
+                  style={styles.saveButton}
+                >
+                  {t('gratitude.express')}
+                </Button>
+              </View>
             </>
           ) : (
             <Animated.View
@@ -361,7 +370,16 @@ const styles = StyleSheet.create({
   quickChipText: {
     fontSize: 14,
   },
+  buttonContainer: {
+    flexDirection: 'row',
+    marginTop: 16,
+    gap: 12,
+  },
+  skipButton: {
+    flex: 1,
+  },
   saveButton: {
+    flex: 2,
     borderRadius: 24,
   },
   successContainer: {
