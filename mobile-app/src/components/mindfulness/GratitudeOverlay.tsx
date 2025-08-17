@@ -21,6 +21,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showToast } from '../../utils/toast';
 import HapticFeedback from 'react-native-haptic-feedback';
 import LottieView from 'lottie-react-native';
+import MilestoneService from '../../services/MilestoneService';
 
 const { width, height } = Dimensions.get('window');
 
@@ -129,6 +130,9 @@ const GratitudeOverlay: React.FC<GratitudeOverlayProps> = ({
         message: t('gratitude.saved'),
         preset: 'success',
       });
+
+      // Track milestone
+      await MilestoneService.trackGratitude();
 
       // Close after delay
       setTimeout(() => {

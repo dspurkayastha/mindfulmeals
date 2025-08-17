@@ -3,3 +3,5 @@ export { default as FloatingBreatherButton } from './FloatingBreatherButton';
 export { default as PostMealReflection } from './PostMealReflection';
 export { default as GratitudeOverlay } from './GratitudeOverlay';
 export { default as CookingBreathingTimer } from './CookingBreathingTimer';
+export { default as MicroCelebration } from './MicroCelebration';
+export type { CelebrationMilestone } from './MicroCelebration';

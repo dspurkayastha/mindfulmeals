@@ -168,6 +168,16 @@ export default {
     practicePatience: 'Practice patience as we gather your information...',
   },
 
+  // Widgets
+  widgets: {
+    todayEnergy: "Today's Energy",
+    gratitudes: 'Gratitudes',
+    streak: '{{days}} day streak',
+    breathing: 'Breathing',
+    dayStreak: 'Day Streak',
+    sessions: 'Sessions',
+  },
+
   // Breathing
   breathing: {
     inhale: 'Inhale...',
@@ -229,6 +239,72 @@ export default {
     ingredients: 'Ingredients',
     emptyTitle: 'Start Your Gratitude Journey',
     emptyText: 'Long press any meal or ingredient to add your first gratitude entry',
+  },
+
+  // Celebration
+  celebration: {
+    share: 'Share',
+    continue: 'Continue',
+    first_pantry_item: {
+      title: 'First Step!',
+      message: 'You\'ve added your first ingredient. Your mindful journey begins!',
+    },
+    pantry_10_items: {
+      title: 'Pantry Growing!',
+      message: '10 ingredients organized. You\'re building healthy habits!',
+    },
+    first_meal_planned: {
+      title: 'Meal Planned!',
+      message: 'Your first mindful meal is ready. Enjoy the nourishment!',
+    },
+    first_gratitude: {
+      title: 'Gratitude Started!',
+      message: 'Your first grateful moment captured. Keep the positive energy flowing!',
+    },
+    gratitude_streak_3: {
+      title: '3 Days of Gratitude!',
+      message: 'You\'re building a beautiful gratitude practice!',
+    },
+    gratitude_streak_7: {
+      title: 'Week of Gratitude!',
+      message: 'A full week of appreciation. You\'re glowing!',
+    },
+    breathing_streak_3: {
+      title: 'Breathing Streak!',
+      message: '3 days of mindful breathing. Feel the calm!',
+    },
+    breathing_streak_7: {
+      title: 'Zen Master!',
+      message: 'A week of breathing exercises. Inner peace achieved!',
+    },
+    first_reflection: {
+      title: 'First Reflection!',
+      message: 'You\'re tuning into how food makes you feel. Wonderful!',
+    },
+    weekly_wellness_complete: {
+      title: 'Weekly Goal Met!',
+      message: 'You\'ve completed your weekly wellness practices. Amazing!',
+    },
+  },
+
+  // Report
+  report: {
+    weeklyReport: 'Weekly Wellness Report',
+    loading: 'Gathering your wellness data...',
+    noData: 'Not enough data for a report yet',
+    reflections: 'Reflections',
+    gratitudes: 'Gratitudes',
+    mindfulMinutes: 'Mindful Minutes',
+    avgEnergy: 'Average Energy Level',
+    highEnergy: 'You had great energy this week!',
+    moderateEnergy: 'Your energy was moderate this week',
+    moodDistribution: 'How You Felt After Meals',
+    insights: 'Your Wellness Insights',
+    wellnessScore: 'Wellness Score',
+    excellentWeek: 'Excellent week! Keep it up!',
+    goodWeek: 'Good progress this week!',
+    keepGoing: 'Keep going, you\'re building habits!',
+    share: 'Share Report',
   },
 
   // Reflection
