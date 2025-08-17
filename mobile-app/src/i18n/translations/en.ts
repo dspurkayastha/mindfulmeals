@@ -168,6 +168,78 @@ export default {
     practicePatience: 'Practice patience as we gather your information...',
   },
 
+  // Intention
+  intention: {
+    title: 'Before {{meal}}',
+    subtitle: 'Set your intention for this meal',
+    howToFeel: 'How do you want to feel after this meal?',
+    feelings: {
+      energized: 'Energized',
+      satisfied: 'Satisfied', 
+      light: 'Light',
+      nourished: 'Nourished',
+      comforted: 'Comforted',
+      focused: 'Focused',
+    },
+    energyLevel: 'Desired Energy Level',
+    lowEnergy: 'Calm',
+    highEnergy: 'Energetic',
+    practices: 'Mindful Practices',
+    mindfulEating: 'Eat Mindfully',
+    mindfulEatingDesc: 'Slow down and savor each bite',
+    portionAwareness: 'Portion Awareness',
+    portionAwarenessDesc: 'Listen to your body\'s fullness cues',
+    skip: 'Skip',
+    setIntention: 'Set Intention',
+  },
+
+  // Eating
+  eating: {
+    startMindfulMeal: 'Start Mindful Meal',
+    mindfulMode: 'Mindful Mode Active',
+    phases: {
+      preparation: 'Preparation',
+      firstThird: 'First Part',
+      checkIn1: 'Check-In',
+      secondThird: 'Middle Part',
+      checkIn2: 'Check-In',
+      finalThird: 'Final Part',
+      reflection: 'Reflection',
+    },
+    preparation: {
+      title: 'Prepare Your Mind & Body',
+      steps: 'Take a moment to prepare for your meal',
+      gratitude: 'Express gratitude for this meal',
+      observe: 'Observe the colors, textures, and aromas',
+      breathe: 'Take 3 deep breaths to center yourself',
+    },
+    checkIn: {
+      title: 'Pause & Check In',
+      howFull: 'How full do you feel right now?',
+    },
+    fullness: {
+      level1: 'Empty',
+      level2: 'Slightly Full',
+      level3: 'Satisfied',
+      level4: 'Full',
+      level5: 'Very Full',
+    },
+    tips: {
+      lookAtFood: 'Take a moment to really look at your food',
+      smellAroma: 'Notice the aroma of your meal',
+      firstBite: 'Savor your first bite completely',
+      chewSlowly: 'Chew slowly, noticing all the flavors',
+      putDownFork: 'Put down your fork between bites',
+      breatheBetween: 'Take a breath between bites',
+      noticeTexture: 'Notice the texture as you eat',
+      appreciateFlavors: 'Appreciate how the flavors change',
+    },
+    recordBite: 'Tap for Each Bite',
+    bites: '{{count}} bites',
+    complete: 'Complete Meal',
+    portionReminder: 'You\'re comfortably satisfied. Listen to your body\'s fullness cues.',
+  },
+
   // Widgets
   widgets: {
     todayEnergy: "Today's Energy",
@@ -215,6 +287,18 @@ export default {
       experience: 'What joy does this bring to your day?',
       sharing: 'Who would you love to share this with?',
     },
+  },
+
+  // Recipes
+  recipes: {
+    smartSuggestions: 'Smart Recipe Suggestions',
+    basedOnPantryMood: 'Based on your pantry and how you want to feel',
+    howToFeel: 'How do you want to feel?',
+    energyGoal: 'Energy Goal',
+    finding: 'Finding perfect recipes for you...',
+    forYouNow: 'For You Now',
+    noSuggestions: 'No recipes found for your current preferences',
+    tryDifferentMood: 'Try a different mood',
   },
 
   // Cooking
