@@ -270,7 +270,7 @@ export class MealPlanningService {
     }
 
     // Dietary compliance
-    if (recipe.type === household.dietaryType) {
+    if (this.isRecipeTypeCompatibleWithDiet(recipe.type, household.dietaryType)) {
       score += 25;
     }
 
@@ -300,25 +300,33 @@ export class MealPlanningService {
     return 30; // Lower score for off-season
   }
 
+  private isRecipeTypeCompatibleWithDiet(recipeType: RecipeType, dietaryType: DietaryType): boolean {
+    // Simple compatibility mapping; can be expanded
+    if (dietaryType === DietaryType.VEGAN) return recipeType === RecipeType.VEGAN;
+    if (dietaryType === DietaryType.VEGETARIAN) return recipeType === RecipeType.VEGETARIAN || recipeType === RecipeType.EGGETARIAN;
+    if (dietaryType === DietaryType.JAIN) return recipeType === RecipeType.JAIN;
+    if (dietaryType === DietaryType.HALAL) return recipeType === RecipeType.HALAL || recipeType === RecipeType.NON_VEGETARIAN;
+    // Mixed or others
+    return true;
+  }
+
   // Mindfulness Generation
   private generateMindfulnessTheme(mealType: MealType, date: Date, household: Household): MindfulnessTheme {
-    const themes = Object.values(MindfulnessTheme);
-    
     // Morning meals - energizing themes
     if (mealType === MealType.BREAKFAST || mealType === MealType.MORNING_SNACK) {
-      const morningThemes = [MindfulnessTheme.JOY, MindfulnessTheme.ENERGY, MindfulnessTheme.BALANCE];
+      const morningThemes: MindfulnessTheme[] = [MindfulnessTheme.JOY, MindfulnessTheme.BALANCE, MindfulnessTheme.PRESENCE];
       return morningThemes[Math.floor(Math.random() * morningThemes.length)];
     }
     
     // Midday meals - balancing themes
     if (mealType === MealType.LUNCH || mealType === MealType.AFTERNOON_SNACK) {
-      const middayThemes = [MindfulnessTheme.BALANCE, MindfulnessTheme.HARMONY, MindfulnessTheme.WISDOM];
+      const middayThemes: MindfulnessTheme[] = [MindfulnessTheme.BALANCE, MindfulnessTheme.HARMONY, MindfulnessTheme.WISDOM];
       return middayThemes[Math.floor(Math.random() * middayThemes.length)];
     }
     
     // Evening meals - calming themes
     if (mealType === MealType.DINNER || mealType === MealType.EVENING_SNACK) {
-      const eveningThemes = [MindfulnessTheme.PEACE, MindfulnessTheme.GRATITUDE, MindfulnessTheme.LOVE];
+      const eveningThemes: MindfulnessTheme[] = [MindfulnessTheme.PEACE, MindfulnessTheme.GRATITUDE, MindfulnessTheme.LOVE];
       return eveningThemes[Math.floor(Math.random() * eveningThemes.length)];
     }
 
@@ -571,8 +579,7 @@ export class MealPlanningService {
   }
 
   private getCompatibleRecipeType(dietaryType: DietaryType): RecipeType {
-    const mapping: Record<DietaryType, RecipeType> = {
-      [DietaryType.VEGETARIAN]: RecipeType.VEGETARIAN,
+    const mapping: Partial<Record<DietaryType, RecipeType>> = {
       [DietaryType.VEGAN]: RecipeType.VEGAN,
       [DietaryType.NON_VEGETARIAN]: RecipeType.NON_VEGETARIAN,
       [DietaryType.EGGETARIAN]: RecipeType.EGGETARIAN,
@@ -582,7 +589,7 @@ export class MealPlanningService {
       [DietaryType.GLUTEN_FREE]: RecipeType.GLUTEN_FREE,
       [DietaryType.DAIRY_FREE]: RecipeType.DAIRY_FREE,
       [DietaryType.NUT_FREE]: RecipeType.NUT_FREE,
-      [DietaryType.FLEXITARIAN]: RecipeType.FLEXITARIAN,
+      // FLEXITARIAN and others map to a general type
     };
     return mapping[dietaryType] || RecipeType.VEGETARIAN;
   }
@@ -682,13 +689,13 @@ export class MealPlanningService {
         description: mealPlan.recipe?.description || mealPlan.customMeal?.description,
         planType: PlanType.DAILY,
         status: PlanStatus.DRAFT,
-        date: mealPlan.date,
+        date: mealPlan.date as any,
         mealType: mealPlan.mealType,
         recipeId: mealPlan.recipe?.id,
         customMealName: mealPlan.customMeal?.name,
         customMealDescription: mealPlan.customMeal?.description,
         mindfulnessGoals: {
-          theme: mealPlan.mindfulnessTheme,
+          theme: mealPlan.mindfulnessTheme as any,
           intention: mealPlan.intention,
           meditationPrompt: mealPlan.meditationPrompt,
           breathingExercise: mealPlan.breathingExercise,
@@ -699,10 +706,16 @@ export class MealPlanningService {
         healthConsiderations: {
           healthGoals: mealPlan.healthBenefits,
         },
-        nutritionalGoals: mealPlan.nutritionalGoals,
-      });
+        nutritionalGoals: {
+          targetCalories: mealPlan.nutritionalGoals.calories,
+          targetProtein: mealPlan.nutritionalGoals.protein,
+          targetCarbs: mealPlan.nutritionalGoals.carbs,
+          targetFat: mealPlan.nutritionalGoals.fat,
+          targetFiber: mealPlan.nutritionalGoals.fiber,
+        },
+      } as any);
 
-      const savedPlan = await this.mealPlanRepo.save(plan);
+      const savedPlan = await (this.mealPlanRepo.save as any)(plan);
       savedPlans.push(savedPlan);
     }
 

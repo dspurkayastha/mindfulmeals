@@ -76,7 +76,7 @@ router.post('/households/:householdId/generate-plan',
 router.post('/households/:householdId/save-plan',
   validateHouseholdId,
   body('mealPlans').isArray({ min: 1 }).withMessage('At least one meal plan is required'),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -103,7 +103,7 @@ router.post('/households/:householdId/save-plan',
 router.post('/households/:householdId/recipes',
   validateHouseholdId,
   validateRecipeInput,
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     // TODO: Implement recipe creation
     res.status(501).json({
       success: false,
@@ -120,7 +120,7 @@ router.get('/households/:householdId/recipes',
   query('difficulty').optional().isIn(Object.values(RecipeDifficulty)),
   query('mindfulnessLevel').optional().isIn(Object.values(MindfulnessLevel)),
   query('search').optional().isLength({ min: 1, max: 100 }),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     // TODO: Implement recipe retrieval
     res.status(501).json({
       success: false,
@@ -138,7 +138,7 @@ router.get('/households/:householdId/recommendations',
   query('culturalAuthenticity').optional().isBoolean(),
   query('seasonalCooking').optional().isBoolean(),
   query('healthGoals').optional().isArray(),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -162,7 +162,7 @@ router.get('/households/:householdId/recommendations',
 
 // Mindfulness Integration Routes
 router.get('/mindfulness/themes',
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const themes = (Object.values(MindfulnessTheme) as MindfulnessTheme[]).map(theme => ({
       value: theme,
       label: theme.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
@@ -180,7 +180,7 @@ router.get('/mindfulness/themes',
 
 router.get('/mindfulness/prompts/:theme',
   param('theme').isIn(Object.values(MindfulnessTheme)).withMessage('Invalid mindfulness theme'),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const { theme } = req.params;
     
     const prompts = generateMindfulnessPrompts(theme as MindfulnessTheme);
@@ -195,7 +195,7 @@ router.get('/mindfulness/prompts/:theme',
 
 // Cultural Integration Routes
 router.get('/cultural/regions',
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const regions = Object.values(IndianRegion).map(region => ({
       value: region,
       label: region.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
@@ -215,7 +215,7 @@ router.get('/cultural/regions',
 router.get('/cultural/festivals',
   query('region').optional().isIn(Object.values(IndianRegion)),
   query('month').optional().isInt({ min: 1, max: 12 }),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const { region, month } = req.query;
     
     // TODO: Implement festival retrieval
@@ -233,7 +233,7 @@ router.post('/nutrition/analyze',
   body('ingredients.*.name').isLength({ min: 1 }).withMessage('Ingredient name is required'),
   body('ingredients.*.quantity').isFloat({ min: 0 }).withMessage('Quantity must be a positive number'),
   body('ingredients.*.unit').isLength({ min: 1 }).withMessage('Unit is required'),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -262,7 +262,7 @@ router.get('/households/:householdId/meal-plans',
   query('mealType').optional().isIn(Object.values(MealType)),
   query('startDate').optional().isISO8601(),
   query('endDate').optional().isISO8601(),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     // TODO: Implement meal plan retrieval
     res.status(501).json({
       success: false,
@@ -275,7 +275,7 @@ router.get('/households/:householdId/meal-plans',
 router.put('/households/:householdId/meal-plans/:planId',
   validateHouseholdId,
   param('planId').isUUID().withMessage('Invalid plan ID'),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     // TODO: Implement meal plan update
     res.status(501).json({
       success: false,
@@ -288,7 +288,7 @@ router.put('/households/:householdId/meal-plans/:planId',
 router.delete('/households/:householdId/meal-plans/:planId',
   validateHouseholdId,
   param('planId').isUUID().withMessage('Invalid plan ID'),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     // TODO: Implement meal plan deletion
     res.status(501).json({
       success: false,
@@ -302,7 +302,7 @@ router.delete('/households/:householdId/meal-plans/:planId',
 router.get('/households/:householdId/insights',
   validateHouseholdId,
   query('period').optional().isIn(['week', 'month', 'quarter', 'year']),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     // TODO: Implement AI insights
     res.status(501).json({
       success: false,
