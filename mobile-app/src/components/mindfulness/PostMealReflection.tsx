@@ -21,6 +21,7 @@ import { useTranslation } from '../../hooks/useTranslation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showToast } from '../../utils/toast';
 import Slider from '@react-native-community/slider';
+import { hapticFeedback } from '../../utils/haptic';
 
 interface PostMealReflectionProps {
   mealId: string;
@@ -86,6 +87,7 @@ const PostMealReflection: React.FC<PostMealReflectionProps> = ({
         preset: 'success',
       });
 
+      hapticFeedback.reflectionComplete();
       onComplete(reflection);
     } catch (error) {
       showToast({
@@ -136,7 +138,10 @@ const PostMealReflection: React.FC<PostMealReflectionProps> = ({
               {MOOD_OPTIONS.map((mood) => (
                 <TouchableOpacity
                   key={mood.key}
-                  onPress={() => setSelectedMood(mood.key)}
+                  onPress={() => {
+                    hapticFeedback.selection();
+                    setSelectedMood(mood.key);
+                  }}
                   style={[
                     styles.moodOption,
                     selectedMood === mood.key && {

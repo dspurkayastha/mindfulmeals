@@ -134,6 +134,9 @@ class WellnessService {
   async incrementMindfulMeals(): Promise<void> {
     this.wellnessData.mindfulMealsCount++;
     await this.saveData();
+    
+    // Check for mindful meals milestones
+    await this.checkMindfulMealsMilestone();
   }
 
   async updateStreak(days: number): Promise<void> {
@@ -159,6 +162,34 @@ class WellnessService {
       entryDate.setHours(0, 0, 0, 0);
       return entryDate.getTime() === today.getTime();
     });
+  }
+
+  private async checkMindfulMealsMilestone(): Promise<void> {
+    const count = this.wellnessData.mindfulMealsCount;
+    
+    // Define milestone thresholds
+    const milestones = [
+      { count: 1, type: 'first_mindful_meal' },
+      { count: 7, type: 'mindful_week' },
+      { count: 21, type: 'mindful_habit' },
+      { count: 50, type: 'mindful_master' },
+    ];
+    
+    for (const milestone of milestones) {
+      if (count === milestone.count) {
+        // Track the milestone achievement
+        const progress = await MilestoneService.getInstance().getProgress();
+        // Use a more direct approach to trigger celebration
+        if (milestone.type === 'first_mindful_meal' && count === 1) {
+          MilestoneService.getInstance()['notifyListeners']('first_mindful_meal' as any);
+        } else if (milestone.type === 'mindful_week' && count === 7) {
+          MilestoneService.getInstance()['notifyListeners']('weekly_wellness' as any);
+        } else if (milestone.type === 'mindful_habit' && count === 21) {
+          MilestoneService.getInstance()['notifyListeners']('gratitude_consistency' as any);
+        }
+        break;
+      }
+    }
   }
 
   getWeeklyStats() {

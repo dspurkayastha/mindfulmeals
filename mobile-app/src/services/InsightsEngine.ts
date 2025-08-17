@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { parseISO, differenceInDays, format, startOfWeek, endOfWeek } from 'date-fns';
 import WellnessService from './WellnessService';
+import SmartRecipeService from './SmartRecipeService';
 
 interface MealReflection {
   mealId: string;
@@ -66,6 +67,10 @@ class InsightsEngine {
     // Analyze breathing benefits
     const breathingInsights = await this.analyzeBreathingBenefits();
     insights.push(...breathingInsights);
+
+    // Analyze nutrition and wellness patterns
+    const nutritionWellnessInsights = await this.analyzeNutritionWellnessPatterns();
+    insights.push(...nutritionWellnessInsights);
 
     // Sort by confidence and return top insights
     return insights
@@ -331,6 +336,124 @@ class InsightsEngine {
     }
 
     return insights;
+  }
+
+  private async analyzeNutritionWellnessPatterns(): Promise<WellnessInsight[]> {
+    const insights: WellnessInsight[] = [];
+
+    try {
+      // Get meal history from SmartRecipeService
+      const mealHistory = await this.getMealHistory();
+      const pantryItems = await this.getPantryItems();
+      
+      // Get wellness data
+      const wellnessData = WellnessService.getInstance().getWellnessData();
+      const moodHistory = wellnessData.moodHistory;
+      
+      // Analyze correlation between meal types and mood
+      const mealMoodCorrelations = await this.analyzeMealMoodCorrelations(mealHistory, moodHistory);
+      
+      // Check if certain foods correlate with better moods
+      if (mealMoodCorrelations.healthyMealsPositiveMood > 0.7) {
+        insights.push({
+          id: 'nutrition_mood_positive',
+          type: 'meal_mood',
+          title: 'Healthy Eating Boosts Your Mood',
+          message: 'You tend to feel better after nutritious meals. Keep up the healthy choices!',
+          confidence: mealMoodCorrelations.healthyMealsPositiveMood,
+          actionable: 'Try more vegetable-rich recipes this week',
+        });
+      }
+      
+      // Analyze pantry variety and wellness
+      const pantryVariety = new Set(pantryItems).size;
+      if (pantryVariety > 20 && wellnessData.currentStreak > 3) {
+        insights.push({
+          id: 'pantry_variety_wellness',
+          type: 'meal_mood',
+          title: 'Diverse Pantry, Better Wellbeing',
+          message: 'Your varied pantry choices support your wellness journey.',
+          confidence: 0.75,
+        });
+      }
+      
+      // Check mindful eating correlation with energy
+      const mindfulMeals = wellnessData.mindfulMealsCount;
+      const avgEnergy = moodHistory
+        .filter(m => m.linkedMealId)
+        .reduce((sum, m, _, arr) => sum + (m.note ? 5 : 3) / arr.length, 0);
+      
+      if (mindfulMeals > 10 && avgEnergy > 3.5) {
+        insights.push({
+          id: 'mindful_eating_energy',
+          type: 'energy_pattern',
+          title: 'Mindful Eating Energizes You',
+          message: 'Your mindful eating practice is linked to higher energy levels.',
+          confidence: 0.8,
+          data: { mindfulMeals, avgEnergy },
+        });
+      }
+    } catch (error) {
+      console.error('Error analyzing nutrition wellness patterns:', error);
+    }
+
+    return insights;
+  }
+
+  private async getMealHistory(): Promise<any[]> {
+    try {
+      const stored = await AsyncStorage.getItem('@meal_history');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private async getPantryItems(): Promise<string[]> {
+    try {
+      const stored = await AsyncStorage.getItem('@pantry_items');
+      if (stored) {
+        const items = JSON.parse(stored);
+        return items.map((item: any) => item.name || item);
+      }
+      return [];
+    } catch {
+      return [];
+    }
+  }
+
+  private async analyzeMealMoodCorrelations(mealHistory: any[], moodHistory: any[]): Promise<any> {
+    // Simple correlation analysis
+    let healthyMealsPositiveMood = 0;
+    let totalHealthyMeals = 0;
+    
+    mealHistory.forEach(meal => {
+      // Check if meal is healthy (simple heuristic based on keywords)
+      const isHealthy = meal.name && (
+        meal.name.toLowerCase().includes('salad') ||
+        meal.name.toLowerCase().includes('vegetable') ||
+        meal.name.toLowerCase().includes('grain') ||
+        meal.name.toLowerCase().includes('fruit')
+      );
+      
+      if (isHealthy) {
+        totalHealthyMeals++;
+        // Find mood entries around this meal time
+        const mealTime = new Date(meal.timestamp || Date.now()).getTime();
+        const relatedMood = moodHistory.find(m => {
+          const moodTime = m.timestamp.getTime();
+          return Math.abs(moodTime - mealTime) < 3600000; // Within 1 hour
+        });
+        
+        if (relatedMood && ['grateful', 'energized', 'calm'].includes(relatedMood.mood)) {
+          healthyMealsPositiveMood++;
+        }
+      }
+    });
+    
+    return {
+      healthyMealsPositiveMood: totalHealthyMeals > 0 ? healthyMealsPositiveMood / totalHealthyMeals : 0,
+    };
   }
 
   // Helper methods

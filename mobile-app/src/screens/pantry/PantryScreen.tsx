@@ -28,6 +28,7 @@ import PantryItem from '../../components/PantryItem';
 import EmptyState from '../../components/EmptyState';
 import { showToast } from '../../utils/toast';
 import { FloatingBreatherButton, MindfulLoader, GratitudeOverlay } from '../../components/mindfulness';
+import { hapticFeedback } from '../../utils/haptic';
 
 const { width } = Dimensions.get('window');
 
@@ -96,6 +97,7 @@ const PantryScreen = ({ navigation }: any) => {
   });
 
   const handleRefresh = async () => {
+    hapticFeedback.pullToRefresh();
     setRefreshing(true);
     try {
       await refetch();
@@ -114,6 +116,7 @@ const PantryScreen = ({ navigation }: any) => {
   };
 
   const handleAddItem = () => {
+    hapticFeedback.buttonPress();
     trackTap();
     navigation.navigate('AddPantryItem');
   };
@@ -215,6 +218,17 @@ const PantryScreen = ({ navigation }: any) => {
             [{ nativeEvent: { contentOffset: { y: scrollY } } }],
             { useNativeDriver: false }
           )}
+          // Performance optimizations
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={10}
+          windowSize={10}
+          initialNumToRender={10}
+          updateCellsBatchingPeriod={50}
+          getItemLayout={(data, index) => ({
+            length: 80, // Approximate item height
+            offset: 80 * index,
+            index,
+          })}
         />
       )}
 
