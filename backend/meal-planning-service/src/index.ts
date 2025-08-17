@@ -4,12 +4,19 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
-import { createConnection } from 'typeorm';
-import { config } from './config/database';
-import { mealPlanningRoutes } from './routes/meal-planning.routes';
-import { errorHandler } from './middleware/errorHandler';
 
 dotenv.config();
+
+import { env } from './config/env';
+import { config } from './config/database';
+import { mealPlanningRoutes, setMealPlanningService } from './routes/meal-planning.routes';
+import { errorHandler } from './middleware/errorHandler';
+import { MealPlanningService } from './services/meal-planning.service';
+import { Recipe } from './entities/Recipe';
+import { RecipeIngredient } from './entities/RecipeIngredient';
+import { RecipeStep } from './entities/RecipeStep';
+import { MealPlan } from './entities/MealPlan';
+import { Household } from './entities/Household';
 
 const app = express();
 const PORT = process.env.PORT || 3004;
@@ -62,9 +69,25 @@ app.use('*', (req, res) => {
 // Database connection and server startup
 async function startServer() {
   try {
-    // Connect to database
-    await createConnection(config);
+    if (!config.isInitialized) {
+      await config.initialize();
+    }
     console.log('✅ Database connected successfully');
+
+    // Wire repositories and inject services
+    const recipeRepo = config.getRepository(Recipe);
+    const ingredientRepo = config.getRepository(RecipeIngredient);
+    const stepRepo = config.getRepository(RecipeStep);
+    const mealPlanRepo = config.getRepository(MealPlan);
+    const householdRepo = config.getRepository(Household);
+    const mealPlanningService = new MealPlanningService(
+      recipeRepo,
+      ingredientRepo,
+      stepRepo,
+      mealPlanRepo,
+      householdRepo
+    );
+    setMealPlanningService(mealPlanningService);
 
     // Start server
     app.listen(PORT, () => {

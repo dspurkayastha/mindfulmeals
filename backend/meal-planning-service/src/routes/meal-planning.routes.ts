@@ -2,8 +2,7 @@ import { Router } from 'express';
 import { body, query, param, validationResult } from 'express-validator';
 import { asyncHandler } from '../middleware/errorHandler';
 import { MealPlanningService } from '../services/meal-planning.service';
-import { Repository } from 'typeorm';
-import { Recipe, RecipeCategory, RecipeType, MindfulnessLevel } from '../entities/Recipe';
+import { Recipe, RecipeCategory, RecipeType, MindfulnessLevel, RecipeDifficulty } from '../entities/Recipe';
 import { RecipeIngredient, IngredientType } from '../entities/RecipeIngredient';
 import { RecipeStep, MindfulnessPrompt } from '../entities/RecipeStep';
 import { MealPlan, MealType, PlanType, PlanStatus, MindfulnessTheme } from '../entities/MealPlan';
@@ -11,14 +10,11 @@ import { Household, IndianRegion, DietaryType } from '../entities/Household';
 
 export const router = Router();
 
-// Initialize service (this would be injected via dependency injection)
-const mealPlanningService = new MealPlanningService(
-  {} as Repository<Recipe>,
-  {} as Repository<RecipeIngredient>,
-  {} as Repository<RecipeStep>,
-  {} as Repository<MealPlan>,
-  {} as Repository<Household>
-);
+// Initialize service (injected during server startup)
+let mealPlanningService: MealPlanningService = null as unknown as MealPlanningService;
+export const setMealPlanningService = (service: MealPlanningService) => {
+  mealPlanningService = service;
+};
 
 // Validation middleware
 const validateHouseholdId = param('householdId')
@@ -48,7 +44,7 @@ const validateRecipeInput = [
 router.post('/households/:householdId/generate-plan',
   validateHouseholdId,
   validateMealPlanningInput,
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -80,7 +76,7 @@ router.post('/households/:householdId/generate-plan',
 router.post('/households/:householdId/save-plan',
   validateHouseholdId,
   body('mealPlans').isArray({ min: 1 }).withMessage('At least one meal plan is required'),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -107,7 +103,7 @@ router.post('/households/:householdId/save-plan',
 router.post('/households/:householdId/recipes',
   validateHouseholdId,
   validateRecipeInput,
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     // TODO: Implement recipe creation
     res.status(501).json({
       success: false,
@@ -124,7 +120,7 @@ router.get('/households/:householdId/recipes',
   query('difficulty').optional().isIn(Object.values(RecipeDifficulty)),
   query('mindfulnessLevel').optional().isIn(Object.values(MindfulnessLevel)),
   query('search').optional().isLength({ min: 1, max: 100 }),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     // TODO: Implement recipe retrieval
     res.status(501).json({
       success: false,
@@ -142,7 +138,7 @@ router.get('/households/:householdId/recommendations',
   query('culturalAuthenticity').optional().isBoolean(),
   query('seasonalCooking').optional().isBoolean(),
   query('healthGoals').optional().isArray(),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -166,8 +162,8 @@ router.get('/households/:householdId/recommendations',
 
 // Mindfulness Integration Routes
 router.get('/mindfulness/themes',
-  asyncHandler(async (req, res) => {
-    const themes = Object.values(MindfulnessTheme).map(theme => ({
+  asyncHandler(async (req: any, res: any) => {
+    const themes = (Object.values(MindfulnessTheme) as MindfulnessTheme[]).map(theme => ({
       value: theme,
       label: theme.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
       description: getMindfulnessThemeDescription(theme),
@@ -184,7 +180,7 @@ router.get('/mindfulness/themes',
 
 router.get('/mindfulness/prompts/:theme',
   param('theme').isIn(Object.values(MindfulnessTheme)).withMessage('Invalid mindfulness theme'),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const { theme } = req.params;
     
     const prompts = generateMindfulnessPrompts(theme as MindfulnessTheme);
@@ -199,7 +195,7 @@ router.get('/mindfulness/prompts/:theme',
 
 // Cultural Integration Routes
 router.get('/cultural/regions',
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const regions = Object.values(IndianRegion).map(region => ({
       value: region,
       label: region.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
@@ -219,7 +215,7 @@ router.get('/cultural/regions',
 router.get('/cultural/festivals',
   query('region').optional().isIn(Object.values(IndianRegion)),
   query('month').optional().isInt({ min: 1, max: 12 }),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const { region, month } = req.query;
     
     // TODO: Implement festival retrieval
@@ -237,7 +233,7 @@ router.post('/nutrition/analyze',
   body('ingredients.*.name').isLength({ min: 1 }).withMessage('Ingredient name is required'),
   body('ingredients.*.quantity').isFloat({ min: 0 }).withMessage('Quantity must be a positive number'),
   body('ingredients.*.unit').isLength({ min: 1 }).withMessage('Unit is required'),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -266,7 +262,7 @@ router.get('/households/:householdId/meal-plans',
   query('mealType').optional().isIn(Object.values(MealType)),
   query('startDate').optional().isISO8601(),
   query('endDate').optional().isISO8601(),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     // TODO: Implement meal plan retrieval
     res.status(501).json({
       success: false,
@@ -279,7 +275,7 @@ router.get('/households/:householdId/meal-plans',
 router.put('/households/:householdId/meal-plans/:planId',
   validateHouseholdId,
   param('planId').isUUID().withMessage('Invalid plan ID'),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     // TODO: Implement meal plan update
     res.status(501).json({
       success: false,
@@ -292,7 +288,7 @@ router.put('/households/:householdId/meal-plans/:planId',
 router.delete('/households/:householdId/meal-plans/:planId',
   validateHouseholdId,
   param('planId').isUUID().withMessage('Invalid plan ID'),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     // TODO: Implement meal plan deletion
     res.status(501).json({
       success: false,
@@ -306,7 +302,7 @@ router.delete('/households/:householdId/meal-plans/:planId',
 router.get('/households/:householdId/insights',
   validateHouseholdId,
   query('period').optional().isIn(['week', 'month', 'quarter', 'year']),
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     // TODO: Implement AI insights
     res.status(501).json({
       success: false,
@@ -505,7 +501,7 @@ function getRegionalCuisine(region: IndianRegion): string {
 }
 
 function getRegionalSpecialties(region: IndianRegion): string[] {
-  const specialties: Record<IndianRegion, string[]> = {
+  const specialties: Partial<Record<IndianRegion, string[]>> = {
     [IndianRegion.PUNJAB]: ['Butter Chicken', 'Sarson da Saag', 'Makki di Roti', 'Amritsari Fish'],
     [IndianRegion.KERALA]: ['Kerala Fish Curry', 'Appam with Stew', 'Malabar Biryani', 'Puttu Kadala'],
     [IndianRegion.WEST_BENGAL]: ['Macher Jhol', 'Luchi Aloor Dom', 'Rasgulla', 'Sandesh'],
@@ -521,7 +517,7 @@ function getRegionalSpecialties(region: IndianRegion): string[] {
 }
 
 function getRegionalFestivals(region: IndianRegion): string[] {
-  const festivals: Record<IndianRegion, string[]> = {
+  const festivals: Partial<Record<IndianRegion, string[]>> = {
     [IndianRegion.PUNJAB]: ['Lohri', 'Baisakhi', 'Gurpurab', 'Hola Mohalla'],
     [IndianRegion.KERALA]: ['Onam', 'Vishu', 'Thrissur Pooram', 'Theyyam'],
     [IndianRegion.WEST_BENGAL]: ['Durga Puja', 'Kali Puja', 'Poila Boishakh', 'Nabanna'],

@@ -16,17 +16,27 @@ export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: N
     const authHeader = req.headers.authorization;
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         message: 'Access token required',
         errors: ['MISSING_TOKEN'],
       });
+      return;
     }
 
     const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+    const secret = process.env.JWT_ACCESS_SECRET;
+    if (!secret) {
+      res.status(500).json({
+        success: false,
+        message: 'Server configuration error',
+        errors: ['MISSING_JWT_SECRET'],
+      });
+      return;
+    }
 
     try {
-      const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET || 'fallback-secret') as any;
+      const decoded = jwt.verify(token, secret) as any;
       
       // Add user info to request
       req.user = {
@@ -38,20 +48,23 @@ export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: N
       };
 
       next();
+      return;
     } catch (jwtError) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         message: 'Invalid or expired token',
         errors: ['INVALID_TOKEN'],
       });
+      return;
     }
   } catch (error) {
     console.error('Auth middleware error:', error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       message: 'Authentication error',
       errors: ['INTERNAL_ERROR'],
     });
+    return;
   }
 };
 
@@ -62,13 +75,20 @@ export const optionalAuthMiddleware = (req: AuthenticatedRequest, res: Response,
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       // No token provided, continue without user info
-      return next();
+      next();
+      return;
     }
 
     const token = authHeader.substring(7);
+    const secret = process.env.JWT_ACCESS_SECRET;
+    if (!secret) {
+      // If not configured, continue without user info
+      next();
+      return;
+    }
 
     try {
-      const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET || 'fallback-secret') as any;
+      const decoded = jwt.verify(token, secret) as any;
       
       req.user = {
         id: decoded.sub,
@@ -79,13 +99,16 @@ export const optionalAuthMiddleware = (req: AuthenticatedRequest, res: Response,
       };
 
       next();
+      return;
     } catch (jwtError) {
       // Invalid token, continue without user info
-      return next();
+      next();
+      return;
     }
   } catch (error) {
     // Error occurred, continue without user info
-    return next();
+    next();
+    return;
   }
 };
 
@@ -93,19 +116,21 @@ export const optionalAuthMiddleware = (req: AuthenticatedRequest, res: Response,
 export const requireRole = (allowedRoles: string[]) => {
   return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     if (!req.user) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         message: 'Authentication required',
         errors: ['UNAUTHORIZED'],
       });
+      return;
     }
 
     if (!allowedRoles.includes(req.user.role)) {
-      return res.status(403).json({
+      res.status(403).json({
         success: false,
         message: 'Insufficient permissions',
         errors: ['INSUFFICIENT_PERMISSIONS'],
       });
+      return;
     }
 
     next();
@@ -115,21 +140,23 @@ export const requireRole = (allowedRoles: string[]) => {
 // Household access control middleware
 export const requireHouseholdAccess = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   if (!req.user) {
-    return res.status(401).json({
+    res.status(401).json({
       success: false,
       message: 'Authentication required',
       errors: ['UNAUTHORIZED'],
     });
+    return;
   }
 
-  const householdId = req.params.householdId || req.body.householdId;
+  const householdId = (req.params as any).householdId || (req.body as any).householdId;
   
   if (householdId && householdId !== req.user.householdId) {
-    return res.status(403).json({
+    res.status(403).json({
       success: false,
       message: 'Access denied to this household',
       errors: ['HOUSEHOLD_ACCESS_DENIED'],
     });
+    return;
   }
 
   next();

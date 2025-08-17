@@ -6,7 +6,13 @@ import { User } from '../entities/User';
 import { UserSession } from '../entities/UserSession';
 import { TwoFactorSecret } from '../entities/TwoFactorSecret';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
-import { ApiResponse } from '@/shared/types';
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  message: string;
+  errors?: string[];
+}
 
 export interface AuthenticationResult {
   user: Partial<User>;
@@ -137,8 +143,14 @@ export class AuthService {
       jti: this.generateJTI(), // Unique token ID for revocation
     };
 
+    const accessSecret = process.env.JWT_ACCESS_SECRET;
+    const refreshSecret = process.env.JWT_REFRESH_SECRET;
+    if (!accessSecret || !refreshSecret) {
+      throw new Error('JWT secrets are not configured');
+    }
+
     // Short-lived access token
-    const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET || 'fallback-secret', {
+    const accessToken = jwt.sign(payload, accessSecret, {
       expiresIn: '1h',
     });
 
@@ -149,7 +161,7 @@ export class AuthService {
         type: 'refresh',
         jti: this.generateJTI(),
       },
-      process.env.JWT_REFRESH_SECRET || 'fallback-refresh-secret',
+      refreshSecret,
       {
         expiresIn: '30d',
       }
@@ -165,10 +177,9 @@ export class AuthService {
     try {
       // Generate TOTP secret
       const secret = speakeasy.generateSecret({
-        name: 'MindfulMeals',
-        account: userId,
-        issuer: 'MindfulMeals App',
-      });
+        name: 'MindfulMeals App',
+        issuer: 'MindfulMeals',
+      } as any);
 
       // Store secret (encrypted) in database
       await this.storeTwoFactorSecret(userId, secret.base32);
@@ -180,7 +191,7 @@ export class AuthService {
         success: true,
         data: {
           secret: secret.base32,
-          qrCode: secret.otpauth_url,
+          qrCode: secret.otpauth_url as string,
           backupCodes,
         },
         message: 'Two-factor authentication setup complete',

@@ -75,7 +75,7 @@ export class InventoryService {
   }
 
   async updatePantryItem(id: string, updates: Partial<PantryItem>): Promise<PantryItem> {
-    await this.pantryItemRepo.update(id, updates);
+    await this.pantryItemRepo.update(id, updates as Partial<PantryItem>);
     const item = await this.pantryItemRepo.findOne({ where: { id } });
     if (!item) {
       throw new Error('Pantry item not found');

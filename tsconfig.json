@@ -13,6 +13,8 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
@@ -21,12 +23,13 @@
     }
   },
   "include": [
-    "mobile-app/src/**/*",
-    "backend/**/*"
+    "backend/**/src/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "build"
+    "build",
+    "backend/shared/**",
+    "mobile-app/**"
   ]
 }

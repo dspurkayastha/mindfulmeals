@@ -17,7 +17,7 @@ export interface RegionalCuisineProfile {
 }
 
 export class RegionalCuisineService {
-  private static readonly regionalProfiles: Record<IndianRegion, RegionalCuisineProfile> = {
+  private static readonly regionalProfiles: Partial<Record<IndianRegion, RegionalCuisineProfile>> = {
     // North Indian States
     [IndianRegion.PUNJAB]: {
       region: IndianRegion.PUNJAB,
@@ -159,7 +159,7 @@ export class RegionalCuisineService {
 
   static getRegionsByLanguage(language: string): IndianRegion[] {
     return Object.values(this.regionalProfiles)
-      .filter(profile => profile.primaryLanguage === language)
+      .filter((profile): profile is RegionalCuisineProfile => !!profile && profile.primaryLanguage === language)
       .map(profile => profile.region);
   }
 
