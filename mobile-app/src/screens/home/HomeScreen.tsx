@@ -20,7 +20,7 @@ const HomeScreen = ({ navigation }: any) => {
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}> 
       <ScrollView style={styles.scrollView}>
         {/* Header */}
-        <SunsetHeader title="Namaste! 🙏" subtitle="Welcome to Swasthya Food" />
+        <SunsetHeader title="Namaste! 🙏" subtitle="Welcome to MindfulMeals" />
 
         {/* Quick Actions */}
         <View style={styles.quickActions}>

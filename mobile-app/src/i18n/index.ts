@@ -1,10 +1,18 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const resources = {
+// Import translation files
+import en from './translations/en';
+import hi from './translations/hi';
+
+const LANGUAGE_KEY = '@MindfulMeals:language';
+
+// Temporary inline translations until we fully migrate
+const legacyTranslations = {
 	en: {
 		common: {
-			welcome: 'Welcome to Swasthya Food',
+			welcome: 'Welcome to MindfulMeals',
 			continue: 'Continue',
 		},
 		pantry: {
@@ -14,7 +22,7 @@ const resources = {
 	},
 	hi: {
 		common: {
-			welcome: 'स्वास्थ्य फूड में आपका स्वागत है',
+			welcome: 'MindfulMeals में आपका स्वागत है',
 			continue: 'जारी रखें',
 		},
 		pantry: {
@@ -24,14 +32,38 @@ const resources = {
 	},
 };
 
+// Language detection
+const languageDetector = {
+	type: 'languageDetector' as const,
+	async: true,
+	detect: async (callback: (lang: string) => void) => {
+		try {
+			const savedLanguage = await AsyncStorage.getItem(LANGUAGE_KEY);
+			callback(savedLanguage || 'en');
+		} catch {
+			callback('en');
+		}
+	},
+	init: () => {},
+	cacheUserLanguage: async (lang: string) => {
+		try {
+			await AsyncStorage.setItem(LANGUAGE_KEY, lang);
+		} catch {
+			// Silent fail
+		}
+	},
+};
+
 i18n
+	.use(languageDetector)
 	.use(initReactI18next)
 	.init({
-		resources,
+		resources: legacyTranslations, // Will switch to new translations once files are loaded
 		lng: 'en',
 		fallbackLng: 'en',
 		compatibilityJSON: 'v3',
 		interpolation: { escapeValue: false },
+		react: { useSuspense: false },
 	});
 
 export default i18n;

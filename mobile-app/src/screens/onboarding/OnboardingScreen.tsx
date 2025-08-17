@@ -10,7 +10,7 @@ const OnboardingScreen = ({ navigation }: any) => {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.content}>
-        <SunsetHeader title="Swasthya Food" subtitle="Healthy Indian Meals Made Simple" />
+        <SunsetHeader title="MindfulMeals" subtitle="Nourish Your Body, Mind & Soul" />
 
         <View style={styles.features}>
           <Text style={styles.feature}>🍽️ Personalized Meal Planning</Text>
