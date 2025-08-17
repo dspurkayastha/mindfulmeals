@@ -3,12 +3,12 @@
 **Core Philosophy**: Build the minimum viable delightful experience. Every feature must earn its place.
 
 ### 🎯 MVP Feature Scope (Mindful-First Approach)
-**🧘 Core Mindfulness Features (Essential)**:
-- Wellness tracking (mood, energy, digestion after meals)
-- Mindful eating guidance (portion awareness, eating pace)
-- Health insights and gentle recommendations
-- Meditation/breathing exercises before meals
-- Gratitude journaling for food
+**🧘 Contextual Mindfulness Features (Woven Throughout)**:
+- Post-meal reflections (30 min notification: mood, energy, gratitude)
+- Breathing during activities (pantry organizing, cooking, loading)
+- Smart meditation prompts (stress detection, energy dips, meal times)
+- Micro-gratitude moments (ingredient appreciation, meal completion)
+- Adaptive UI based on emotional state (colors, animations, suggestions)
 
 **✨ Essential Experience Features**:
 - Delightful animations (Lottie success states, smooth transitions)

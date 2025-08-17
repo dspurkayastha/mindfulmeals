@@ -47,17 +47,18 @@ Status key: [ ] pending, [~] in progress, [x] done, [🚀] next focus
 - [ ] Basic error boundaries and crash handling
 - [ ] TypeScript coverage report (aim for >90%)
 
-## Phase 5 — Mindfulness Features & Polish (2 weeks) 🧘
-**The core differentiator - what makes us unique**
-- [🚀] Wellness tracking dashboard with mood/energy charts
-- [🚀] Daily gratitude journaling with celebration animations  
-- [🚀] Guided breathing exercises (3-5 minute sessions)
-- [🚀] Mindful eating guidance and gentle portion awareness
-- [ ] Health insights based on eating patterns (gentle, non-judgmental)
-- [ ] Beautiful, calming theme with gradients and smooth animations
-- [ ] Haptic feedback patterns for achievements and positive actions
-- [ ] Streak tracking for mindful practices with visual rewards
-- [ ] Gentle waste awareness and seasonal ingredient celebrations
+## Phase 5 — Contextual Mindfulness Integration (2 weeks) 🧘
+**The core differentiator - integrated naturally into meal planning flow**
+- [🚀] Contextual breathing: pantry organizing, cooking timers, loading states
+- [🚀] Meal-based gratitude: post-meal reflections (30 min after eating)
+- [🚀] Smart meditation reminders: based on stress, energy, and patterns
+- [🚀] Micro-wellness moments: ingredient gratitude, celebration toasts
+- [ ] Adaptive UI: responds to mood, energy, and stress levels
+- [ ] Mindful error recovery: breathing through errors, no judgment
+- [ ] Haptic breathing patterns: synchronized with interactions
+- [ ] Visual gratitude timeline: meal photos with mood tracking
+- [ ] Contextual insights: "You feel best after Mediterranean meals"
+- [ ] See TODO-3-CONTEXTUAL-MINDFULNESS.md for detailed implementation
 
 ## Phase 6 — Security & Performance (1 week)
 - [ ] Secure token storage (Keychain/Keystore)
