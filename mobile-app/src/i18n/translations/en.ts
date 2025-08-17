@@ -97,6 +97,7 @@ export default {
     moodBefore: 'How are you feeling before this meal?',
     moodAfter: 'How do you feel after eating?',
     intentions: 'Set your meal intention',
+    schedule: 'Schedule',
   },
 
   // Wellness
@@ -153,6 +154,13 @@ export default {
     loadFailed: 'Could not load data',
   },
 
+  // Share
+  share: {
+    gratitudeTitle: 'My Gratitude',
+    gratitudeMessage: 'Feeling grateful for {{item}}',
+    error: 'Could not share at this time',
+  },
+
   // Loading
   loading: {
     mindfulMoment: 'Taking a mindful moment...',
@@ -177,6 +185,50 @@ export default {
       cooking: 'Find calm in the rhythm of cooking',
       general: 'Let\'s take a mindful breathing break',
     },
+  },
+
+  // Gratitude
+  gratitude: {
+    titleFor: 'Grateful for {{item}}',
+    placeholder: 'Share what you appreciate...',
+    express: 'Express Gratitude',
+    enterText: 'Please share your gratitude',
+    saved: 'Gratitude saved with love',
+    saveError: 'Could not save gratitude',
+    thanksForSharing: 'Thank you for sharing!',
+    quick1: 'Grateful for this nourishment',
+    quick2: 'Thankful for this moment',
+    prompts: {
+      nourishment: 'How does this nourish your body and soul?',
+      preparation: 'What effort and care went into this?',
+      source: 'Where did this blessing come from?',
+      experience: 'What joy does this bring to your day?',
+      sharing: 'Who would you love to share this with?',
+    },
+  },
+
+  // Cooking
+  cooking: {
+    breatheIn: 'Breathe In',
+    holdBreath: 'Hold',
+    breatheOut: 'Breathe Out',
+    breathCount: '{{count}} breaths',
+    startTimer: 'Start Cooking',
+    timerComplete: '{{recipe}} is ready!',
+    mindfulTip: 'Mindful Cooking Tip',
+    tipMessage: 'Use the rhythm of your breath to stay present while cooking',
+  },
+
+  // Journal
+  journal: {
+    gratitudeJournal: 'Gratitude Journal',
+    subtitle: 'Your collection of mindful moments',
+    weeklyHighlights: 'This Week\'s Highlights',
+    all: 'All',
+    meals: 'Meals',
+    ingredients: 'Ingredients',
+    emptyTitle: 'Start Your Gratitude Journey',
+    emptyText: 'Long press any meal or ingredient to add your first gratitude entry',
   },
 
   // Reflection

@@ -23,10 +23,11 @@ import {
 } from 'react-native-paper';
 import { usePantryItems } from '../../hooks/api/usePantryItems';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useStressDetection } from '../../hooks/useStressDetection';
 import PantryItem from '../../components/PantryItem';
 import EmptyState from '../../components/EmptyState';
 import { showToast } from '../../utils/toast';
-import { FloatingBreatherButton, MindfulLoader } from '../../components/mindfulness';
+import { FloatingBreatherButton, MindfulLoader, GratitudeOverlay } from '../../components/mindfulness';
 
 const { width } = Dimensions.get('window');
 
@@ -38,9 +39,16 @@ const PantryScreen = ({ navigation }: any) => {
   const [refreshing, setRefreshing] = useState(false);
   const [organizingStartTime, setOrganizingStartTime] = useState<number | null>(null);
   const [showBreatherButton, setShowBreatherButton] = useState(false);
+  const [gratitudeItem, setGratitudeItem] = useState<any>(null);
   
   const scrollY = useRef(new Animated.Value(0)).current;
   const breathButtonOpacity = useRef(new Animated.Value(0)).current;
+  
+  const { StressAwareFlatList, trackTap } = useStressDetection({
+    screen: 'Pantry',
+    enableScrollTracking: true,
+    enableTapTracking: true,
+  });
 
   const {
     data: pantryItems = [],
@@ -106,6 +114,7 @@ const PantryScreen = ({ navigation }: any) => {
   };
 
   const handleAddItem = () => {
+    trackTap();
     navigation.navigate('AddPantryItem');
   };
 
@@ -118,7 +127,7 @@ const PantryScreen = ({ navigation }: any) => {
       item={item}
       onPress={() => handleItemPress(item)}
       onLongPress={() => {
-        // Will implement gratitude overlay in next step
+        setGratitudeItem(item);
       }}
     />
   );
@@ -190,7 +199,7 @@ const PantryScreen = ({ navigation }: any) => {
           onAction={handleAddItem}
         />
       ) : (
-        <FlatList
+        <StressAwareFlatList
           data={filteredItems}
           renderItem={renderPantryItem}
           keyExtractor={(item) => item.id}
@@ -235,6 +244,16 @@ const PantryScreen = ({ navigation }: any) => {
           style={{
             opacity: breathButtonOpacity,
           }}
+        />
+      )}
+
+      {gratitudeItem && (
+        <GratitudeOverlay
+          visible={!!gratitudeItem}
+          onClose={() => setGratitudeItem(null)}
+          itemName={gratitudeItem.name}
+          itemId={gratitudeItem.id}
+          itemType="ingredient"
         />
       )}
     </SafeAreaView>
