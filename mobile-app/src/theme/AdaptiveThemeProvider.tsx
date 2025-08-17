@@ -244,7 +244,10 @@ export const AdaptiveThemeProvider: React.FC<AdaptiveThemeProviderProps> = ({ ch
 
   useEffect(() => {
     loadThemePreferences();
-    subscribeToStressChanges();
+    const cleanup = subscribeToStressChanges();
+    
+    // Return the cleanup function
+    return cleanup;
   }, []);
 
   useEffect(() => {

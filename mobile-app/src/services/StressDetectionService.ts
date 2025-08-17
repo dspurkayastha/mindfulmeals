@@ -337,6 +337,40 @@ class StressDetectionService {
     this.activities = this.activities.filter((a) => a.timestamp > oneHourAgo);
   }
 
+  getCurrentStressLevel(): number {
+    const indicators = this.calculateStressIndicators();
+    
+    // Calculate a normalized stress level between 0 and 1
+    let stressScore = 0;
+    
+    // Navigation speed contribution (0-0.3)
+    if (indicators.navigationSpeed > this.STRESS_THRESHOLDS.highNavigationSpeed) {
+      stressScore += 0.3;
+    } else {
+      stressScore += (indicators.navigationSpeed / this.STRESS_THRESHOLDS.highNavigationSpeed) * 0.3;
+    }
+    
+    // Scroll velocity contribution (0-0.3)
+    if (indicators.scrollVelocity > this.STRESS_THRESHOLDS.highScrollVelocity) {
+      stressScore += 0.3;
+    } else {
+      stressScore += (indicators.scrollVelocity / this.STRESS_THRESHOLDS.highScrollVelocity) * 0.3;
+    }
+    
+    // Decision fatigue contribution (0-0.2)
+    if (indicators.decisionFatigue) {
+      stressScore += 0.2;
+    }
+    
+    // Rush pattern contribution (0-0.2)
+    if (indicators.rushPattern) {
+      stressScore += 0.2;
+    }
+    
+    // Ensure the stress level is between 0 and 1
+    return Math.min(Math.max(stressScore, 0), 1);
+  }
+
   private getActiveRouteName(state: NavigationState): string {
     const route = state.routes[state.index];
     if (route.state) {
