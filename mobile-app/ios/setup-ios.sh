@@ -48,6 +48,11 @@ module.exports = {
         },
       },
     },
+    'react-native-vector-icons': {
+      platforms: {
+        ios: null,
+      },
+    },
   },
 };
 EOF
@@ -69,6 +74,10 @@ PLIST_FILE="MindfulMeals/Info.plist"
 # Add photo library permission
 /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryUsageDescription string 'MindfulMeals needs photo access to save meal images'" "$PLIST_FILE" 2>/dev/null || \
 /usr/libexec/PlistBuddy -c "Set :NSPhotoLibraryUsageDescription 'MindfulMeals needs photo access to save meal images'" "$PLIST_FILE"
+
+# Add haptic feedback permission message
+/usr/libexec/PlistBuddy -c "Add :NSHapticUsageDescription string 'MindfulMeals uses haptic feedback for mindful moments'" "$PLIST_FILE" 2>/dev/null || \
+/usr/libexec/PlistBuddy -c "Set :NSHapticUsageDescription 'MindfulMeals uses haptic feedback for mindful moments'" "$PLIST_FILE"
 
 # Clean and reinstall pods
 echo "🧹 Cleaning and reinstalling pods..."
