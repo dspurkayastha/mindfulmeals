@@ -16,7 +16,9 @@ def node_modules_path
   if node_modules.nil?
     Pod::UI.puts "Error: Could not find node_modules directory!".red
     Pod::UI.puts "Searched in: #{possible_paths.join(', ')}".yellow
-    raise "node_modules directory not found"
+    Pod::UI.puts "\nPlease run 'npm install' in the mobile-app directory first!".green
+    Pod::UI.puts "Or run './scripts/fix-build-issues.sh' for a complete setup.".green
+    raise "node_modules directory not found - run 'npm install' first"
   end
   
   return File.expand_path(node_modules)

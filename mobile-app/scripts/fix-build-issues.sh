@@ -152,25 +152,22 @@ echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━�
 
 npm install --legacy-peer-deps
 
-# Step 4: Create patches for known issues
-echo -e "\n${YELLOW}Step 4: Creating patches for known issues...${NC}"
+# Step 4: Apply patches if any exist
+# Note: Patches should be created using 'npx patch-package <package-name>' after manually
+# fixing issues in node_modules. Do not create fake patches with invalid git hashes.
+echo -e "\n${YELLOW}Step 4: Checking for patches...${NC}"
 echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
+# Create patches directory if it doesn't exist
 mkdir -p patches
 
-# Create patch for react-native-reanimated if needed
-cat > patches/react-native-reanimated+3.3.0.patch << 'EOF'
-diff --git a/node_modules/react-native-reanimated/lib/types/lib/types/reanimated2/commonTypes.d.ts b/node_modules/react-native-reanimated/lib/types/lib/types/reanimated2/commonTypes.d.ts
-index 1234567..abcdefg 100644
---- a/node_modules/react-native-reanimated/lib/types/lib/types/reanimated2/commonTypes.d.ts
-+++ b/node_modules/react-native-reanimated/lib/types/lib/types/reanimated2/commonTypes.d.ts
-@@ -1,1 +1,1 @@
--// Fixed type definitions
-+// Fixed type definitions for compatibility
-EOF
-
-# Apply patches
-npx patch-package
+# Apply any existing patches
+if [ "$(ls -A patches 2>/dev/null)" ]; then
+    echo -e "${GREEN}Applying existing patches...${NC}"
+    npx patch-package
+else
+    echo -e "${YELLOW}No patches to apply${NC}"
+fi
 
 # Step 5: Setup iOS
 echo -e "\n${YELLOW}Step 5: Setting up iOS...${NC}"
