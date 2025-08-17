@@ -2,23 +2,27 @@
 
 **Core Philosophy**: Build the minimum viable delightful experience. Every feature must earn its place.
 
-### 🎯 MVP Feature Scope (Mindful-First Approach)
-**🧘 Contextual Mindfulness Features (Woven Throughout)**:
-- Post-meal reflections (30 min notification: mood, energy, gratitude)
-- Breathing during activities (pantry organizing, cooking, loading)
-- Smart meditation prompts (stress detection, energy dips, meal times)
-- Micro-gratitude moments (ingredient appreciation, meal completion)
-- Adaptive UI based on emotional state (colors, animations, suggestions)
+**📋 IMPORTANT**: This plan focuses on implementation details. For comprehensive UI/UX design, animations, and user experience flows, refer to `UI-UX-ENHANCEMENT-PLAN.md` as the definitive source.
+
+### 🎯 MVP Feature Scope (Wellness-First Approach)
+**🧘 Core Wellness Features (NOT optional)**:
+- **Wellness tracking**: Mood before/after meals, energy levels, gratitude journaling
+- **Contextual mindfulness**: Breathing during activities, meditation prompts, mindful moments
+- **Post-meal reflections**: 30-min notifications with mood/energy tracking
+- **Adaptive UI**: Colors and animations that respond to emotional state
+- **Habit formation**: Streak tracking, gentle nudges, progress celebration
 
 **✨ Essential Experience Features**:
-- Delightful animations (Lottie success states, smooth transitions)
-- Microinteractions (button feedback, loading states, swipe gestures)
-- Haptic feedback for key actions
-- Beautiful onboarding with mindfulness education
+- **Delightful animations**: Lottie success states, smooth transitions, breathing guides
+- **Microinteractions**: Button feedback, loading states, swipe gestures
+- **Haptic feedback**: Different patterns for different accomplishments
+- **Beautiful onboarding**: Mindfulness education and wellness goal setting
 
 **✅ Core Functionality**: Household setup, pantry tracking, meal planning, shopping integration  
 **❌ Defer for V2**: Voice input, barcode scanning, community features, calorie scanning  
-**📱 Experience**: Premium feel with animations, smooth UX, mindful design patterns
+**📱 Experience**: Premium wellness app with animations, smooth UX, mindful design patterns
+
+**🎯 Key Insight**: Wellness tracking IS the core value proposition, not an add-on feature
 
 ### 1) 🚀 Mindful Dependencies & Experience Setup (Day 1-2)
 **Include mindfulness + animation essentials - these ARE the differentiators**
@@ -109,29 +113,34 @@ npm i react-native-chart-kit react-native-calendars
 - **Simple sharing**: share shopping list as text
 - **No cart integration** (too complex for MVP)
 
-### 9) 🌟 Wellness Tracking & Insights (Week 3-4) 
-**The key differentiator - mindful eating insights**
-- **Daily check-ins**: Mood before/after meals, energy levels, digestion comfort
-- **Visual tracking**: Simple charts showing mood/energy patterns over time
-- **Gentle insights**: "You seem happier after home-cooked meals" (no judgment, just observation)
-- **Mindful moments**: 
-  - Daily gratitude for food journal
-  - Simple breathing exercises (3-5 minutes)
-  - Mindful eating reminders and tips
-- **Progress celebration**: Streak tracking for mindful practices with Lottie rewards
-- **Health guidance**: Gentle suggestions based on patterns (not medical advice)
+### 9) 🌟 Wellness Tracking & Insights (Week 3-4) ⭐ **CORE MVP FEATURE**
+**This is NOT optional - it's what makes MindfulMeals unique**
+- **Daily wellness check-ins**: Mood before/after meals, energy levels, digestion comfort
+- **Visual wellness tracking**: Charts showing mood/energy patterns, gratitude streaks, meditation completion
+- **Contextual insights**: "You feel best after Mediterranean meals", "Gratitude practice improved satisfaction"
+- **Mindful moments integration**: 
+  - Breathing exercises during natural pause points (loading, transitions, decision fatigue)
+  - Meditation prompts based on stress detection and energy patterns
+  - Gratitude journaling tied to actual meals and eating experiences
+- **Progress celebration**: Streak tracking with Lottie rewards, achievement animations
+- **Adaptive UI**: Colors and animations that respond to emotional state
+- **Habit formation**: Gentle nudges, optimal timing, no guilt for skipping
+
+**🎯 Success Metric**: 70% of users complete daily wellness check-ins by week 2
 
 ### 10) 🎨 Delightful Experience Polish (Week 4)
 **Animations and microinteractions - essential for customer attraction**
-- **Mindful theme**: Calming gradients, warm colors, soft shadows
-- **Key animations**: 
-  - Onboarding flow with mindful education
-  - Success moments (completed meals, gratitude entries, breathing exercises)
-  - Gentle transitions between screens
-  - Loading states with breathing rhythm
-- **Microinteractions**: Button press feedback, swipe gestures, tab transitions
-- **Haptic patterns**: Different vibrations for different accomplishments
-- **Accessibility**: VoiceOver support, sufficient contrast, 44px targets
+**📋 Reference**: See `UI-UX-ENHANCEMENT-PLAN.md` for comprehensive animation and UX specifications
+
+- **Mindful theme**: Calming gradients, warm colors, soft shadows (from design system tokens)
+- **Key animations** (implement per UI-UX plan):
+  - Onboarding flow with mindful education and breathing guides
+  - Success moments with celebration animations and haptic feedback
+  - Gentle transitions with breathing rhythm (inhale exit, exhale enter)
+  - Loading states as mindfulness opportunities
+- **Microinteractions**: Button breathing, scroll resistance, card selection patterns
+- **Haptic patterns**: Different vibrations synchronized with breathing and accomplishments
+- **Accessibility**: VoiceOver support, reduced motion respect, high contrast mode
 
 ### 10) 🧪 Essential Testing (Week 4)
 **Focus on critical paths only**
@@ -176,10 +185,23 @@ npm i react-native-chart-kit react-native-calendars
 - Voice input/commands
 - Barcode/QR scanning  
 - Community features
-- Wellness tracking
 - Calorie scanning
-- Complex animations
 - Advanced AI features
 - Offline synchronization
 
 **Rationale**: Focus on core value proposition first. Add delighters after validating core usage.
+
+## ✅ **WELLNESS TRACKING IS CORE MVP**
+**Mindfulness features are NOT nice-to-have - they ARE the core differentiator**
+- Wellness tracking (mood, energy, gratitude) = **ESSENTIAL**
+- Contextual mindfulness (breathing, meditation) = **ESSENTIAL**  
+- Beautiful animations and microinteractions = **ESSENTIAL**
+- These features create the premium experience that justifies the app's existence
+
+## 📋 **PLAN HIERARCHY & REFERENCES**
+- **`UI-UX-ENHANCEMENT-PLAN.md`**: **DEFINITIVE** source for animations, UX flows, and user experience design
+- **`TODO-3-CONTEXTUAL-MINDFULNESS.md`**: **DEFINITIVE** source for mindfulness feature specifications
+- **`TODO-2.md`** (this file): Implementation details and technical approach
+- **`TODO.md`**: High-level strategic roadmap and phases
+
+**🎯 Implementation Rule**: Always check UI-UX plan first for design decisions, TODO-3 for mindfulness features
