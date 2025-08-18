@@ -18,6 +18,7 @@ import { useTranslation } from '../../hooks/useTranslation';
 import Svg, { Circle } from 'react-native-svg';
 // Removed react-native-background-timer; using foreground setInterval. For background cadence use expo-background-fetch tasks.
 import { showToast } from '../../utils/toast';
+import TimerService from '../../services/TimerService';
 // Optional: use expo-av for sound playback if needed
 // import { Audio } from 'expo-av';
 
@@ -69,7 +70,6 @@ const CookingBreathingTimer: React.FC<CookingBreathingTimerProps> = ({
 
     return () => {
       subscription.remove();
-      BackgroundTimer.stop();
     };
   }, [isActive, isPaused]);
 
@@ -166,10 +166,19 @@ const CookingBreathingTimer: React.FC<CookingBreathingTimerProps> = ({
     }
   };
 
-  const handleStart = () => {
+  const handleStart = async () => {
     setIsActive(true);
     setIsPaused(false);
     Vibration.vibrate(100);
+    const durationMs = cookingTime * 60 * 1000;
+    const timer = await TimerService.startTimer({ id: `cook_${recipeName}`, type: 'cooking', durationMs, metadata: { recipeName } });
+    const fireAt = timer.startedAt + durationMs;
+    await TimerService.cancelScheduledNotifications(timer.id);
+    await TimerService.scheduleCompletionNotification(timer.id, fireAt, {
+      title: '⏲️ Cooking timer finished',
+      body: `${recipeName} is ready!`,
+      data: { recipeName },
+    });
   };
 
   const handlePause = () => {
@@ -177,7 +186,7 @@ const CookingBreathingTimer: React.FC<CookingBreathingTimerProps> = ({
     Vibration.vibrate(100);
   };
 
-  const handleComplete = useCallback(() => {
+  const handleComplete = useCallback(async () => {
     setIsActive(false);
     // Optional: play via expo-av
     Vibration.vibrate([0, 200, 100, 200]);
@@ -188,6 +197,7 @@ const CookingBreathingTimer: React.FC<CookingBreathingTimerProps> = ({
     });
 
     onComplete?.();
+    await TimerService.stopTimer(`cook_${recipeName}`);
   }, [recipeName, onComplete]);
 
   const formatTime = (seconds: number) => {

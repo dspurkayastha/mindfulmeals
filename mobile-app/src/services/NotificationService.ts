@@ -15,6 +15,24 @@ class NotificationService {
     return NotificationService.instance;
   }
 
+  async scheduleLocal(content: { title: string; body: string; data?: any }, date: Date) {
+    return Notifications.scheduleNotificationAsync({
+      content: {
+        title: content.title,
+        body: content.body,
+        data: content.data,
+        sound: 'default',
+      },
+      trigger: date,
+    });
+  }
+
+  async cancel(id: string) {
+    try {
+      await Notifications.cancelScheduledNotificationAsync(id);
+    } catch {}
+  }
+
   async configure() {
     if (this.initialized) return;
     // iOS foreground presentation options
