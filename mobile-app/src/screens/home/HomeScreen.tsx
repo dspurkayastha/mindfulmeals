@@ -8,7 +8,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { Card, Title, Paragraph, Button, useTheme } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { MaterialIcons as Icon } from '@expo/vector-icons';
 import SunsetHeader from '../../components/common/SunsetHeader';
 import MindfulButton from '../../components/common/MindfulButton';
 import AnimatedSurface from '../../components/common/AnimatedSurface';

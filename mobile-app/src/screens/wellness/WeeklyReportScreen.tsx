@@ -19,7 +19,8 @@ import {
 } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from '../../hooks/useTranslation';
-import { LinearGradient } from 'react-native-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
+// TODO: consider replacing react-native-chart-kit with a maintained alternative or webview-based charting if needed
 import { BarChart, LineChart } from 'react-native-chart-kit';
 import { format, startOfWeek, endOfWeek } from 'date-fns';
 import InsightsEngine from '../../services/InsightsEngine';

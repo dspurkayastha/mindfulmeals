@@ -17,11 +17,11 @@ import {
   ProgressBar,
   Card,
 } from 'react-native-paper';
-import { LinearGradient } from 'react-native-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from '../../hooks/useTranslation';
-import BackgroundTimer from 'react-native-background-timer';
-import HapticFeedback from 'react-native-haptic-feedback';
-import Sound from 'react-native-sound';
+import * as Haptics from 'expo-haptics';
+// Optional: use expo-av for sound playback if needed
+// import { Audio } from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get('window');
@@ -83,15 +83,10 @@ const MindfulEatingTimer: React.FC<MindfulEatingTimerProps> = ({
   
   const appState = useRef(AppState.currentState);
   const intervalRef = useRef<number | null>(null);
-  const gentleChime = useRef<Sound | null>(null);
+  const gentleChime = useRef<any>(null);
 
   useEffect(() => {
-    // Load sound
-    gentleChime.current = new Sound('gentle_chime.mp3', Sound.MAIN_BUNDLE, (error) => {
-      if (error) {
-        console.log('Failed to load sound', error);
-      }
-    });
+    // Optional: load sound via expo-av
 
     // App state listener
     const subscription = AppState.addEventListener('change', handleAppStateChange);
@@ -101,7 +96,7 @@ const MindfulEatingTimer: React.FC<MindfulEatingTimerProps> = ({
       if (intervalRef.current) {
         BackgroundTimer.clearInterval(intervalRef.current);
       }
-      gentleChime.current?.release();
+      // Optional: unload via expo-av
     };
   }, []);
 
@@ -111,14 +106,14 @@ const MindfulEatingTimer: React.FC<MindfulEatingTimerProps> = ({
 
   useEffect(() => {
     if (isActive && !isPaused) {
-      // Start timer
-      intervalRef.current = BackgroundTimer.setInterval(() => {
+      // Start timer (foreground only). Background cadence handled via BackgroundFetch elsewhere if needed.
+      intervalRef.current = setInterval(() => {
         setElapsedTime(prev => {
           const newTime = prev + 1;
           checkPhaseTransition(newTime);
           return newTime;
         });
-      }, 1000);
+      }, 1000) as unknown as number;
 
       // Start pulse animation
       Animated.loop(
@@ -137,13 +132,13 @@ const MindfulEatingTimer: React.FC<MindfulEatingTimerProps> = ({
       ).start();
     } else {
       if (intervalRef.current) {
-        BackgroundTimer.clearInterval(intervalRef.current);
+        clearInterval(intervalRef.current);
       }
     }
 
     return () => {
       if (intervalRef.current) {
-        BackgroundTimer.clearInterval(intervalRef.current);
+        clearInterval(intervalRef.current);
       }
     };
   }, [isActive, isPaused]);
@@ -193,10 +188,10 @@ const MindfulEatingTimer: React.FC<MindfulEatingTimerProps> = ({
     setCurrentPhase(phase);
     
     // Play gentle chime
-    gentleChime.current?.play();
+    // Optional: play via expo-av
     
     // Haptic feedback
-    HapticFeedback.trigger('notificationSuccess');
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
     // Special handling for check-ins
     if (phase.includes('CHECK_IN')) {
@@ -218,7 +213,7 @@ const MindfulEatingTimer: React.FC<MindfulEatingTimerProps> = ({
 
   const handleBite = () => {
     setBiteCount(prev => prev + 1);
-    HapticFeedback.trigger('impactLight');
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     
     // Pulse animation
     Animated.sequence([

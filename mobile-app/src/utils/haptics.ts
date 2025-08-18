@@ -2,19 +2,32 @@
 // Provides easy-to-use haptic feedback functions
 
 import { Platform } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import hapticTokens from '../design-system/tokens/haptics';
 
-// Mock implementation until react-native-haptic-feedback is installed
-// Replace this with actual import after installation:
-// import HapticFeedback from 'react-native-haptic-feedback';
-
-// Temporary mock
-const HapticFeedback = {
-  trigger: (type: string, options?: any) => {
-    if (__DEV__) {
-      console.log(`[Haptic] ${type}`, options);
+// Bridges token names to expo-haptics API
+const trigger = (type: string) => {
+  try {
+    switch (type) {
+      case 'impactLight':
+      case 'impactSoft':
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); break;
+      case 'impactMedium':
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); break;
+      case 'impactHeavy':
+      case 'impactRigid':
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); break;
+      case 'notificationSuccess':
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); break;
+      case 'notificationWarning':
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning); break;
+      case 'notificationError':
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error); break;
+      case 'selection':
+      default:
+        Haptics.selectionAsync(); break;
     }
-  },
+  } catch {}
 };
 
 const defaultOptions = {
@@ -38,13 +51,7 @@ class HapticUtility {
   private trigger(type: string, options = {}) {
     if (!this.enabled) return;
     
-    try {
-      HapticFeedback.trigger(type, { ...defaultOptions, ...options });
-    } catch (error) {
-      if (__DEV__) {
-        console.warn('[Haptic] Error:', error);
-      }
-    }
+    trigger(type);
   }
   
   // Impact feedback

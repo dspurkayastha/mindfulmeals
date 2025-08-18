@@ -15,11 +15,11 @@ import {
   useTheme,
   Chip,
 } from 'react-native-paper';
-import { LinearGradient } from 'react-native-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from '../../hooks/useTranslation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import HapticFeedback from 'react-native-haptic-feedback';
-import { BlurView } from '@react-native-community/blur';
+import { haptic } from '../../utils/haptics';
+import { BlurView } from 'expo-blur';
 
 const { width } = Dimensions.get('window');
 
@@ -117,7 +117,7 @@ const PreMealIntention: React.FC<PreMealIntentionProps> = ({
       console.error('Error saving intention:', error);
     }
 
-    HapticFeedback.trigger('notificationSuccess');
+    haptic.success();
     onIntentionSet?.(intention);
     handleClose();
   };
@@ -152,7 +152,7 @@ const PreMealIntention: React.FC<PreMealIntentionProps> = ({
         key={option.id}
         onPress={() => {
           setSelectedFeeling(option.id);
-          HapticFeedback.trigger('impactLight');
+          haptic.impact('light');
         }}
         style={[
           styles.feelingOption,
@@ -202,8 +202,8 @@ const PreMealIntention: React.FC<PreMealIntentionProps> = ({
         >
           <BlurView
             style={StyleSheet.absoluteFillObject}
-            blurType="dark"
-            blurAmount={10}
+            tint="dark"
+            intensity={80}
           />
         </TouchableOpacity>
 
@@ -518,5 +518,3 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
-
-export default PreMealIntention;

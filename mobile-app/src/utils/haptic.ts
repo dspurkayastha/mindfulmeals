@@ -1,13 +1,5 @@
 import { Platform } from 'react-native';
-
-// Using a dynamic import to handle the optional dependency
-let HapticFeedback: any = null;
-
-try {
-  HapticFeedback = require('react-native-haptic-feedback').default;
-} catch (error) {
-  console.log('Haptic feedback not available');
-}
+import * as Haptics from 'expo-haptics';
 
 export type HapticType = 
   | 'impactLight'
@@ -25,12 +17,30 @@ const hapticOptions = {
 
 export const haptic = {
   trigger: (type: HapticType = 'selection') => {
-    if (!HapticFeedback || Platform.OS === 'web') return;
-    
-    try {
-      HapticFeedback.trigger(type, hapticOptions);
-    } catch (error) {
-      console.log('Haptic feedback error:', error);
+    if (Platform.OS === 'web') return;
+    switch (type) {
+      case 'impactLight':
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        break;
+      case 'impactMedium':
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        break;
+      case 'impactHeavy':
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+        break;
+      case 'notificationSuccess':
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        break;
+      case 'notificationWarning':
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        break;
+      case 'notificationError':
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        break;
+      case 'selection':
+      default:
+        Haptics.selectionAsync();
+        break;
     }
   },
   

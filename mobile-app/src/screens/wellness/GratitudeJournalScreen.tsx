@@ -25,7 +25,7 @@ import { useTranslation } from '../../hooks/useTranslation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { format, startOfWeek, endOfWeek, isThisWeek, parseISO } from 'date-fns';
 import { MindfulLoader } from '../../components/mindfulness';
-import { LinearGradient } from 'react-native-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 import LottieView from 'lottie-react-native';
 
 const { width } = Dimensions.get('window');

@@ -16,9 +16,10 @@ import {
 } from 'react-native-paper';
 import { useTranslation } from '../../hooks/useTranslation';
 import Svg, { Circle } from 'react-native-svg';
-import BackgroundTimer from 'react-native-background-timer';
+// Removed react-native-background-timer; using foreground setInterval. For background cadence use expo-background-fetch tasks.
 import { showToast } from '../../utils/toast';
-import Sound from 'react-native-sound';
+// Optional: use expo-av for sound playback if needed
+// import { Audio } from 'expo-av';
 
 const { width } = Dimensions.get('window');
 const CIRCLE_SIZE = width * 0.7;
@@ -52,31 +53,19 @@ const CookingBreathingTimer: React.FC<CookingBreathingTimerProps> = ({
   const progressAnim = useRef(new Animated.Value(0)).current;
   const breathingOpacity = useRef(new Animated.Value(0.6)).current;
   
-  const completionSound = useRef<Sound | null>(null);
+  const completionSound = useRef<any>(null);
 
   useEffect(() => {
-    // Load completion sound
-    completionSound.current = new Sound('gentle_chime.mp3', Sound.MAIN_BUNDLE, (error) => {
-      if (error) {
-        console.log('Failed to load sound', error);
-      }
-    });
+    // Optional: load sound via expo-av
 
     return () => {
-      completionSound.current?.release();
+      // Optional: unload via expo-av
     };
   }, []);
 
   useEffect(() => {
     // Handle app state changes for background timer
-    const subscription = AppState.addEventListener('change', (nextAppState) => {
-      if (nextAppState === 'background' && isActive && !isPaused) {
-        // Continue timer in background
-        BackgroundTimer.start();
-      } else if (nextAppState === 'active') {
-        BackgroundTimer.stop();
-      }
-    });
+    const subscription = AppState.addEventListener('change', () => {});
 
     return () => {
       subscription.remove();
@@ -86,9 +75,8 @@ const CookingBreathingTimer: React.FC<CookingBreathingTimerProps> = ({
 
   useEffect(() => {
     let interval: any;
-
     if (isActive && !isPaused && timeRemaining > 0) {
-      interval = BackgroundTimer.setInterval(() => {
+      interval = setInterval(() => {
         setTimeRemaining((prev) => {
           if (prev <= 1) {
             handleComplete();
@@ -101,7 +89,7 @@ const CookingBreathingTimer: React.FC<CookingBreathingTimerProps> = ({
 
     return () => {
       if (interval) {
-        BackgroundTimer.clearInterval(interval);
+        clearInterval(interval);
       }
     };
   }, [isActive, isPaused, timeRemaining]);
@@ -191,7 +179,7 @@ const CookingBreathingTimer: React.FC<CookingBreathingTimerProps> = ({
 
   const handleComplete = useCallback(() => {
     setIsActive(false);
-    completionSound.current?.play();
+    // Optional: play via expo-av
     Vibration.vibrate([0, 200, 100, 200]);
     
     showToast({

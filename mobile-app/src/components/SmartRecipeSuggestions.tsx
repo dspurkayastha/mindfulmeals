@@ -17,7 +17,7 @@ import {
   Button,
   ProgressBar,
 } from 'react-native-paper';
-import { LinearGradient } from 'react-native-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from '../hooks/useTranslation';
 import SmartRecipeService from '../services/SmartRecipeService';
 import { MindfulLoader } from './mindfulness';

@@ -1,4 +1,4 @@
-import PushNotification from 'react-native-push-notification';
+import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -15,90 +15,46 @@ class NotificationService {
     return NotificationService.instance;
   }
 
-  configure() {
+  async configure() {
     if (this.initialized) return;
-
-    PushNotification.configure({
-      onRegister: function (token) {
-        console.log('TOKEN:', token);
-      },
-
-      onNotification: function (notification) {
-        console.log('NOTIFICATION:', notification);
-        
-        // Handle notification tap
-        if (notification.userInteraction) {
-          // Navigate to appropriate screen based on notification data
-          const { type, data } = notification.data || {};
-          
-          switch (type) {
-            case 'post_meal_reflection':
-              // Navigate to reflection screen
-              // NavigationService.navigate('PostMealReflection', data);
-              break;
-            case 'breathing_reminder':
-              // Navigate to breathing exercise
-              // NavigationService.navigate('BreathingExercise', data);
-              break;
-          }
-        }
-
-        // Required on iOS only
-        notification.finish('backgroundFetchResultNewData');
-      },
-
-      permissions: {
-        alert: true,
-        badge: true,
-        sound: true,
-      },
-
-      popInitialNotification: true,
-      requestPermissions: Platform.OS === 'ios',
+    // iOS foreground presentation options
+    await Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+      }),
     });
 
-    // Create notification channels for Android
+    // Android channels
     if (Platform.OS === 'android') {
-      PushNotification.createChannel(
-        {
-          channelId: 'mindful-meals-default',
-          channelName: 'MindfulMeals Notifications',
-          channelDescription: 'Mindful reminders and reflections',
-          soundName: 'default',
-          importance: 4,
-          vibrate: true,
-        },
-        (created) => console.log(`createChannel returned '${created}'`)
-      );
+      await Notifications.setNotificationChannelAsync('mindful-meals-default', {
+        name: 'MindfulMeals Notifications',
+        importance: Notifications.AndroidImportance.DEFAULT,
+        sound: 'default',
+        vibrationPattern: [0, 250, 250, 250],
+        lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+      });
 
-      PushNotification.createChannel(
-        {
-          channelId: 'mindful-meals-gentle',
-          channelName: 'Gentle Reminders',
-          channelDescription: 'Soft mindfulness prompts',
-          soundName: 'gentle_chime.mp3',
-          importance: 2,
-          vibrate: false,
-        },
-        (created) => console.log(`createChannel returned '${created}'`)
-      );
+      await Notifications.setNotificationChannelAsync('mindful-meals-gentle', {
+        name: 'Gentle Reminders',
+        importance: Notifications.AndroidImportance.LOW,
+        sound: 'gentle_chime.mp3',
+        vibrationPattern: [0, 100],
+        lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+      });
     }
 
     this.initialized = true;
   }
 
   async requestPermissions(): Promise<boolean> {
-    return new Promise((resolve) => {
-      PushNotification.checkPermissions((permissions) => {
-        if (!permissions.alert) {
-          PushNotification.requestPermissions().then((granted) => {
-            resolve(granted.alert === 1);
-          });
-        } else {
-          resolve(true);
-        }
-      });
-    });
+    const settings = await Notifications.getPermissionsAsync();
+    if (!settings.granted) {
+      const ask = await Notifications.requestPermissionsAsync();
+      return !!ask.granted;
+    }
+    return true;
   }
 
   schedulePostMealReflection(mealData: {
@@ -109,20 +65,14 @@ class NotificationService {
     const notificationTime = new Date(mealData.mealTime);
     notificationTime.setMinutes(notificationTime.getMinutes() + 30);
 
-    PushNotification.localNotificationSchedule({
-      id: `meal-reflection-${mealData.mealId}`,
-      channelId: 'mindful-meals-gentle',
-      title: '🍽️ How was your meal?',
-      message: `Take a moment to reflect on ${mealData.mealName}`,
-      date: notificationTime,
-      allowWhileIdle: true,
-      data: {
-        type: 'post_meal_reflection',
-        data: mealData,
+    Notifications.scheduleNotificationAsync({
+      content: {
+        title: '🍽️ How was your meal?',
+        body: `Take a moment to reflect on ${mealData.mealName}`,
+        data: { type: 'post_meal_reflection', data: mealData },
+        sound: 'default',
       },
-      userInfo: {
-        mealId: mealData.mealId,
-      },
+      trigger: notificationTime,
     });
 
     // Store scheduled notification info
@@ -145,45 +95,39 @@ class NotificationService {
       const notificationTime = new Date();
       notificationTime.setMinutes(notificationTime.getMinutes() + delayMinutes);
 
-      PushNotification.localNotificationSchedule({
-        id: `breathing-${options}-${Date.now()}`,
-        channelId: 'mindful-meals-gentle',
-        title: '🧘 Time for a mindful breath',
-        message: "You've been busy. Let's take a moment to breathe together.",
-        date: notificationTime,
-        allowWhileIdle: true,
-        data: {
-          type: 'breathing_reminder',
-          data: { context: options },
+      Notifications.scheduleNotificationAsync({
+        content: {
+          title: '🧘 Time for a mindful breath',
+          body: "You've been busy. Let's take a moment to breathe together.",
+          data: { type: 'breathing_reminder', data: { context: options } },
+          sound: 'default',
         },
+        trigger: notificationTime,
       });
     } else {
       // New interface
       const notificationTime = new Date();
       notificationTime.setSeconds(notificationTime.getSeconds() + options.trigger.seconds);
 
-      PushNotification.localNotificationSchedule({
-        id: `breathing-${options.data?.interventionType || 'stress'}-${Date.now()}`,
-        channelId: 'mindful-meals-gentle',
-        title: options.title,
-        message: options.body,
-        date: notificationTime,
-        allowWhileIdle: true,
-        data: {
-          type: 'breathing_reminder',
-          ...options.data,
+      Notifications.scheduleNotificationAsync({
+        content: {
+          title: options.title,
+          body: options.body,
+          data: { type: 'breathing_reminder', ...options.data },
+          sound: 'default',
         },
+        trigger: notificationTime,
       });
     }
   }
 
   cancelNotification(notificationId: string) {
-    PushNotification.cancelLocalNotification(notificationId);
+    Notifications.cancelScheduledNotificationAsync(notificationId as unknown as string);
     this.removeScheduledNotification(notificationId);
   }
 
   cancelAllNotifications() {
-    PushNotification.cancelAllLocalNotifications();
+    Notifications.cancelAllScheduledNotificationsAsync();
     AsyncStorage.removeItem('@scheduled_notifications');
   }
 

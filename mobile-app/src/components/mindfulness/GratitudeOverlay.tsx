@@ -15,11 +15,11 @@ import {
   Button,
   useTheme,
 } from 'react-native-paper';
-import { BlurView } from '@react-native-community/blur';
+import { BlurView } from 'expo-blur';
 import { useTranslation } from '../../hooks/useTranslation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showToast } from '../../utils/toast';
-import HapticFeedback from 'react-native-haptic-feedback';
+import { haptic } from '../../utils/haptics';
 import LottieView from 'lottie-react-native';
 import MilestoneService from '../../services/MilestoneService';
 
@@ -62,7 +62,7 @@ const GratitudeOverlay: React.FC<GratitudeOverlayProps> = ({
   useEffect(() => {
     if (visible) {
       // Haptic feedback on open
-      HapticFeedback.trigger('impactMedium');
+      haptic.impact('medium');
       
       // Animate in
       Animated.parallel([
@@ -99,7 +99,7 @@ const GratitudeOverlay: React.FC<GratitudeOverlayProps> = ({
     }
 
     setSaving(true);
-    HapticFeedback.trigger('notificationSuccess');
+    haptic.success();
 
     try {
       // Save gratitude entry

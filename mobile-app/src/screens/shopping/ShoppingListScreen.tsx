@@ -24,7 +24,7 @@ import {
 } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { LinearGradient } from 'react-native-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from '../../hooks/useTranslation';
 import { MindfulLoader, FloatingBreatherButton } from '../../components/mindfulness';
 import { showToast } from '../../utils/toast';

@@ -15,7 +15,7 @@ import {
   useTheme,
 } from 'react-native-paper';
 import { useTranslation } from '../hooks/useTranslation';
-import HapticFeedback from 'react-native-haptic-feedback';
+import * as Haptics from 'expo-haptics';
 import GratitudeOverlay from './mindfulness/GratitudeOverlay';
 
 const { width } = Dimensions.get('window');
@@ -41,7 +41,7 @@ const MealCard: React.FC<MealCardProps> = ({ meal, onPress, onSchedule }) => {
   const [showGratitude, setShowGratitude] = useState(false);
 
   const handleLongPress = () => {
-    HapticFeedback.trigger('impactMedium');
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setShowGratitude(true);
   };
 

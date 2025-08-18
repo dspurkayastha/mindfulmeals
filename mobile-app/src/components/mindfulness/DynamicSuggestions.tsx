@@ -12,12 +12,12 @@ import {
   useTheme,
   Chip,
 } from 'react-native-paper';
-import { LinearGradient } from 'react-native-linear-gradient';
-import { BlurView } from '@react-native-community/blur';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 import { useTranslation } from '../../hooks/useTranslation';
 import StressDetectionService from '../../services/StressDetectionService';
 import { useAdaptiveTheme, useMoodStyles } from '../../theme/AdaptiveThemeProvider';
-import HapticFeedback from 'react-native-haptic-feedback';
+import * as Haptics from 'expo-haptics';
 
 interface Suggestion {
   id: string;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 import { colors, gradients, borderRadius, spacing, typography } from '../../utils/theme';
 
 interface SunsetHeaderProps {

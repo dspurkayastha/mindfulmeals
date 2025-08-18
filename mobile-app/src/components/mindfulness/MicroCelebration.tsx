@@ -14,10 +14,9 @@ import {
   useTheme,
 } from 'react-native-paper';
 import LottieView from 'lottie-react-native';
-import { LinearGradient } from 'react-native-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from '../../hooks/useTranslation';
-import HapticFeedback from 'react-native-haptic-feedback';
-import Sound from 'react-native-sound';
+import { haptic } from '../../utils/haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
@@ -168,7 +167,8 @@ const MicroCelebration: React.FC<MicroCelebrationProps> = ({
   ).current;
 
   const config = MILESTONE_CONFIG[milestone];
-  const celebrationSound = useRef<Sound | null>(null);
+  // Sound playback removed in Expo plan; consider expo-av if needed
+  const celebrationSound = useRef<any>(null);
 
   useEffect(() => {
     if (visible && !hasShown) {
@@ -186,18 +186,9 @@ const MicroCelebration: React.FC<MicroCelebrationProps> = ({
     }
 
     // Haptic feedback
-    HapticFeedback.trigger('notificationSuccess');
+    haptic.success();
 
-    // Play sound
-    celebrationSound.current = new Sound(
-      config.sound,
-      Sound.MAIN_BUNDLE,
-      (error) => {
-        if (!error) {
-          celebrationSound.current?.play();
-        }
-      }
-    );
+    // Optional: play sound via expo-av here
 
     // Animate in
     Animated.parallel([

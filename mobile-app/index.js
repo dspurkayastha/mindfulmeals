@@ -1,6 +1,6 @@
+import 'expo-dev-client';
 import 'react-native-gesture-handler';
-import { AppRegistry } from 'react-native';
+import { registerRootComponent } from 'expo';
 import App from './App';
-import appJson from './app.json';
 
-AppRegistry.registerComponent(appJson.name, () => App);
+registerRootComponent(App);

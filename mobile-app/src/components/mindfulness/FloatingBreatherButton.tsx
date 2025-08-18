@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { Text, IconButton, useTheme } from 'react-native-paper';
 import { useTranslation } from '../../hooks/useTranslation';
-import { LinearGradient } from 'react-native-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const { width } = Dimensions.get('window');
 
