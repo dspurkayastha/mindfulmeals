@@ -13,7 +13,7 @@
     "test": "npm run test --workspaces",
     "lint": "npm run lint --workspaces",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "prepare": "husky install",
+    "prepare": "if command -v husky >/dev/null 2>&1; then husky install || true; else echo 'Skipping husky install (husky not found)'; fi",
     "start:mobile": "cd mobile-app && npm start",
     "start:backend": "cd backend && npm run dev",
     "install:mobile": "npm install --workspace mobile-app",
