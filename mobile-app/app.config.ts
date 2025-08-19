@@ -5,6 +5,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 	name: 'MindfulMeals',
 	slug: 'mindfulmeals',
 	scheme: 'mindfulmeals',
+	icon: './assets/icon.png',
 	ios: {
 		bundleIdentifier: 'com.mindfulmeals.app',
 	},

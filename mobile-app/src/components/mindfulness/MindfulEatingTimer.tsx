@@ -23,6 +23,7 @@ import * as Haptics from 'expo-haptics';
 // Optional: use expo-av for sound playback if needed
 // import { Audio } from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import TimerService from '../../services/TimerService';
 
 const { width } = Dimensions.get('window');
 
@@ -102,6 +103,27 @@ const MindfulEatingTimer: React.FC<MindfulEatingTimerProps> = ({
 
   const handleAppStateChange = (nextAppState: AppStateStatus) => {
     appState.current = nextAppState;
+    if (nextAppState === 'active' && isActive) {
+      // Recompute elapsed from persisted timer if available
+      (async () => {
+        const timer = await TimerService.getTimer(`eat_${mealId}`);
+        if (timer) {
+          const remainingMs = TimerService.computeRemainingMs(timer);
+          const totalMs = timer.durationMs;
+          const newElapsed = Math.floor((totalMs - remainingMs) / 1000);
+          setElapsedTime(newElapsed);
+          // Advance phase if we crossed boundaries
+          let acc = 0;
+          for (const [phaseKey, cfg] of Object.entries(EATING_PHASES)) {
+            acc += cfg.duration;
+            if (newElapsed < acc) {
+              setCurrentPhase(phaseKey);
+              break;
+            }
+          }
+        }
+      })();
+    }
   };
 
   useEffect(() => {
@@ -200,11 +222,37 @@ const MindfulEatingTimer: React.FC<MindfulEatingTimerProps> = ({
     }
   };
 
-  const handleStart = () => {
+  const handleStart = async () => {
     setIsActive(true);
     setIsPaused(false);
     setElapsedTime(0);
     setCurrentPhase('PREPARATION');
+    // Persist session timer and schedule check-ins + completion
+    const totalDurationSec = Object.values(EATING_PHASES).reduce((sum, cfg) => sum + cfg.duration, 0);
+    const timer = await TimerService.startTimer({ id: `eat_${mealId}` as string, type: 'mindful_eating', durationMs: totalDurationSec * 1000, metadata: { mealId, mealName } });
+    await TimerService.cancelScheduledNotifications(timer.id);
+    const startMs = timer.startedAt;
+    // Boundaries: end of PREPARATION, end of FIRST_THIRD, end of SECOND_THIRD, completion at end
+    const boundaryOffsets: Array<{ offsetSec: number; title: string; body: string; data?: any }> = [];
+    let acc = 0;
+    for (const [key, cfg] of Object.entries(EATING_PHASES)) {
+      acc += cfg.duration;
+      if (key === 'PREPARATION') {
+        boundaryOffsets.push({ offsetSec: acc, title: 'Mindful meal starting', body: 'Take a moment to begin with intention.' });
+      }
+      if (key === 'FIRST_THIRD') {
+        boundaryOffsets.push({ offsetSec: acc, title: 'Check-in', body: 'How full are you right now?', data: { type: 'mindful_check_in', mealId } });
+      }
+      if (key === 'SECOND_THIRD') {
+        boundaryOffsets.push({ offsetSec: acc, title: 'Check-in', body: 'Pause to notice your fullness again.', data: { type: 'mindful_check_in', mealId } });
+      }
+    }
+    // Completion at totalDurationSec
+    boundaryOffsets.push({ offsetSec: totalDurationSec, title: 'Mindful meal complete', body: 'Take a moment to reflect on your meal.' , data: { type: 'mindful_complete', mealId } });
+    for (const b of boundaryOffsets) {
+      const fireAt = startMs + b.offsetSec * 1000;
+      await TimerService.scheduleCompletionNotification(timer.id, fireAt, { title: b.title, body: b.body, data: b.data ?? {} });
+    }
   };
 
   const handlePause = () => {
@@ -298,6 +346,7 @@ const MindfulEatingTimer: React.FC<MindfulEatingTimerProps> = ({
     }
 
     setIsActive(false);
+    await TimerService.stopTimer(`eat_${mealId}`);
     onComplete?.(sessionData);
   };
 
