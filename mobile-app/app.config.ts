@@ -7,12 +7,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 	scheme: 'mindfulmeals',
 	extra: {
 		eas: {
-			projectId: 'mindfulmeals-mobile',
-		},
-	},
-	extra: {
-		eas: {
-			projectId: 'mindfulmeals-mobile',
+			projectId: '20500198-5703-48f8-9bdd-379925c60cbf',
 		},
 	},
 	ios: {
