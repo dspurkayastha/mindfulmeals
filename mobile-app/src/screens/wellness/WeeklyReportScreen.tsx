@@ -20,8 +20,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from '../../hooks/useTranslation';
 import { LinearGradient } from 'expo-linear-gradient';
-// TODO: consider replacing react-native-chart-kit with a maintained alternative or webview-based charting if needed
-import { BarChart, LineChart } from 'react-native-chart-kit';
+import { VictoryBar, VictoryChart, VictoryTheme, VictoryAxis, VictoryLine } from 'victory-native';
 import { format, startOfWeek, endOfWeek } from 'date-fns';
 import InsightsEngine from '../../services/InsightsEngine';
 import { MindfulLoader } from '../../components/mindfulness';
@@ -164,24 +163,20 @@ const WeeklyReportScreen = () => {
       <Card style={styles.card}>
         <Card.Content>
           <Text style={styles.cardTitle}>{t('report.moodDistribution')}</Text>
-          <View style={styles.moodContainer}>
-            {moods.map(([mood, count]) => (
-              <View key={mood} style={styles.moodItem}>
-                <Text style={styles.moodIcon}>{getMoodIcon(mood)}</Text>
-                <Text style={styles.moodName}>{t(`reflection.moods.${mood}`)}</Text>
-                <View
-                  style={[
-                    styles.moodBar,
-                    {
-                      backgroundColor: getMoodColor(mood),
-                      width: `${(count / summary.reflectionCount) * 100}%`,
-                    },
-                  ]}
-                />
-                <Text style={styles.moodCount}>{count}</Text>
-              </View>
-            ))}
-          </View>
+          <VictoryChart
+            theme={VictoryTheme.material}
+            domainPadding={{ x: 20, y: 10 }}
+          >
+            <VictoryAxis tickFormat={(x) => ''} />
+            <VictoryAxis dependentAxis tickFormat={(y) => `${y}`} />
+            <VictoryBar
+              data={moods.map(([mood, count]) => ({ mood, count }))}
+              x="mood"
+              y="count"
+              style={{ data: { fill: ({ datum }) => getMoodColor(datum.mood) } }}
+              labels={({ datum }) => t(`reflection.moods.${datum.mood}`)}
+            />
+          </VictoryChart>
         </Card.Content>
       </Card>
     );
