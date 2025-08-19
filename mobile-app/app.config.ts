@@ -5,6 +5,16 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 	name: 'MindfulMeals',
 	slug: 'mindfulmeals',
 	scheme: 'mindfulmeals',
+	extra: {
+		eas: {
+			projectId: 'mindfulmeals-mobile',
+		},
+	},
+	extra: {
+		eas: {
+			projectId: 'mindfulmeals-mobile',
+		},
+	},
 	ios: {
 		bundleIdentifier: 'com.mindfulmeals.app',
 	},
@@ -17,4 +27,3 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		'./plugins/with-voice-permissions',
 	],
 });
-
