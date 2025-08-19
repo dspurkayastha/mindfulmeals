@@ -17,7 +17,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		package: 'com.mindfulmeals.app',
 	},
 	plugins: [
-		'expo-build-properties',
+		[
+			'expo-build-properties',
+			{
+				ios: { newArchEnabled: false, deploymentTarget: '13.0' },
+				android: { newArchEnabled: false },
+			},
+		],
 		['expo-notifications'],
 		'./plugins/with-voice-permissions',
 	],
