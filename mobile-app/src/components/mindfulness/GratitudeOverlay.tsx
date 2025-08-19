@@ -187,8 +187,8 @@ const GratitudeOverlay: React.FC<GratitudeOverlayProps> = ({
         >
           <BlurView
             style={StyleSheet.absoluteFillObject}
-            blurType="dark"
-            blurAmount={10}
+            tint="dark"
+            intensity={80}
           />
         </TouchableOpacity>
 

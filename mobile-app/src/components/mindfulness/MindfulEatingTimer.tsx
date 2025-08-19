@@ -94,7 +94,7 @@ const MindfulEatingTimer: React.FC<MindfulEatingTimerProps> = ({
     return () => {
       subscription.remove();
       if (intervalRef.current) {
-        BackgroundTimer.clearInterval(intervalRef.current);
+        clearInterval(intervalRef.current);
       }
       // Optional: unload via expo-av
     };
