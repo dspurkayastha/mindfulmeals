@@ -293,8 +293,9 @@ const GratitudeOverlay: React.FC<GratitudeOverlayProps> = ({
                 },
               ]}
             >
+              {/* was: require('../../assets/animations/gratitude-heart.json') */}
               <LottieView
-                source={require('../../assets/animations/gratitude-heart.json')}
+                source={require('../../assets/animations/calm-waves.json')}
                 autoPlay
                 loop={false}
                 style={styles.lottie}

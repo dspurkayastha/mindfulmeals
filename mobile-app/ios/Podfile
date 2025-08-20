@@ -61,39 +61,38 @@ target 'MindfulMeals' do
       end
     end
 
-		# Additional fixes for Folly/Reanimated and RNScreens C++ flags
-		installer.pods_project.targets.each do |target|
-			# Folly and Reanimated macro compatibility to avoid coroutine/clock typedef issues
-			if target.name == 'RCT-Folly' || target.name == 'RNReanimated'
-				target.build_configurations.each do |config|
-					config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
-					defs = config.build_settings['GCC_PREPROCESSOR_DEFINITIONS']
-					['FOLLY_NO_CONFIG','FOLLY_MOBILE=1','FOLLY_USE_LIBCPP=1','FOLLY_CFG_NO_COROUTINES=1','FOLLY_HAVE_CLOCK_GETTIME=1','FOLLY_HAVE_CLOCKID_T=1'].each do |d|
-						defs << d unless defs.include?(d)
-					end
-					config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = defs
-				end
-			end
+    # Screens: enforce C++17 and inject headers to resolve std::move and selector availability
+    installer.pods_project.targets.each do |target|
+      if target.name == 'RNScreens'
+        target.build_configurations.each do |config|
+          config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'gnu++17'
+          config.build_settings['CLANG_CXX_LIBRARY'] = 'libc++'
+          other_cpp = config.build_settings['OTHER_CPLUSPLUSFLAGS'] || ['$(inherited)']
+          other_cpp << '-std=gnu++17' unless other_cpp.include?('-std=gnu++17')
+          other_cpp << '-stdlib=libc++' unless other_cpp.include?('-stdlib=libc++')
+          config.build_settings['OTHER_CPLUSPLUSFLAGS'] = other_cpp
+          other_ld = config.build_settings['OTHER_LDFLAGS'] || ['$(inherited)']
+          other_ld << '-lc++' unless other_ld.include?('-lc++')
+          config.build_settings['OTHER_LDFLAGS'] = other_ld
+          headers = config.build_settings['HEADER_SEARCH_PATHS'] || ['$(inherited)']
+          headers << '$(SDKROOT)/usr/include/c++/v1' unless headers.include?('$(SDKROOT)/usr/include/c++/v1')
+          config.build_settings['HEADER_SEARCH_PATHS'] = headers
+        end
+      end
+    end
 
-			# Ensure RNScreens compiles with C++17 and libc++ so std::move, etc. are available
-			if target.name == 'RNScreens'
-				target.build_configurations.each do |config|
-					config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'gnu++17'
-					config.build_settings['CLANG_CXX_LIBRARY'] = 'libc++'
-					other_cpp = config.build_settings['OTHER_CPLUSPLUSFLAGS'] || ['$(inherited)']
-					other_cpp << '-std=gnu++17' unless other_cpp.include?('-std=gnu++17')
-					other_cpp << '-stdlib=libc++' unless other_cpp.include?('-stdlib=libc++')
-					config.build_settings['OTHER_CPLUSPLUSFLAGS'] = other_cpp
-					# Ensure linker pulls in libc++ when building as a framework
-					other_ld = config.build_settings['OTHER_LDFLAGS'] || ['$(inherited)']
-					other_ld << '-lc++' unless other_ld.include?('-lc++')
-					config.build_settings['OTHER_LDFLAGS'] = other_ld
-					# Ensure libc++ headers are found
-					headers = config.build_settings['HEADER_SEARCH_PATHS'] || ['$(inherited)']
-					headers << '$(SDKROOT)/usr/include/c++/v1' unless headers.include?('$(SDKROOT)/usr/include/c++/v1')
-					config.build_settings['HEADER_SEARCH_PATHS'] = headers
-				end
-			end
-		end
+    # Patch RNScreens sources to ensure std::move is available on all toolchains
+    begin
+      screens_mm = File.expand_path('../node_modules/react-native-screens/ios/RNSScreenStackHeaderConfig.mm', __dir__)
+      if File.exist?(screens_mm)
+        contents = File.read(screens_mm)
+        unless contents.include?('#include <utility>')
+          File.write(screens_mm, "#include <utility>\n" + contents)
+        end
+      end
+    rescue => e
+      Pod::UI.puts "[Podfile] Skipped patching RNScreens include: #{e}"
+    end
+
   end
 end

@@ -203,8 +203,9 @@ const GratitudeJournalScreen = () => {
 
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
+      {/* was: require('../../assets/animations/gratitude-heart.json') */}
       <LottieView
-        source={require('../../assets/animations/gratitude-heart.json')}
+        source={require('../../assets/animations/calm-waves.json')}
         autoPlay
         loop
         style={styles.emptyAnimation}

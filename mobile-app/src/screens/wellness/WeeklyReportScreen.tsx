@@ -258,8 +258,9 @@ const WeeklyReportScreen = () => {
             </Text>
           </View>
           
+          {/* was: require('../../assets/animations/wellness-score.json') */}
           <LottieView
-            source={require('../../assets/animations/wellness-score.json')}
+            source={require('../../assets/animations/calm-waves.json')}
             autoPlay
             loop
             style={styles.scoreAnimation}
