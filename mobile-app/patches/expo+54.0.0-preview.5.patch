@@ -1,0 +1,20 @@
+diff --git a/node_modules/expo/ios/AppDelegates/ExpoReactNativeFactory.swift b/node_modules/expo/ios/AppDelegates/ExpoReactNativeFactory.swift
+index 1234567..abcdefg 100644
+--- a/node_modules/expo/ios/AppDelegates/ExpoReactNativeFactory.swift
++++ b/node_modules/expo/ios/AppDelegates/ExpoReactNativeFactory.swift
+@@ -8,15 +8,9 @@ import React
+   @objc public override init(delegate: any RCTReactNativeFactoryDelegate) {
+-    let releaseLevel = (Bundle.main.object(forInfoDictionaryKey: "ReactNativeReleaseLevel") as? String)
+-      .flatMap { [
+-        "canary": RCTReleaseLevel.Canary,
+-        "experimental": RCTReleaseLevel.Experimental,
+-        "stable": RCTReleaseLevel.Stable
+-      ][$0.lowercased()]
+-      }
+-    ?? RCTReleaseLevel.Stable
+-
+-    super.init(delegate: delegate, releaseLevel: releaseLevel)
++    // RCTReleaseLevel removed in RN 0.81.0
++    // Simply call parent init without releaseLevel
++    super.init(delegate: delegate)
+   }
