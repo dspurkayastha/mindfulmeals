@@ -21,6 +21,27 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 
+// Static Lottie sources with fallback to calm-waves.json
+const ANIMATION_SOURCES: Record<string, any> = {
+  'calm-waves': require('../../assets/animations/calm-waves.json'),
+  // Fallback mappings for current milestones until dedicated files are added
+  confetti: require('../../assets/animations/calm-waves.json'), // Original: confetti.json
+  stars: require('../../assets/animations/calm-waves.json'), // Original: stars.json
+  celebration: require('../../assets/animations/calm-waves.json'), // Original: celebration.json
+  heart: require('../../assets/animations/calm-waves.json'), // Original: heart.json
+  gratitude: require('../../assets/animations/calm-waves.json'), // Original: gratitude.json
+  magic: require('../../assets/animations/calm-waves.json'), // Original: magic.json
+  zen: require('../../assets/animations/calm-waves.json'), // Original: zen.json
+  waves: require('../../assets/animations/calm-waves.json'), // Original: waves.json
+  sparkle: require('../../assets/animations/calm-waves.json'), // Original: sparkle.json
+  trophy: require('../../assets/animations/calm-waves.json'), // Original: trophy.json
+  rainbow: require('../../assets/animations/calm-waves.json'), // Original: rainbow.json
+  crown: require('../../assets/animations/calm-waves.json'), // Original: crown.json
+  target: require('../../assets/animations/calm-waves.json'), // Original: target.json
+};
+
+const getAnimationSource = (key: string) => ANIMATION_SOURCES[key] ?? ANIMATION_SOURCES['calm-waves'];
+
 export type CelebrationMilestone = 
   | 'first_pantry_item'
   | 'pantry_10_items'
@@ -400,7 +421,7 @@ const MicroCelebration: React.FC<MicroCelebrationProps> = ({
             </View>
 
             <LottieView
-              source={require(`../../assets/animations/${config.animation}.json`)}
+              source={getAnimationSource(config.animation)}
               autoPlay
               loop
               style={styles.backgroundAnimation}

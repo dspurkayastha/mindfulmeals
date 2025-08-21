@@ -61,7 +61,7 @@ target 'MindfulMeals' do
       end
     end
 
-    # Ensure RNScreens compiles with C++17 and libc++ so std::move is available
+    # Ensure RNScreens builds with C++17/libc++ and patch std::move usage
     installer.pods_project.targets.each do |target|
       if target.name == 'RNScreens'
         target.build_configurations.each do |config|
@@ -83,17 +83,17 @@ target 'MindfulMeals' do
       end
     end
 
-    # Patch RNScreens source to include <utility> for std::move
+    # Patch RNSScreenStackHeaderConfig.mm for toolchains missing <utility>
     begin
-      screens_mm = File.expand_path('../node_modules/react-native-screens/ios/RNSScreenStackHeaderConfig.mm', __dir__)
+      screens_mm = File.expand_path('../../node_modules/react-native-screens/ios/RNSScreenStackHeaderConfig.mm', __dir__)
       if File.exist?(screens_mm)
         contents = File.read(screens_mm)
-        unless contents.include?('#include <utility>')
-          File.write(screens_mm, "#include <utility>\n" + contents)
-        end
+        contents = "#include <utility>\n" + contents unless contents.include?('#include <utility>')
+        contents = contents.gsub(/_lastHeaderInsets = std::move\(insets\);/, '_lastHeaderInsets = insets;')
+        File.write(screens_mm, contents)
       end
     rescue => e
-      Pod::UI.puts "[Podfile] Skipped patching RNScreens include: #{e}"
+      Pod::UI.puts "[Podfile] Skipped patching RNScreens: #{e}"
     end
   end
 end

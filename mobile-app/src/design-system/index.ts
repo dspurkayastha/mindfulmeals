@@ -8,6 +8,13 @@ export { default as typography } from './tokens/typography';
 export { default as animations } from './tokens/animations';
 export { default as haptics } from './tokens/haptics';
 
+// Local imports to avoid dynamic require() at runtime
+import colorsTokens, { moods } from './tokens/colors';
+import spacingTokens from './tokens/spacing';
+import typographyTokens from './tokens/typography';
+import animationsTokens from './tokens/animations';
+import hapticsTokens from './tokens/haptics';
+
 // Re-export specific token groups for convenience
 export { 
   baseColors,
@@ -47,11 +54,11 @@ export { haptic, useHaptic } from '../utils/haptics';
 
 // Design System Configuration
 export const designSystem = {
-  colors: require('./tokens/colors').default,
-  spacing: require('./tokens/spacing').default,
-  typography: require('./tokens/typography').default,
-  animations: require('./tokens/animations').default,
-  haptics: require('./tokens/haptics').default,
+  colors: colorsTokens,
+  spacing: spacingTokens,
+  typography: typographyTokens,
+  animations: animationsTokens,
+  haptics: hapticsTokens,
 };
 
 // Theme helpers
@@ -65,7 +72,6 @@ export const getTheme = (mode: 'light' | 'dark' = 'light') => {
 
 // Mood-based theme helper
 export const getMoodTheme = (mood: 'energetic' | 'calm' | 'grounded' | 'grateful') => {
-  const { moods } = require('./tokens/colors');
   return moods[mood] || moods.calm;
 };
 

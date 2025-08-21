@@ -40,11 +40,7 @@
     "typescript": "^5.0.0"
   },
   "overrides": {
-    "@babel/plugin-transform-async-generator-functions": "7.24.6",
-    "metro": "0.82.3",
-    "metro-config": "0.82.3",
-    "metro-resolver": "0.82.3",
-    "metro-cache": "0.82.3"
+    "@babel/plugin-transform-async-generator-functions": "7.24.6"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
