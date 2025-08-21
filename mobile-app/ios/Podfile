@@ -61,7 +61,7 @@ target 'MindfulMeals' do
       end
     end
 
-    # Screens: enforce C++17 and inject headers to resolve std::move and selector availability
+    # Ensure RNScreens compiles with C++17 and libc++ so std::move is available
     installer.pods_project.targets.each do |target|
       if target.name == 'RNScreens'
         target.build_configurations.each do |config|
@@ -71,9 +71,11 @@ target 'MindfulMeals' do
           other_cpp << '-std=gnu++17' unless other_cpp.include?('-std=gnu++17')
           other_cpp << '-stdlib=libc++' unless other_cpp.include?('-stdlib=libc++')
           config.build_settings['OTHER_CPLUSPLUSFLAGS'] = other_cpp
+
           other_ld = config.build_settings['OTHER_LDFLAGS'] || ['$(inherited)']
           other_ld << '-lc++' unless other_ld.include?('-lc++')
           config.build_settings['OTHER_LDFLAGS'] = other_ld
+
           headers = config.build_settings['HEADER_SEARCH_PATHS'] || ['$(inherited)']
           headers << '$(SDKROOT)/usr/include/c++/v1' unless headers.include?('$(SDKROOT)/usr/include/c++/v1')
           config.build_settings['HEADER_SEARCH_PATHS'] = headers
@@ -81,7 +83,7 @@ target 'MindfulMeals' do
       end
     end
 
-    # Patch RNScreens sources to ensure std::move is available on all toolchains
+    # Patch RNScreens source to include <utility> for std::move
     begin
       screens_mm = File.expand_path('../node_modules/react-native-screens/ios/RNSScreenStackHeaderConfig.mm', __dir__)
       if File.exist?(screens_mm)
@@ -93,6 +95,5 @@ target 'MindfulMeals' do
     rescue => e
       Pod::UI.puts "[Podfile] Skipped patching RNScreens include: #{e}"
     end
-
   end
 end

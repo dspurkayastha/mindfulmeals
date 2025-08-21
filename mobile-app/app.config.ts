@@ -22,7 +22,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		[
 			'expo-build-properties',
 			{
-				ios: { deploymentTarget: '15.1' },
+				ios: { newArchEnabled: false, deploymentTarget: '15.1' },
+				android: { newArchEnabled: false },
 			},
 		],
 		['expo-notifications'],
