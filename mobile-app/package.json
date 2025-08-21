@@ -42,7 +42,6 @@
     "expo-task-manager": "~14.0.2",
     "i18next": "^23.5.1",
     "lottie-react-native": "~7.3.1",
-    "assert": "^2.1.0",
     "moti": "^0.27.3",
     "react": "19.1.0",
     "react-freeze": "^1.0.4",
@@ -86,6 +85,5 @@
   },
   "jest": {
     "preset": "react-native"
-  },
-  
+  }
 }
