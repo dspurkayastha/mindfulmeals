@@ -5,8 +5,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 	name: 'MindfulMeals',
 	slug: 'mindfulmeals',
 	scheme: 'mindfulmeals',
-	// Explicitly disable New Architecture at the top-level to avoid deprecation warnings
-	newArchEnabled: false,
+	// Enable New Architecture for Reanimated 4 compatibility
+	newArchEnabled: true,
 	extra: {
 		eas: {
 			projectId: '20500198-5703-48f8-9bdd-379925c60cbf',
@@ -22,8 +22,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		[
 			'expo-build-properties',
 			{
-				ios: { newArchEnabled: false, deploymentTarget: '15.1' },
-				android: { newArchEnabled: false },
+				ios: { newArchEnabled: true, deploymentTarget: '15.1' },
+				android: { newArchEnabled: true },
 			},
 		],
 		['expo-notifications'],
