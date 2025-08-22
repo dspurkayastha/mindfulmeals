@@ -1,20 +1,88 @@
 {
   "cli": {
-    "version": ">= 9.0.0"
+    "version": ">= 9.0.0",
+    "appVersionSource": "remote"
   },
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleDebug"
+      },
+      "ios": {
+        "simulator": true,
+        "buildConfiguration": "Debug"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api-dev.mindfulmeals.com",
+        "EXPO_PUBLIC_ENV": "development"
+      },
+      "cache": {
+        "key": "dev-{{ checksum \"package-lock.json\" }}"
+      }
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "buildConfiguration": "Release"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api-staging.mindfulmeals.com",
+        "EXPO_PUBLIC_ENV": "preview"
+      },
+      "cache": {
+        "key": "preview-{{ checksum \"package-lock.json\" }}"
+      }
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "ios": {
+        "buildConfiguration": "Release"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api.mindfulmeals.com",
+        "EXPO_PUBLIC_ENV": "production"
+      },
+      "cache": {
+        "key": "prod-{{ checksum \"package-lock.json\" }}"
+      }
+    },
+    "debug": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleDebug",
+        "withoutCredentials": true
+      },
+      "ios": {
+        "simulator": true,
+        "buildConfiguration": "Debug"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "http://localhost:3000",
+        "EXPO_PUBLIC_ENV": "debug",
+        "EXPO_PUBLIC_DEBUG": "true"
+      }
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {
+        "track": "internal",
+        "releaseStatus": "draft"
+      },
+      "ios": {
+        "ascAppId": "YOUR_APP_STORE_CONNECT_APP_ID"
+      }
+    }
   }
 }

@@ -1,0 +1,77 @@
+name: EAS Build
+
+on:
+  push:
+    branches:
+      - main
+      - dev-expo
+  pull_request:
+    types: [opened, synchronize]
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform to build'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - android
+          - ios
+      profile:
+        description: 'Build profile'
+        required: true
+        default: 'preview'
+        type: choice
+        options:
+          - development
+          - preview
+          - production
+
+jobs:
+  build:
+    name: EAS Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🏗 Setup repo
+        uses: actions/checkout@v3
+
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: npm
+          cache-dependency-path: mobile-app/package-lock.json
+
+      - name: 📦 Install dependencies
+        working-directory: ./mobile-app
+        run: npm ci
+
+      - name: 🚀 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📱 Build app
+        working-directory: ./mobile-app
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            eas build --non-interactive --platform ${{ github.event.inputs.platform }} --profile ${{ github.event.inputs.profile }}
+          elif [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            eas build --non-interactive --platform all --profile production
+          else
+            eas build --non-interactive --platform all --profile preview
+          fi
+
+      - name: 📊 Comment PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '📱 EAS build triggered! Check the [Expo dashboard](https://expo.dev) for build status.'
+            })

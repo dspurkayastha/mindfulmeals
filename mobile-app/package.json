@@ -12,7 +12,16 @@
     "clean": "cd ios && rm -rf Pods build && cd ../android && ./gradlew clean && cd ..",
     "pod-install": "cd ios && pod install",
     "postinstall": "patch-package || true",
-    "prepare": "echo 'Skipping husky in mobile-app...'"
+    "prepare": "echo 'Skipping husky in mobile-app...'",
+    "eas:build:dev": "eas build --profile development --platform all",
+    "eas:build:dev:android": "eas build --profile development --platform android",
+    "eas:build:dev:ios": "eas build --profile development --platform ios",
+    "eas:build:preview": "eas build --profile preview --platform all",
+    "eas:build:prod": "eas build --profile production --platform all",
+    "eas:build:debug": "eas build --profile debug --platform all --local",
+    "eas:submit": "eas submit --profile production",
+    "eas:update": "eas update --branch preview --message",
+    "eas:device:create": "eas device:create"
   },
   "dependencies": {
     "@expo/config-plugins": "~11.0.0",
