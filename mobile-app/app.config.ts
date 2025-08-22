@@ -24,6 +24,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 	assetBundlePatterns: ['**/*'],
 	// Enable New Architecture for Reanimated 4 compatibility
 	newArchEnabled: true,
+	jsEngine: 'hermes',
 	extra: {
 		eas: {
 			projectId: '20500198-5703-48f8-9bdd-379925c60cbf',
@@ -39,10 +40,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		infoPlist: {
 			NSMicrophoneUsageDescription: 'MindfulMeals needs access to your microphone for voice commands and mindfulness exercises.',
 			NSSpeechRecognitionUsageDescription: 'MindfulMeals uses speech recognition for voice journaling and commands.',
+			UIRequiresFullScreen: true,
+			// Add background modes if needed
+			UIBackgroundModes: ['audio', 'fetch', 'remote-notification'],
 		},
 		config: {
 			usesNonExemptEncryption: false,
 		},
+		// Ensure proper JS engine
+		jsEngine: 'hermes',
 	},
 	android: {
 		adaptiveIcon: {
@@ -52,6 +58,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		package: 'com.mindfulmeals.app',
 		versionCode: 1,
 		permissions: ['RECORD_AUDIO', 'VIBRATE', 'NOTIFICATIONS'],
+		// Ensure proper JS engine
+		jsEngine: 'hermes',
 	},
 	web: {
 		favicon: './src/assets/favicon.png',
@@ -67,6 +75,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 					...(IS_DEV && {
 						flipper: true,
 					}),
+					// Ensure Hermes is used
+					useFrameworks: 'static',
+					extraPods: [
+						{
+							name: 'hermes-engine',
+							path: '../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec',
+							modular_headers: true,
+						},
+					],
 				},
 				android: { 
 					newArchEnabled: true,
@@ -75,6 +92,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 						enableProguardInReleaseBuilds: false,
 						enableShrinkResourcesInReleaseBuilds: false,
 					}),
+					// Ensure Hermes is used
+					hermesEnabled: true,
 				},
 			},
 		],

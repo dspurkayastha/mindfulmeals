@@ -1,33 +1,42 @@
-// Polyfill for require in Hermes/Winter with New Architecture
-// Some libraries expect global.require to exist
-if (typeof global.require === 'undefined') {
-  if (typeof global.__r !== 'undefined') {
-    // Metro's internal require function
-    global.require = global.__r;
-  } else if (typeof require !== 'undefined') {
-    // Fallback to the existing require if available
-    global.require = require;
-  } else {
-    // Last resort: create a stub that throws a meaningful error
-    global.require = function(moduleId) {
-      throw new Error(`Cannot require module '${moduleId}' - require is not available in this environment`);
-    };
-  }
+// Early polyfills for React Native New Architecture
+// Must be the very first code executed
+import './polyfills';
+
+// Polyfill global if it doesn't exist
+if (typeof global === 'undefined') {
+  window.global = window;
 }
 
-// Additional polyfill for module.exports pattern
-if (typeof global.module === 'undefined') {
-  global.module = { exports: {} };
+// Ensure process.env exists
+if (typeof process === 'undefined') {
+  global.process = { env: { NODE_ENV: 'development' } };
 }
 
-// Ensure __DEV__ is defined
+// Polyfill for __DEV__
 if (typeof global.__DEV__ === 'undefined') {
   global.__DEV__ = process.env.NODE_ENV !== 'production';
 }
 
+// Fix for require not being available in some environments
+if (typeof global.require === 'undefined') {
+  // Try to use Metro's internal require
+  if (typeof global.__r !== 'undefined') {
+    global.require = global.__r;
+  } else if (typeof global.__metro_require__ !== 'undefined') {
+    global.require = global.__metro_require__;
+  } else if (typeof require !== 'undefined') {
+    global.require = require;
+  }
+}
+
+// Import order is important here
+import 'react-native/Libraries/Core/InitializeCore';
 import 'expo-dev-client';
 import 'react-native-gesture-handler';
 import { registerRootComponent } from 'expo';
+
+// Import App after all polyfills are set up
 import App from './App';
 
+// Register the app
 registerRootComponent(App);
