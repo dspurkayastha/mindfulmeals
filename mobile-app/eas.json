@@ -19,7 +19,6 @@
       "env": {
         "EXPO_PUBLIC_API_URL": "https://api-dev.mindfulmeals.com",
         "EXPO_PUBLIC_ENV": "development",
-        "NPM_CONFIG_WORKSPACES": "false",
         "EAS_BUILD": "true"
       },
       "node": "18.18.0"
@@ -36,7 +35,6 @@
       "env": {
         "EXPO_PUBLIC_API_URL": "https://api-staging.mindfulmeals.com",
         "EXPO_PUBLIC_ENV": "preview",
-        "NPM_CONFIG_WORKSPACES": "false",
         "EAS_BUILD": "true"
       },
       "node": "18.18.0"
@@ -53,7 +51,6 @@
       "env": {
         "EXPO_PUBLIC_API_URL": "https://api.mindfulmeals.com",
         "EXPO_PUBLIC_ENV": "production",
-        "NPM_CONFIG_WORKSPACES": "false",
         "EAS_BUILD": "true"
       },
       "node": "18.18.0"
@@ -75,7 +72,6 @@
         "EXPO_PUBLIC_API_URL": "http://localhost:3000",
         "EXPO_PUBLIC_ENV": "debug",
         "EXPO_PUBLIC_DEBUG": "true",
-        "NPM_CONFIG_WORKSPACES": "false",
         "EAS_BUILD": "true"
       },
       "node": "18.18.0"
