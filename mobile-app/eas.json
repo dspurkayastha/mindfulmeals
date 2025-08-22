@@ -4,26 +4,7 @@
     "appVersionSource": "remote"
   },
   "build": {
-    "base": {
-      "node": "18.18.0",
-      "npm": "10.2.3",
-      "env": {
-        "NPM_CONFIG_WORKSPACES": "false",
-        "EAS_BUILD_WORKSPACES": "",
-        "EAS_BUILD": "true"
-      },
-      "cache": {
-        "maximumAge": 604800,
-        "customPaths": ["node_modules/**/*"]
-      },
-      "prebuild": {
-        "commands": [
-          "bash eas-build-pre-install.sh"
-        ]
-      }
-    },
     "development": {
-      "extends": "base",
       "developmentClient": true,
       "distribution": "internal",
       "android": {
@@ -39,11 +20,13 @@
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://api-dev.mindfulmeals.com",
-        "EXPO_PUBLIC_ENV": "development"
-      }
+        "EXPO_PUBLIC_ENV": "development",
+        "NPM_CONFIG_WORKSPACES": "false",
+        "EAS_BUILD": "true"
+      },
+      "node": "18.18.0"
     },
     "preview": {
-      "extends": "base",
       "distribution": "internal",
       "android": {
         "buildType": "apk",
@@ -56,11 +39,13 @@
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://api-staging.mindfulmeals.com",
-        "EXPO_PUBLIC_ENV": "preview"
-      }
+        "EXPO_PUBLIC_ENV": "preview",
+        "NPM_CONFIG_WORKSPACES": "false",
+        "EAS_BUILD": "true"
+      },
+      "node": "18.18.0"
     },
     "production": {
-      "extends": "base",
       "autoIncrement": true,
       "android": {
         "buildType": "app-bundle",
@@ -73,11 +58,13 @@
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://api.mindfulmeals.com",
-        "EXPO_PUBLIC_ENV": "production"
-      }
+        "EXPO_PUBLIC_ENV": "production",
+        "NPM_CONFIG_WORKSPACES": "false",
+        "EAS_BUILD": "true"
+      },
+      "node": "18.18.0"
     },
     "debug": {
-      "extends": "base",
       "developmentClient": true,
       "distribution": "internal",
       "android": {
@@ -93,8 +80,11 @@
       "env": {
         "EXPO_PUBLIC_API_URL": "http://localhost:3000",
         "EXPO_PUBLIC_ENV": "debug",
-        "EXPO_PUBLIC_DEBUG": "true"
-      }
+        "EXPO_PUBLIC_DEBUG": "true",
+        "NPM_CONFIG_WORKSPACES": "false",
+        "EAS_BUILD": "true"
+      },
+      "node": "18.18.0"
     }
   },
   "submit": {
