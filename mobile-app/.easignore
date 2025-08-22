@@ -1,0 +1,43 @@
+# Ignore root workspace files that EAS doesn't need
+../backend
+../database
+../infrastructure
+../data-pipeline
+../agents
+../.git
+../.cursor
+../.husky
+../node_modules
+
+# Ignore documentation
+*.md
+!README.md
+docs/
+
+# Ignore test files
+__tests__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Ignore source control
+.git/
+.gitignore
+
+# Ignore IDE files
+.vscode/
+.idea/
+
+# Keep only necessary files for build
+!package.json
+!package-lock.json
+!app.config.ts
+!babel.config.js
+!metro.config.js
+!index.js
+!App.tsx
+!src/
+!assets/
+!ios/
+!android/

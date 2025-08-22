@@ -4,64 +4,87 @@
     "appVersionSource": "remote"
   },
   "build": {
+    "base": {
+      "node": "18.18.0",
+      "npm": "10.2.3",
+      "env": {
+        "NPM_CONFIG_WORKSPACES": "false",
+        "EAS_BUILD_WORKSPACES": "",
+        "EAS_BUILD": "true"
+      },
+      "cache": {
+        "maximumAge": 604800,
+        "customPaths": ["node_modules/**/*"]
+      },
+      "prebuild": {
+        "commands": [
+          "bash eas-build-pre-install.sh"
+        ]
+      }
+    },
     "development": {
-      "developmentClient": true,
-      "distribution": "internal",
-      "android": {
-        "buildType": "apk",
-        "gradleCommand": ":app:assembleDebug"
-      },
-      "ios": {
-        "simulator": true,
-        "buildConfiguration": "Debug"
-      },
-      "env": {
-        "EXPO_PUBLIC_API_URL": "https://api-dev.mindfulmeals.com",
-        "EXPO_PUBLIC_ENV": "development"
-      },
-      "cache": {
-        "key": "dev-{{ checksum \"package-lock.json\" }}"
-      }
-    },
-    "preview": {
-      "distribution": "internal",
-      "android": {
-        "buildType": "apk"
-      },
-      "ios": {
-        "buildConfiguration": "Release"
-      },
-      "env": {
-        "EXPO_PUBLIC_API_URL": "https://api-staging.mindfulmeals.com",
-        "EXPO_PUBLIC_ENV": "preview"
-      },
-      "cache": {
-        "key": "preview-{{ checksum \"package-lock.json\" }}"
-      }
-    },
-    "production": {
-      "autoIncrement": true,
-      "android": {
-        "buildType": "app-bundle"
-      },
-      "ios": {
-        "buildConfiguration": "Release"
-      },
-      "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.mindfulmeals.com",
-        "EXPO_PUBLIC_ENV": "production"
-      },
-      "cache": {
-        "key": "prod-{{ checksum \"package-lock.json\" }}"
-      }
-    },
-    "debug": {
+      "extends": "base",
       "developmentClient": true,
       "distribution": "internal",
       "android": {
         "buildType": "apk",
         "gradleCommand": ":app:assembleDebug",
-        "withoutCredentials": true
+        "image": "latest",
+        "resourceClass": "large"
+      },
+      "ios": {
+        "simulator": true,
+        "buildConfiguration": "Debug",
+        "resourceClass": "m-medium"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api-dev.mindfulmeals.com",
+        "EXPO_PUBLIC_ENV": "development"
+      }
+    },
+    "preview": {
+      "extends": "base",
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk",
+        "image": "latest",
+        "resourceClass": "large"
+      },
+      "ios": {
+        "buildConfiguration": "Release",
+        "resourceClass": "m-medium"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api-staging.mindfulmeals.com",
+        "EXPO_PUBLIC_ENV": "preview"
+      }
+    },
+    "production": {
+      "extends": "base",
+      "autoIncrement": true,
+      "android": {
+        "buildType": "app-bundle",
+        "image": "latest",
+        "resourceClass": "large"
+      },
+      "ios": {
+        "buildConfiguration": "Release",
+        "resourceClass": "m-medium"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api.mindfulmeals.com",
+        "EXPO_PUBLIC_ENV": "production"
+      }
+    },
+    "debug": {
+      "extends": "base",
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleDebug",
+        "withoutCredentials": true,
+        "image": "latest"
       },
       "ios": {
         "simulator": true,

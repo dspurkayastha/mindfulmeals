@@ -97,7 +97,11 @@
     "preset": "react-native"
   },
   "overrides": {
-    "react-native-reanimated": "4.0.2",
+    "react-native-reanimated": "^4.0.2",
     "react-native-safe-area-context": "~5.6.0"
-  }
+  },
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
