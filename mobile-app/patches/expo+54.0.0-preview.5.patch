@@ -14,7 +14,10 @@ index 1234567..abcdefg 100644
 -    ?? RCTReleaseLevel.Stable
 -
 -    super.init(delegate: delegate, releaseLevel: releaseLevel)
-+    // RCTReleaseLevel removed in RN 0.81.0
-+    // Simply call parent init without releaseLevel
++    // RCTReleaseLevel removed in RN 0.81.0  
++    // Call parent init with just delegate for RN 0.81.0
 +    super.init(delegate: delegate)
    }
++@@ -26,1 +20,1 @@
++      newArchEnabled: RCTIsNewArchEnabled()
+-      newArchEnabled: weakDelegate.newArchEnabled()
